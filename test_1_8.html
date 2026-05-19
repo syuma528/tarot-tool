@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>タロット：ケルト十字</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif; background: #f5f4f0; color: #1a1a1a; min-height: 100vh; padding: 1.25rem; }
+h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.03em; }
+
+.phase-bar { display: flex; align-items: center; gap: 5px; margin-bottom: 1rem; flex-wrap: wrap; }
+.phase-label { font-size: 12px; color: #888; margin-right: 4px; }
+.phase-btn { font-size: 11px; padding: 3px 9px; border: 0.5px solid #ccc; border-radius: 7px; background: #fff; color: #555; cursor: pointer; transition: all 0.15s; }
+.phase-btn:hover { background: #f0effe; border-color: #afa9ec; color: #3c3489; }
+.phase-btn.active { background: #534AB7; color: #eeedfe; border-color: #534AB7; font-weight: 500; }
+.phase-btn.done { border-color: #5dcaa5; color: #0f6e56; }
+
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: 1rem; align-items: start; }
+@media (max-width: 800px) { .layout { grid-template-columns: 1fr; } }
+
+.left-panel { display: flex; flex-direction: column; gap: 1rem; }
+
+/* 名前・日付カード */
+.meta-card { background: #fff; border: 0.5px solid #e0dfd8; border-radius: 12px; padding: 0.875rem 1.25rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.meta-label { font-size: 12px; color: #aaa; white-space: nowrap; }
+.meta-input { flex: 1; min-width: 140px; border: 0.5px solid #ddd; border-radius: 8px; padding: 6px 10px; font-size: 13px; font-family: inherit; color: #1a1a1a; background: #fff; }
+.meta-input:focus { outline: none; border-color: #afa9ec; }
+.meta-date { font-size: 12px; color: #888; white-space: nowrap; }
+
+.phase-card { background: #fff; border: 0.5px solid #e0dfd8; border-radius: 12px; padding: 1rem 1.25rem; }
+.phase-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px; }
+.phase-num { font-size: 12px; color: #aaa; }
+.phase-name { font-size: 16px; font-weight: 500; }
+.phase-desc { font-size: 13px; color: #666; line-height: 1.7; margin-bottom: 1rem; }
+
+.card-section { border-top: 0.5px solid #e8e7e0; padding-top: 1rem; }
+.card-select-label { font-size: 12px; color: #aaa; margin-bottom: 8px; }
+.card-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.75rem; }
+.card-btn { width: 44px; height: 44px; border: 0.5px solid #ccc; border-radius: 8px; background: #f5f4f0; color: #1a1a1a; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+.card-btn:hover { background: #eeedfe; border-color: #afa9ec; color: #3c3489; }
+.card-btn.selected { background: #534AB7; color: #eeedfe; border-color: #534AB7; }
+
+.random-btn { font-size: 12px; padding: 5px 14px; border: 0.5px solid #f0997b; border-radius: 8px; background: #faece7; color: #993c1d; cursor: pointer; transition: all 0.15s; margin-bottom: 1rem; }
+.random-btn:hover { background: #f5c4b3; }
+
+.card-result { background: #f5f4f0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+.card-name { font-size: 15px; font-weight: 700; margin-bottom: 10px; color: #333; }
+.meaning-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.meaning-box { border-radius: 8px; padding: 10px 12px; transition: opacity 0.2s; }
+.meaning-box.up { background: #e1f5ee; border: 0.5px solid #5dcaa5; }
+.meaning-box.down { background: #faece7; border: 0.5px solid #f0997b; }
+.meaning-title { font-size: 11px; font-weight: 500; margin-bottom: 6px; }
+.meaning-box.up .meaning-title { color: #0f6e56; }
+.meaning-box.down .meaning-title { color: #993c1d; }
+.meaning-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag { font-size: 12px; padding: 2px 8px; border-radius: 999px; }
+.tag.up { background: #9fe1cb; color: #085041; }
+.tag.down { background: #f5c4b3; color: #712b13; }
+
+.memo-label { font-size: 12px; color: #aaa; margin-bottom: 5px; }
+.memo-area { width: 100%; border: 0.5px solid #ddd; border-radius: 8px; padding: 8px 10px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 70px; color: #1a1a1a; background: #fff; }
+.memo-area:focus { outline: none; border-color: #afa9ec; }
+
+.nav-row { display: flex; gap: 8px; justify-content: flex-end; align-items: center; position: sticky; bottom: 0; background: #f5f4f0; padding: 10px 0; border-top: 1px solid #ddd; z-index: 10; }
+.progress { font-size: 12px; color: #aaa; margin-right: auto; }
+.nav-btn { font-size: 13px; padding: 6px 14px; border: 0.5px solid #ccc; border-radius: 8px; background: #fff; color: #1a1a1a; cursor: pointer; transition: all 0.15s; }
+.nav-btn:hover { background: #f0effe; }
+.nav-btn.primary { background: #534AB7; color: #eeedfe; border-color: #534AB7; }
+.nav-btn.primary:hover { background: #3c3489; }
+.nav-btn.danger { border-color: #f0997b; color: #993c1d; }
+.nav-btn.danger:hover { background: #faece7; }
+
+.right-panel { background: #fff; border: 0.5px solid #e0dfd8; border-radius: 12px; padding: 1rem; position: sticky; top: 1rem; max-height: 90vh; overflow-y: auto; }
+.right-title { font-size: 12px; color: #888; margin-bottom: 0.75rem; text-align: center; }
+
+.celtic-grid { position: relative; width: 260px; height: 330px; margin: 0 auto; }
+.ccard { position: absolute; width: 54px; height: 76px; border-radius: 6px; background: #b2e4f5; border: 2px solid #7ecde8; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; cursor: pointer; transition: all 0.2s; user-select: none; text-shadow: 0 1px 3px rgba(0,0,0,0.2); text-align: center; line-height: 1.2; }
+.ccard:hover { transform: scale(1.06); }
+.ccard.horizontal { width: 76px; height: 54px; }
+.ccard.active { background: #e05c5c !important; border-color: #c03030 !important; box-shadow: 0 0 0 4px rgba(224,92,92,0.3); z-index: 5; }
+.ccard.done-c { background: #a8d5c2; border-color: #5dcaa5; }
+
+.pos1  { left: 103px; top: 122px; }
+.pos2  { left:  92px; top: 133px; z-index: 2; }
+.pos3  { left: 103px; top:  30px; }
+.pos4  { left: 103px; top: 214px; }
+.pos5  { left:  25px; top: 122px; }
+.pos6  { left: 181px; top: 122px; }
+.pos7  { left: 198px; top: 244px; }
+.pos8  { left: 198px; top: 168px; }
+.pos9  { left: 198px; top:  92px; }
+.pos10 { left: 198px; top:  16px; }
+.pos7, .pos8, .pos9, .pos10 { width: 50px; }
+
+.legend { display: flex; gap: 10px; justify-content: center; margin-top: 10px; font-size: 11px; color: #666; flex-wrap: wrap; }
+.legend span { display: flex; align-items: center; gap: 3px; }
+.dot { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+
+/* 振り返り用ミニリスト */
+.review-list { display: flex; flex-direction: column; gap: 10px; }
+.review-item { border-bottom: 0.5px solid #eee; padding-bottom: 8px; }
+.review-item:last-child { border-bottom: none; }
+.review-phase-name { font-size: 11px; color: #999; margin-bottom: 2px; }
+.review-card-info { font-size: 12px; font-weight: 600; color: #333; margin-bottom: 4px; }
+.review-memo-text { font-size: 12px; color: #555; line-height: 1.5; white-space: pre-wrap; background: #f9f9f9; padding: 6px; border-radius: 4px; }
+.review-struct { font-size: 11px; color: #534AB7; margin-top: 4px; font-weight: 500; }
+
+/* 完了サマリー */
+.done-banner { background: #eaf3de; border: 0.5px solid #97c459; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.done-title { font-size: 15px; font-weight: 500; color: #3b6d11; margin-bottom: 4px; }
+.done-sub { font-size: 13px; color: #639922; }
+.done-meta { font-size: 12px; color: #639922; margin-top: 4px; }
+.summary-list { display: flex; flex-direction: column; gap: 8px; }
+.summary-item { background: #fff; border: 0.5px solid #e0dfd8; border-radius: 8px; padding: 10px 12px; }
+.summary-top { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+.summary-phase { font-size: 12px; color: #aaa; }
+.summary-card { font-size: 14px; font-weight: 700; color: #333; }
+.summary-orient { font-size: 11px; padding: 1px 8px; border-radius: 999px; }
+.summary-orient.up   { background: #9fe1cb; color: #085041; }
+.summary-orient.down { background: #f5c4b3; color: #712b13; }
+.summary-keywords { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; }
+.summary-memo { font-size: 12px; color: #666; border-top: 0.5px solid #f0efe8; margin-top: 6px; padding-top: 6px; white-space: pre-wrap; }
+
+/* 保存済みデータ一覧 */
+.saves-section { margin-top: 2rem; }
+.saves-title { font-size: 14px; font-weight: 500; color: #555; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 0.5px solid #e0dfd8; }
+.save-item { background: #fff; border: 0.5px solid #e0dfd8; border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.save-info { flex: 1; }
+.save-name { font-size: 14px; font-weight: 500; color: #1a1a1a; }
+.save-date { font-size: 12px; color: #aaa; margin-top: 2px; }
+.save-actions { display: flex; gap: 6px; }
+.save-btn { font-size: 12px; padding: 4px 10px; border: 0.5px solid #ccc; border-radius: 7px; background: #fff; color: #555; cursor: pointer; transition: all 0.15s; }
+.save-btn:hover { background: #f0effe; }
+.save-btn.del { border-color: #f0997b; color: #993c1d; }
+.save-btn.del:hover { background: #faece7; }
+.no-saves { font-size: 13px; color: #aaa; text-align: center; padding: 1rem 0; }
+
+/* 案内キャラクター */
+.guide-wrap { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 1rem; }
+.guide-chara { width: 48px; height: 48px; border-radius: 50%; background: #534AB7; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(83,74,183,0.25); }
+.guide-balloon { position: relative; background: #fff; border: 1.5px solid #afa9ec; border-radius: 12px; padding: 8px 14px; font-size: 13px; color: #3c3489; line-height: 1.7; flex: 1; }
+.guide-balloon::before { content: ''; position: absolute; left: -10px; top: 14px; border: 5px solid transparent; border-right-color: #afa9ec; }
+.guide-balloon::after { content: ''; position: absolute; left: -8px; top: 14px; border: 5px solid transparent; border-right-color: #fff; }
+
+/* 途中再開バナー */
+.resume-banner { background: #fff8e1; border: 1.5px solid #f0c040; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; max-width: 620px; margin-left: auto; margin-right: auto; }
+.resume-title { font-size: 14px; font-weight: 600; color: #7a5c00; margin-bottom: 4px; }
+.resume-sub { font-size: 12px; color: #a07800; margin-bottom: 10px; line-height: 1.6; }
+.resume-actions { display: flex; gap: 8px; }
+.resume-btn { font-size: 13px; padding: 6px 14px; border-radius: 8px; cursor: pointer; transition: all 0.15s; border: 0.5px solid #ccc; background: #fff; color: #555; }
+.resume-btn:hover { background: #f0effe; }
+.resume-btn.primary { background: #534AB7; color: #eeedfe; border-color: #534AB7; }
+.resume-btn.primary:hover { background: #3c3489; }
+
+/* テーマ選択画面 */
+.theme-screen { max-width: 620px; margin: 0 auto; }
+.theme-card { background: #fff; border: 0.5px solid #e0dfd8; border-radius: 16px; padding: 1.75rem 2rem; margin-bottom: 1rem; }
+.theme-title { font-size: 17px; font-weight: 600; margin-bottom: 0.5rem; }
+.theme-sub { font-size: 13px; color: #888; line-height: 1.7; margin-bottom: 1.25rem; }
+.theme-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.25rem; }
+.theme-option { padding: 14px 18px; border: 1.5px solid #e0dfd8; border-radius: 10px; background: #fff; font-size: 14px; color: #1a1a1a; cursor: pointer; transition: all 0.15s; text-align: left; line-height: 1.6; }
+.theme-option:hover { border-color: #afa9ec; background: #f0effe; color: #3c3489; }
+.theme-option.selected { border-color: #534AB7; background: #eeedfe; color: #3c3489; font-weight: 500; }
+
+/* カスタムテーマ入力フォーム */
+.custom-theme-input { width: 100%; border: 0.5px solid #ddd; border-radius: 8px; padding: 10px 12px; font-size: 14px; font-family: inherit; color: #1a1a1a; background: #fff; margin-top: 8px; }
+.custom-theme-input:focus { outline: none; border-color: #afa9ec; }
+
+/* インストラクション画面 */
+.intro-screen { max-width: 620px; margin: 0 auto; }
+.intro-card { background: #fff; border: 0.5px solid #e0dfd8; border-radius: 16px; padding: 1.75rem 2rem; margin-bottom: 1rem; }
+.intro-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 0.5rem; }
+.intro-sub { font-size: 13px; color: #aaa; margin-bottom: 1.5rem; }
+.intro-section { margin-bottom: 1.25rem; }
+.intro-section-title { font-size: 13px; font-weight: 600; color: #534AB7; margin-bottom: 6px; }
+.intro-text { font-size: 13px; color: #444; line-height: 1.8; }
+.intro-highlight { background: #eeedfe; border-left: 3px solid #534AB7; border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #3c3489; line-height: 1.8; margin: 8px 0; }
+.intro-start-btn { width: 100%; padding: 12px; background: #534AB7; color: #eeedfe; border: none; border-radius: 10px; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.15s; letter-spacing: 0.03em; }
+.intro-start-btn:hover { background: #3c3489; }
+
+/* 初期意見入力 */
+.opinion-screen { max-width: 620px; margin: 0 auto; }
+.opinion-card { background: #fff; border: 0.5px solid #e0dfd8; border-radius: 16px; padding: 1.75rem 2rem; margin-bottom: 1rem; }
+.opinion-title { font-size: 17px; font-weight: 600; margin-bottom: 0.5rem; }
+.opinion-sub { font-size: 13px; color: #888; line-height: 1.7; margin-bottom: 1.25rem; }
+.opinion-input { width: 100%; border: 0.5px solid #ddd; border-radius: 8px; padding: 10px 12px; font-size: 14px; font-family: inherit; resize: vertical; min-height: 80px; color: #1a1a1a; background: #fff; margin-bottom: 1rem; }
+.opinion-input:focus { outline: none; border-color: #afa9ec; }
+.opinion-note { font-size: 12px; color: #bbb; margin-bottom: 1rem; }
+
+/* サマリー内の初期意見 */
+.initial-opinion-box { background: #fff8e1; border: 0.5px solid #f0c040; border-radius: 10px; padding: 12px 16px; margin-bottom: 1rem; }
+.initial-opinion-label { font-size: 12px; color: #a07800; margin-bottom: 4px; font-weight: 500; }
+.initial-opinion-text { font-size: 14px; color: #5a4200; line-height: 1.7; }
+
+/* キーワード選択 */
+.keyword-select-label { font-size: 12px; color: #aaa; margin-bottom: 6px; margin-top: 10px; }
+.keyword-select-note  { font-size: 11px; color: #bbb; margin-bottom: 8px; }
+.kw-tag { font-size: 12px; padding: 3px 10px; border-radius: 999px; cursor: pointer; border: 1.5px solid transparent; transition: all 0.15s; user-select: none; }
+.kw-tag.up   { background: #9fe1cb; color: #085041; }
+.kw-tag.down { background: #f5c4b3; color: #712b13; }
+.kw-tag.up.picked   { border-color: #0f6e56; box-shadow: 0 0 0 2px #5dcaa580; font-weight: 700; }
+.kw-tag.down.picked { border-color: #993c1d; box-shadow: 0 0 0 2px #f0997b80; font-weight: 700; }
+.kw-tag.disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* 構造化文セクション */
+.struct-section { border-top: 0.5px solid #e8e7e0; padding-top: 1rem; margin-top: 0.5rem; }
+.struct-label { font-size: 12px; color: #aaa; margin-bottom: 8px; }
+.w5h1-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
+.w5h1-btn { font-size: 12px; padding: 5px 12px; border: 0.5px solid #ccc; border-radius: 8px; background: #fff; color: #555; cursor: pointer; transition: all 0.15s; }
+.w5h1-btn:hover { background: #f0effe; border-color: #afa9ec; color: #3c3489; }
+.w5h1-btn.selected { background: #534AB7; color: #eeedfe; border-color: #534AB7; font-weight: 500; }
+.struct-inputs { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+.struct-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.struct-fixed { font-size: 13px; color: #555; white-space: nowrap; }
+.struct-input { flex: 1; min-width: 120px; border: 0.5px solid #ddd; border-radius: 8px; padding: 6px 10px; font-size: 13px; font-family: inherit; color: #1a1a1a; background: #fff; }
+.struct-input:focus { outline: none; border-color: #afa9ec; }
+.struct-result { background: #eeedfe; border: 0.5px solid #afa9ec; border-radius: 8px; padding: 10px 14px; font-size: 14px; color: #3c3489; font-weight: 500; min-height: 40px; }
+.struct-result-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<h1>タロット：ケルト十字</h1>
+<div id="main"></div>
+
+<script>
+const THEMES = [
+  { id: 1, label: '遊びに行くなら…',       question: '遊びに行くなら「遊園地」と「水族館」、どちらが良いか？' },
+  { id: 2, label: 'プレゼントするとき…',    question: 'プレゼントするとき「サプライズをする」か「ほしいものを聞いておく」か、どちらが良いか？' },
+  { id: 3, label: '機内食といえば…',        question: '飛行機の中で「Fish or Chicken?」と聞かれたら、どちらを選ぶか？' },
+  { id: 4, label: 'ショッピングするなら…',  question: 'オンラインショッピングと実店舗での買い物、どちらが良いか？' },
+  { id: 5, label: '服装といえば…',          question: '学校や職場の服装は「制服」と「私服」、どちらが良いか？' },
+  { id: 99, label: 'その他（自分で決める）', question: '' },
+];
+
+const CARDS = [
+  { num: 0, gnum: '0',    name: '愚者',     up: ['自由','チャレンジ','冒険','始まり','旅人'],                      down: ['無責任','身勝手','飽き性','逃げ癖','無職'] },
+  { num: 1, gnum: 'I',    name: '魔術師',   up: ['才能','応用力','機転','コミュニケーション能力'],                 down: ['嘘つき','話を盛る','詐欺師','口先だけ','ごまかし'] },
+  { num: 2, gnum: 'II',   name: '女教皇',   up: ['洞察力','鋭さ','判断力','冷静','清楚'],                         down: ['神経質','潔癖','頑固','批判的','受け身過ぎる'] },
+  { num: 3, gnum: 'III',  name: '女帝',     up: ['母性','愛情','繁栄','豊か','妊娠','幸せに包まれる'],             down: ['欲張り','わがまま','贅沢','依存','過保護'] },
+  { num: 4, gnum: 'IV',   name: '皇帝',     up: ['魅力','闘争心','情熱','野心','リーダー','目標達成力'],           down: ['横暴','支配的','独りよがり','パワハラ','強引','無責任'] },
+  { num: 5, gnum: 'V',    name: '教皇',     up: ['指揮者','全力','助言','先生','温厚','道徳','おだやかさ'],        down: ['不道徳','偽善者','無慈悲','ルール破り','建前だけ'] },
+  { num: 6, gnum: 'VI',   name: '恋人たち', up: ['ロマンス','娯楽','楽しさ','調和','ドキドキ','ハーモニー'],       down: ['誘惑','浮気','優柔不断','ふらふら','曖昧','衝動的'] },
+  { num: 7, gnum: 'VII',  name: '戦車',     up: ['積極的','突き進む','投資','勝利','スピーディー'],                down: ['無謀','暴走','焦り','障害','操縦不能','視野が狭い'] },
+  { num: 8, gnum: 'VIII', name: '力',       up: ['強い精神力','寛大な愛','忍耐強い','器が大きい'],                 down: ['自信が無い','力不足','器が小さい','諦めがち'] },
+  { num: 9,  gnum: 'IX',   name: '隠者',     up: ['探究心','慎重','洞察力','導き','哲学的','悟り'],                 down: ['孤立','頑固','固執','浅はか','未熟','引きこもる'] },
+  { num: 10, gnum: 'X',    name: '運命の輪', up: ['一時的な幸運','変化','運命','出会い'],                            down: ['アクシデント','急激な悪化','すれ違い'] },
+  { num: 11, gnum: 'XI',   name: '正義',     up: ['公正な判断','均衡','正しさ','平等'],                              down: ['罪','不正','均衡が崩れる','不平等'] },
+  { num: 12, gnum: 'XII',  name: '吊るされた男', up: ['試練','修行','努力','苦労が報われる'],                        down: ['報われない苦悩','徒労','投げやり'] },
+  { num: 13, gnum: 'XIII', name: '死神',     up: ['強制終了','中止','破局','終焉','停止'],                           down: ['再生','再スタート','起死回生','新展開'] },
+  { num: 14, gnum: 'XIV',  name: '節制',     up: ['循環','順調','調和','管理','淀みない'],                           down: ['浪費','淀み','不均衡','停止','惰性'] },
+  { num: 15, gnum: 'XV',   name: '悪魔',     up: ['誘惑','堕落','裏切り','破滅','依存'],                            down: ['解放','再生','目覚め','執着を手放す'] },
+  { num: 16, gnum: 'XVI',  name: '塔',       up: ['災害','災難','事故','崩壊','ショック'],                           down: ['不名誉','緊迫状態','受難','不安定'] },
+  { num: 17, gnum: 'XVII', name: '星',       up: ['直感','閃き','希望','憧れ','目標'],                               down: ['失望','高望み','失意','幻滅','無気力'] },
+  { num: 18, gnum: 'XVIII',name: '月',       up: ['不安','憂鬱','中途半端','誤解','移ろい'],                         down: ['脱却','明晰','トラウマの解消','回復'] },
+  { num: 19, gnum: 'XIX',  name: '太陽',     up: ['天真爛漫','無邪気','喜び','栄光','成功'],                         down: ['不調','落胆','失墜','悪化'] },
+  { num: 20, gnum: 'XX',   name: '審判',     up: ['復活','祝福','再生','再チャレンジ'],                              down: ['警告','罰','消滅','暗闇','罪の償い'] },
+  { num: 21, gnum: 'XXI',  name: '世界',     up: ['完成','理想郷','成功','充足','完璧'],                             down: ['未完成','惰性','物足りなさ','低迷'] },
+];
+
+const GUIDE_MESSAGES = ["はじめまして！まず名前を入力してね。それから、今のテーマについて、あなたが今どんな状況にいるか感じたことをメモに書いてみよう！", "このフェーズでは「障害と対策」を考えるよ。カードは正位置が固定だよ。立ちはだかっていると感じることを書いてみよう！", "表に見えていること・意識していることを書いてみよう。カードのキーワードをヒントにしてね！", "普段は見えていない、深いところにある気持ちや本音を書いてみよう。難しければカードのキーワードから連想してみて！", "過去のことを振り返るフェーズだよ。このテーマに影響を与えた出来事や経験を書いてみよう！", "近い未来を想像してみよう。このテーマについて、これから起こりそうなことを自由に書いてね！", "あなた自身がこのテーマにどう関わっているか書いてみよう。立場や関わり方を考えてみてね！", "自分以外の人たちはどう感じているかな？周りの人の視点を想像して書いてみよう！", "理想や恐れを書くフェーズだよ。このテーマについて、こうなってほしい・こうはなりたくない、を書いてみて！", "いよいよ最後！ここまでの9枚を振り返って、テーマに対するあなたの最終的な考えをまとめてみよう！"];
+
+const PHASES = [
+  { num: 1,  name: '現在の状況', desc: '質問者が今どのような状況に置かれているかを示す' },
+  { num: 2,  name: '障害と対策', desc: '現状に対して対立するもの、乗り越えていくものを示す' },
+  { num: 3,  name: '顕在意識',   desc: '表に見えることで、これから問題に対してどうなるか可能性を示す' },
+  { num: 4,  name: '潜在意識',   desc: '表には見えていない、現状に対して問題の根底にあることを示す' },
+  { num: 5,  name: '近い過去',   desc: '現状に対して影響を及ぼした過去のことを示す' },
+  { num: 6,  name: '近い未来',   desc: '現状から近い未来で起こる可能性があることを示す' },
+  { num: 7,  name: '質問者の立場', desc: '質問者が占う内容や問題に対してどんな関わり方をしているかを示す' },
+  { num: 8,  name: '周囲の状況', desc: '質問者以外の人物の心理や状況などを示す' },
+  { num: 9,  name: '期待と恐れ', desc: '理想や恐れなど質問者の問題に対しての態度を示す' },
+  { num: 10, name: '最終結果',   desc: '質問に対する最終的な結果を示す' },
+];
+
+let screen = 'intro';
+let showPastAnswers    = false; // 今回の前フェーズ回答を表示するか
+let showSameThemePast  = false; // 同テーマ過去回答を表示するか
+let randomUsed         = new Array(10).fill(false); // ランダムボタン使用済みか
+let randomCandidates   = new Array(10).fill(null).map(() => []); // ランダム2枚候補
+let randomOrientations = new Array(10).fill(null).map(() => []); // ランダム2枚の向き // 'intro' | 'theme' | 'opinion' | 'main'
+let selectedTheme = null;
+let customThemeText = '';
+let initialOpinion = '';
+let currentPhase = 0;
+let selectedCards = new Array(10).fill(null);
+let orientations  = new Array(10).fill(null);
+let memos         = new Array(10).fill('');
+let completed     = false;
+let participantName = '';
+
+// 構造化文
+const W5H1_DEFS = {
+  Who:   { label: 'Who（誰が）',   slot1: '誰が',     slot2: 'どんなことを', verb: '考えた' },
+  When:  { label: 'When（いつ）',  slot1: 'いつ',     slot2: 'どんなことを', verb: '考えた' },
+  Where: { label: 'Where（どこで）',slot1: 'どこで',   slot2: 'どんなことを', verb: '考えた' },
+  What:  { label: 'What（何を）',  slot1: '何について',slot2: 'どんなことを', verb: '考えた' },
+  Why:   { label: 'Why（なぜ）',   slot1: 'なぜなら', slot2: 'だから',       verb: '考えた' },
+  How:   { label: 'How（どのように）',slot1: 'どのように',slot2: 'どんなことを', verb: '考えた' },
+};
+let structSelections = new Array(10).fill(null).map(() => ({ w5h1: null, slot1: '', slot2: '' }));
+
+// キーワード選択（各フェーズ最大2つ）
+let pickedKeywords = new Array(10).fill(null).map(() => []);
+
+// 思考時間計測（ミリ秒）
+let phaseTimers    = new Array(10).fill(0);   // 各フェーズの累計時間
+let phaseStartedAt = null;                     // 現在フェーズの開始時刻
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+}
+
+function nowISO() { return new Date().toISOString(); }
+
+function formatSaveDate(iso) {
+  const d = new Date(iso);
+  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+// ===== 保存機能 =====
+const DRAFT_KEY = 'tarot_draft';
+
+function saveDraft() {
+  const draft = {
+    screen, selectedTheme, customThemeText, initialOpinion, participantName,
+    currentPhase, selectedCards: [...selectedCards],
+    orientations: [...orientations], memos: [...memos],
+    structSelections: structSelections.map(s => ({...s})),
+    pickedKeywords: pickedKeywords.map(a => [...a]),
+    phaseTimers: [...phaseTimers],
+    savedAt: new Date().toISOString(),
+  };
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+}
+
+function loadDraft() {
+  try { return JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch { return null; }
+}
+
+function clearDraft() {
+  localStorage.removeItem(DRAFT_KEY);
+}
+
+function resumeDraft() {
+  const d = loadDraft();
+  if (!d) return;
+  screen           = d.screen && d.screen !== 'intro' ? d.screen : 'theme';
+  selectedTheme    = d.selectedTheme || null;
+  customThemeText  = d.customThemeText || '';
+  initialOpinion   = d.initialOpinion || '';
+  participantName  = d.participantName || '';
+  currentPhase     = d.currentPhase || 0;
+  selectedCards    = d.selectedCards || new Array(10).fill(null);
+  orientations     = d.orientations  || new Array(10).fill(null);
+  memos            = d.memos         || new Array(10).fill('');
+  structSelections = d.structSelections ? d.structSelections.map(s => ({...s})) : new Array(10).fill(null).map(() => ({ w5h1: null, slot1: '', slot2: '' }));
+  pickedKeywords   = d.pickedKeywords ? d.pickedKeywords.map(a => [...a]) : new Array(10).fill(null).map(() => []);
+  phaseTimers      = d.phaseTimers   || new Array(10).fill(0);
+  phaseStartedAt   = null;
+  clearDraft();
+  render();
+}
+
+function hasDraft() {
+  const d = loadDraft();
+  return d && (d.currentPhase > 0 || d.screen === 'opinion' || d.screen === 'theme');
+}
+
+function formatDraftDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+function loadSaves() {
+  try { return JSON.parse(localStorage.getItem('tarot_saves') || '[]'); } catch { return []; }
+}
+
+function storeSaves(arr) {
+  localStorage.setItem('tarot_saves', JSON.stringify(arr));
+}
+
+function saveResult() {
+  const nameEl = document.getElementById('participant-name');
+  if (nameEl) participantName = nameEl.value.trim();
+  const saves = loadSaves();
+  const entry = {
+    id: Date.now(),
+    savedAt: nowISO(),
+    name: participantName,
+    selectedTheme:  selectedTheme,
+    customThemeText: customThemeText,
+    initialOpinion: initialOpinion,
+    selectedCards: [...selectedCards],
+    orientations:  [...orientations],
+    memos:         [...memos],
+    structs:       structSelections.map(s => ({...s})),
+    pickedKeywords: pickedKeywords.map(a => [...a]),
+    phaseTimers:    [...phaseTimers],
+  };
+  saves.unshift(entry);
+  storeSaves(saves);
+  alert('保存しました！');
+  render();
+}
+
+function deleteSave(id) {
+  if (!confirm('この記録を削除しますか？')) return;
+  const saves = loadSaves().filter(s => s.id !== id);
+  storeSaves(saves);
+  render();
+}
+
+function exportCSV(btnId) {
+  const saves = loadSaves();
+  if (saves.length === 0) { alert('保存済みデータがありません。'); return; }
+
+  const headers = ['氏名', '実施日時', 'テーマ', '開始前の意見'];
+  for (let i = 0; i < 10; i++) {
+    headers.push(`フェーズ${i+1}(${PHASES[i].name})_カード`);
+    headers.push(`フェーズ${i+1}_向き`);
+    headers.push(`フェーズ${i+1}_キーワード`);
+    headers.push(`フェーズ${i+1}_メモ`);
+    headers.push(`フェーズ${i+1}_視点(5W1H)`);
+    headers.push(`フェーズ${i+1}_構造化文`);
+    headers.push(`フェーズ${i+1}_選択キーワード`);
+    headers.push(`フェーズ${i+1}_思考時間(秒)`);
+  }
+
+  const rows = [headers];
+  for (const s of saves) {
+    const d = new Date(s.savedAt);
+    const dateStr = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    const themeDisplay = s.selectedTheme && s.selectedTheme.id === 99 ? s.customThemeText : (s.selectedTheme ? s.selectedTheme.question : '');
+    const row = [s.name || '', dateStr, themeDisplay, s.initialOpinion || ''];
+    for (let i = 0; i < 10; i++) {
+      const cardNum = s.selectedCards[i];
+      const card = cardNum !== null ? CARDS.find(c => c.num === cardNum) : null;
+      const o = s.orientations[i];
+      const cardName = card ? card.name : '';
+      const oriLabel = o === 'up' ? '正位置' : o === 'down' ? '逆位置' : '';
+      const keywords = card && o ? (o === 'up' ? card.up : card.down).join('・') : '';
+      const memo = (s.memos[i] || '').replace(/\n/g, ' ');
+      const structSel = s.structs ? s.structs[i] : null;
+      const w5h1key = structSel ? (structSel.w5h1 || '') : '';
+      const structSentCSV = structSel && structSel.w5h1 ? (() => {
+        const def = W5H1_DEFS[structSel.w5h1];
+        const s1 = structSel.slot1 || '___'; const s2 = structSel.slot2 || '___';
+        return def ? (structSel.w5h1 === 'Why' ? `${s1}、${s2}ことを${def.verb}` : `${s1}が、${s2}を${def.verb}`) : '';
+      })() : '';
+      const picked = s.pickedKeywords ? (s.pickedKeywords[i] || []).join('・') : '';
+      const tSec = s.phaseTimers ? Math.floor((s.phaseTimers[i] || 0) / 1000) : '';
+      row.push(cardName, oriLabel, keywords, memo, w5h1key, structSentCSV, picked, tSec);
+    }
+    rows.push(row);
+  }
+
+  const csv = '\uFEFF' + rows.map(r =>
+    r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+  ).join('\r\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `tarot_data_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  // ボタンを「保存完了 ✓」に変更して3秒後に元に戻す
+  if (btnId) {
+    const btn = document.getElementById(btnId);
+    if (btn) {
+      const orig = btn.innerHTML;
+      const origStyle = btn.getAttribute('style') || '';
+      btn.innerHTML = '保存完了 ✓';
+      btn.setAttribute('style', origStyle + ';background:#e0ede0;color:#2a7a2a;border-color:#5dcaa5;cursor:default;');
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.innerHTML = orig;
+        btn.setAttribute('style', origStyle);
+        btn.disabled = false;
+      }, 3000);
+    }
+  }
+}
+
+function loadSave(id) {
+  const s = loadSaves().find(x => x.id === id);
+  if (!s) return;
+  selectedCards   = [...s.selectedCards];
+  orientations    = [...s.orientations];
+  memos           = [...s.memos];
+  selectedTheme    = s.selectedTheme || null;
+  customThemeText  = s.customThemeText || '';
+  initialOpinion   = s.initialOpinion || '';
+  structSelections = s.structs ? s.structs.map(x => ({...x})) : new Array(10).fill(null).map(() => ({ w5h1: null, slot1: '', slot2: '' }));
+  pickedKeywords   = s.pickedKeywords ? s.pickedKeywords.map(a => [...a]) : new Array(10).fill(null).map(() => []);
+  phaseTimers      = s.phaseTimers ? [...s.phaseTimers] : new Array(10).fill(0);
+  phaseStartedAt   = null;
+  screen           = 'main';
+  participantName = s.name || '';
+  completed = true;
+  currentPhase = 0;
+  render();
+}
+
+// ===== 状態操作 =====
+function recordPhaseTime() {
+  if (phaseStartedAt !== null) {
+    phaseTimers[currentPhase] += Date.now() - phaseStartedAt;
+    phaseStartedAt = null;
+  }
+}
+function startPhaseTimer() {
+  phaseStartedAt = Date.now();
+}
+
+function toggleKeyword(kw) {
+  const arr = pickedKeywords[currentPhase];
+  const idx = arr.indexOf(kw);
+  if (idx !== -1) {
+    arr.splice(idx, 1);
+  } else {
+    if (arr.length >= 2) return;
+    arr.push(kw);
+  }
+  const container = document.getElementById('kw-container');
+  if (container) {
+    const chosenCard = selectedCards[currentPhase] !== null ? CARDS.find(x => x.num === selectedCards[currentPhase]) : null;
+    if (chosenCard) {
+      const ori = orientations[currentPhase];
+      const kwList = ori === 'up' ? chosenCard.up : chosenCard.down;
+      const tagClass = ori === 'up' ? 'up' : 'down';
+      container.innerHTML = kwList.map(k => {
+        const isPicked = pickedKeywords[currentPhase].includes(k);
+        const isDisabled = !isPicked && pickedKeywords[currentPhase].length >= 2;
+        return `<span class="kw-tag ${tagClass}${isPicked ? ' picked' : ''}${isDisabled ? ' disabled' : ''}" onclick="toggleKeyword('${k}')">${k}</span>`;
+      }).join('');
+    }
+  }
+}
+
+function renderKeywordPicker(chosenCard, ori) {
+  if (!chosenCard || !ori) return '';
+  const kwList = ori === 'up' ? chosenCard.up : chosenCard.down;
+  const tagClass = ori === 'up' ? 'up' : 'down';
+  const picked = pickedKeywords[currentPhase];
+  let h = '<div class="keyword-select-label" id="kw-label">このフェーズで使うキーワードを選んでください（最低1つ・最大2つ）</div>';
+  h += '<div class="keyword-select-note">出た向きのキーワードから、自分の考えに近いものを選んでください</div>';
+  h += '<div class="meaning-tags" id="kw-container">';
+  h += kwList.map(k => {
+    const isPicked = picked.includes(k);
+    const isDisabled = !isPicked && picked.length >= 2;
+    return `<span class="kw-tag ${tagClass}${isPicked ? ' picked' : ''}${isDisabled ? ' disabled' : ''}" onclick="toggleKeyword('${k}')">${k}</span>`;
+  }).join('');
+  h += '</div>';
+  return h;
+}
+
+function formatTime(ms) {
+  const totalSec = Math.floor(ms / 1000);
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  return m > 0 ? `${m}分${s}秒` : `${s}秒`;
+}
+
+function saveMemo() {
+  const ta = document.getElementById('memo-input');
+  if (ta) memos[currentPhase] = ta.value;
+  const s1 = document.getElementById('struct-slot1');
+  const s2 = document.getElementById('struct-slot2');
+  if (s1) structSelections[currentPhase].slot1 = s1.value;
+  if (s2) structSelections[currentPhase].slot2 = s2.value;
+}
+
+function selectW5H1(key) {
+  saveMemo();
+  structSelections[currentPhase].w5h1 = key;
+  render();
+}
+
+function getStructSentence(i) {
+  const sel = structSelections[i];
+  if (!sel || !sel.w5h1) return '';
+  const def = W5H1_DEFS[sel.w5h1];
+  const s1 = sel.slot1 || '___';
+  const s2 = sel.slot2 || '___';
+  if (sel.w5h1 === 'Why') return `${s1}、${s2}ことを${def.verb}`;
+  return `${s1}が、${s2}を${def.verb}`;
+}
+
+function renderStructSection() {
+  const sel = structSelections[currentPhase];
+  const cur = sel.w5h1;
+  let h = '<div class="struct-section">';
+  h += '<div class="struct-label">構造化文（どの視点で考えますか？）</div>';
+  h += '<div class="w5h1-buttons">';
+  for (const [key, def] of Object.entries(W5H1_DEFS)) {
+    h += `<button class="w5h1-btn ${cur === key ? 'selected' : ''}" onclick="selectW5H1('${key}')">${def.label}</button>`;
+  }
+  h += '</div>';
+  if (cur) {
+    const def = W5H1_DEFS[cur];
+    h += '<div class="struct-inputs">';
+    if (cur === 'Why') {
+      h += `<div class="struct-row">
+        <input class="struct-input" id="struct-slot1" placeholder="${def.slot1}…" value="${sel.slot1}" oninput="updateStructPreview()">
+        <span class="struct-fixed">、</span>
+        <input class="struct-input" id="struct-slot2" placeholder="${def.slot2}…" value="${sel.slot2}" oninput="updateStructPreview()">
+        <span class="struct-fixed">ことを${def.verb}</span>
+      </div>`;
+    } else {
+      h += `<div class="struct-row">
+        <input class="struct-input" id="struct-slot1" placeholder="${def.slot1}…" value="${sel.slot1}" oninput="updateStructPreview()">
+        <span class="struct-fixed">が、</span>
+        <input class="struct-input" id="struct-slot2" placeholder="${def.slot2}…" value="${sel.slot2}" oninput="updateStructPreview()">
+        <span class="struct-fixed">を${def.verb}</span>
+      </div>`;
+    }
+    h += '</div>';
+    h += '<div class="struct-result-label">生成される文</div>';
+    const sentence = getStructSentence(currentPhase);
+    h += `<div class="struct-result" id="struct-preview">${sentence || '入力すると文が生成されます'}</div>`;
+  }
+  h += '</div>';
+  return h;
+}
+
+function updateStructPreview() {
+  const s1el = document.getElementById('struct-slot1');
+  const s2el = document.getElementById('struct-slot2');
+  if (s1el) structSelections[currentPhase].slot1 = s1el.value;
+  if (s2el) structSelections[currentPhase].slot2 = s2el.value;
+  const prev = document.getElementById('struct-preview');
+  if (prev) prev.textContent = getStructSentence(currentPhase) || '入力すると文が生成されます';
+}
+
+function saveName() {
+  const el = document.getElementById('participant-name');
+  if (el) participantName = el.value;
+}
+
+function randomTwoCards() {
+  if (randomUsed[currentPhase]) return; // 1回のみ
+  saveMemo(); saveName();
+  randomUsed[currentPhase] = true;
+  const used = selectedCards.filter((v, i) => i !== currentPhase && v !== null);
+  const available = CARDS.map(c => c.num).filter(n => !used.includes(n));
+  if (available.length < 2) return;
+  // シャッフルして2枚選ぶ
+  const shuffled = available.sort(() => Math.random() - 0.5);
+  const picks = shuffled.slice(0, 2);
+  randomCandidates[currentPhase] = picks;
+  randomOrientations[currentPhase] = picks.map((_, i) =>
+    currentPhase === 1 ? 'up' : (Math.random() < 0.5 ? 'up' : 'down')
+  );
+  selectedCards[currentPhase] = null; // 一旦リセット
+  render();
+}
+
+function randomCard() {
+  saveMemo(); saveName();
+  const used = selectedCards.filter((v, i) => i !== currentPhase && v !== null);
+  const available = CARDS.map(c => c.num).filter(n => !used.includes(n));
+  if (available.length === 0) return;
+  selectedCards[currentPhase] = available[Math.floor(Math.random() * available.length)];
+  orientations[currentPhase]  = currentPhase === 1 ? 'up' : (Math.random() < 0.5 ? 'up' : 'down');
+  render();
+}
+
+function selectCard(num, forcedOri) {
+  saveMemo(); saveName();
+  selectedCards[currentPhase] = num;
+  orientations[currentPhase]  = forcedOri ? forcedOri : (currentPhase === 1 ? 'up' : (Math.random() < 0.5 ? 'up' : 'down'));
+  render();
+}
+
+function next()       { recordPhaseTime(); saveMemo(); saveName(); if (currentPhase < 9) { currentPhase++; startPhaseTimer(); saveDraft(); render(); } }
+function jumpTo(i)    { recordPhaseTime(); saveMemo(); saveName(); currentPhase = i; showPastAnswers = false; showSameThemePast = false; startPhaseTimer(); saveDraft(); render(); }
+function resetPhase() { saveMemo(); saveName(); selectedCards[currentPhase] = null; orientations[currentPhase] = null; pickedKeywords[currentPhase] = []; saveDraft(); render(); }
+function complete()   { recordPhaseTime(); saveMemo(); saveName(); completed = true; clearDraft(); render(); }
+function resetAll()   {
+  screen           = 'intro';
+  showPastAnswers    = false;
+  showSameThemePast  = false;
+  randomUsed         = new Array(10).fill(false);
+  randomCandidates   = new Array(10).fill(null).map(() => []);
+  randomOrientations = new Array(10).fill(null).map(() => []);
+  selectedTheme       = null;
+  customThemeText  = '';
+  initialOpinion   = '';
+  selectedCards    = new Array(10).fill(null);
+  orientations     = new Array(10).fill(null);
+  memos            = new Array(10).fill('');
+  structSelections = new Array(10).fill(null).map(() => ({ w5h1: null, slot1: '', slot2: '' }));
+  pickedKeywords   = new Array(10).fill(null).map(() => []);
+  phaseTimers      = new Array(10).fill(0);
+  phaseStartedAt   = null;
+  participantName  = '';
+  currentPhase     = 0;
+  completed        = false;
+  clearDraft();
+  render();
+}
+
+// ===== 配置図 =====
+function renderCeltic() {
+  let h = '<div class="celtic-grid">';
+  for (let i = 0; i < 10; i++) {
+    const isActive = i === currentPhase && !completed;
+    const isDone   = selectedCards[i] !== null;
+    const isHoriz  = i === 1;
+    let label = '';
+    if (isDone) {
+      const card = CARDS.find(c => c.num === selectedCards[i]);
+      const oriText = orientations[i] === 'up' ? '正' : '逆';
+      label = `<div style="font-size:10px">${card.name}</div><div style="font-size:11px">(${oriText})</div>`;
+    } else {
+      label = i + 1;
+    }
+    const cls = ['ccard', `pos${i+1}`, isHoriz ? 'horizontal' : '', isActive ? 'active' : (isDone ? 'done-c' : '')].filter(Boolean).join(' ');
+    h += `<div class="${cls}" onclick="jumpTo(${i})" title="フェーズ${i+1}：${PHASES[i].name}">${label}</div>`;
+  }
+  h += '</div>';
+  h += '<div class="legend">';
+  h += '<span><span class="dot" style="background:#e05c5c;"></span>現在</span>';
+  h += '<span><span class="dot" style="background:#a8d5c2;"></span>選択済み</span>';
+  h += '<span><span class="dot" style="background:#b2e4f5;"></span>未選択</span>';
+  h += '</div>';
+  return h;
+}
+
+// ===== フェーズ10用 振り返り表示 =====
+function renderReviewList() {
+  let h = '<div class="review-list">';
+  if (initialOpinion) {
+    h += `<div class="review-item">
+      <div class="review-phase-name">開始前の意見</div>
+      <div class="review-memo-text">${initialOpinion}</div>
+    </div>`;
+  }
+  // フェーズ1〜9をループ
+  for (let i = 0; i < 9; i++) {
+    const cardNum = selectedCards[i];
+    if (cardNum === null) continue;
+    const card = CARDS.find(c => c.num === cardNum);
+    const ori = orientations[i] === 'up' ? '正' : '逆';
+    const structSent = getStructSentence(i);
+    
+    h += `<div class="review-item">
+      <div class="review-phase-name">フェーズ ${i+1}: ${PHASES[i].name}</div>
+      <div class="review-card-info">${card.name} (${ori})</div>`;
+    if (structSent) h += `<div class="review-struct">📝 ${structSent}</div>`;
+    if (memos[i])   h += `<div class="review-memo-text">${memos[i]}</div>`;
+    h += `</div>`;
+  }
+  h += '</div>';
+  return h;
+}
+
+// ===== メイン描画 =====
+function renderTheme() {
+  let opts = THEMES.map(t => {
+    const isSel = selectedTheme && selectedTheme.id === t.id;
+    let buttonHtml = `<button class="theme-option${isSel ? ' selected' : ''}" onclick="selectTheme(${t.id})">
+      <span style="font-size:12px;color:#aaa;display:block;margin-bottom:2px;">${t.label}</span>
+      ${t.id === 99 ? '好きなテーマを自分で入力する' : t.question}
+    </button>`;
+    
+    if (t.id === 99 && isSel) {
+      buttonHtml += `<input type="text" id="custom-theme-input" class="custom-theme-input" placeholder="ここにテーマを入力してください..." value="${customThemeText}" oninput="onCustomThemeInput()">`;
+    }
+    return buttonHtml;
+  }).join('');
+
+  const canProceed = selectedTheme !== null && (selectedTheme.id !== 99 || customThemeText.trim() !== '');
+
+  return `<div class="theme-screen">
+    <div class="theme-card">
+      <div class="theme-title">テーマを選んでください</div>
+      <div class="theme-sub">以下の中から、今回考えてみたいテーマを1つ選んでください。</div>
+      <div class="theme-options">${opts}</div>
+      <div class="nav-row" style="position:static;border-top:none;padding-top:0;">
+        <button class="nav-btn" onclick="screen='intro'; render()">← 戻る</button>
+        <button class="nav-btn primary" onclick="screen='opinion'; render()" ${canProceed ? '' : 'disabled style="opacity:0.4;cursor:not-allowed;"'}>次へ →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function selectTheme(id) {
+  selectedTheme = THEMES.find(t => t.id === id) || null;
+  saveDraft();
+  render();
+}
+
+function onCustomThemeInput() {
+  const el = document.getElementById('custom-theme-input');
+  if (el) customThemeText = el.value;
+  // ボタンの活性・非活性をリアルタイムで切り替えるために再描画
+  const nextBtn = document.querySelector('.theme-screen .nav-btn.primary');
+  if (nextBtn) {
+    const canProceed = customThemeText.trim() !== '';
+    nextBtn.disabled = !canProceed;
+    nextBtn.style.opacity = canProceed ? '1' : '0.4';
+    nextBtn.style.cursor = canProceed ? 'pointer' : 'not-allowed';
+  }
+}
+
+function renderResumeBanner() {
+  const d = loadDraft();
+  if (!d) return '';
+  const phase = d.currentPhase || 0;
+  const themeDisplay = d.selectedTheme && d.selectedTheme.id === 99 ? d.customThemeText : (d.selectedTheme ? d.selectedTheme.question : 'テーマ未選択');
+  const dateStr = formatDraftDate(d.savedAt);
+  return `<div class="resume-banner">
+    <div class="resume-title">前回の途中データがあります</div>
+    <div class="resume-sub">テーマ：${themeDisplay}<br>フェーズ ${phase + 1} まで回答済み（最終保存：${dateStr}）</div>
+    <div class="resume-actions">
+      <button class="resume-btn primary" onclick="resumeDraft()">続きから再開する</button>
+      <button class="resume-btn" onclick="clearDraft(); render()">最初からはじめる</button>
+    </div>
+  </div>`;
+}
+
+function renderIntro() {
+  const resumeBanner = hasDraft() ? renderResumeBanner() : '';
+  return `<div class="intro-screen">${resumeBanner}
+    <div class="intro-card">
+      <div class="intro-title">タロット：ケルト十字　思考支援ツール</div>
+      <div class="intro-sub">はじめる前に、このツールの使い方をお読みください</div>
+      <div class="intro-section">
+        <div class="intro-section-title">このツールの目的</div>
+        <div class="intro-text">タロットカードを使って、テーマについて多角的に考えるためのツールです。占いではありません。カードに描かれた意味をヒントに、普段とは異なる視点から考えることを目的としています。</div>
+      </div>
+      <div class="intro-section">
+        <div class="intro-section-title">大切なポイント</div>
+        <div class="intro-highlight">カードはあなたの「意見を変える」ものではありません。<br>今まで気づかなかった新しい「視点」を示すヒントです。</div>
+        <div class="intro-text">自分の意見を持ったままで構いません。カードの意味を見て、自分のテーマに当てはめたとき、別の角度から考えられることはないか、探してみてください。</div>
+      </div>
+      <div class="intro-section">
+        <div class="intro-section-title">進め方</div>
+        <div class="intro-text">全部で10のフェーズがあります。各フェーズでカードを選び、カードの意味を参考にしながらメモを記入してください。正解はありません。思ったことをそのまま書いていただければ大丈夫です。</div>
+      </div>
+      <button class="intro-start-btn" onclick="startFromIntro()">内容を確認しました　→　次へ</button>
+    </div>
+  </div>`;
+}
+
+function renderOpinion() {
+  const hasInput = initialOpinion.trim() !== '';
+  const themeDisplay = selectedTheme && selectedTheme.id === 99 ? customThemeText : (selectedTheme ? selectedTheme.question : '');
+  return `<div class="opinion-screen">
+    <div class="opinion-card">
+      ${themeDisplay ? `<div style="font-size:12px;color:#534AB7;font-weight:500;margin-bottom:8px;padding:6px 12px;background:#eeedfe;border-radius:8px;">テーマ：${themeDisplay}</div>` : ''}
+      <div class="opinion-title">はじめる前に：あなたの今の考えを教えてください</div>
+      <div class="opinion-sub">テーマについて、今この時点でのあなたの率直な意見や感じ方を自由に書いてください。<br>後から変わっても構いません。正直に書くほど、このツールがより役立ちます。</div>
+      <textarea class="opinion-input" id="opinion-input" placeholder="今のテーマについて、思うことを自由に書いてください…" oninput="onOpinionInput()">${initialOpinion}</textarea>
+      <div class="opinion-note">※ この内容は最後のサマリーで振り返りに使います。研究データとして記録されます。</div>
+      <div class="nav-row" style="position:static;border-top:none;padding-top:0;">
+        <button class="nav-btn" onclick="screen='intro'; render()">← 戻る</button>
+        <button class="nav-btn primary" id="opinion-next-btn" onclick="startMain()" ${hasInput ? '' : 'disabled style="opacity:0.4;cursor:not-allowed;"'}>フェーズ1へ進む →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function showMemoError() {
+  const ta = document.getElementById('memo-input');
+  if (ta) {
+    ta.style.border = '1.5px solid #e05c5c';
+    ta.style.background = '#fff5f5';
+    ta.placeholder = '⚠️ メモを入力してから次へ進んでください';
+    ta.focus();
+    setTimeout(() => {
+      ta.style.border = '';
+      ta.style.background = '';
+      ta.placeholder = 'このフェーズのメモを入力...';
+    }, 2500);
+  }
+}
+
+function showKeywordError() {
+  const container = document.getElementById('kw-container');
+  if (container) {
+    container.style.outline = '2px solid #e05c5c';
+    container.style.borderRadius = '8px';
+    container.style.padding = '4px';
+    const label = document.getElementById('kw-label');
+    if (label) { label.style.color = '#e05c5c'; }
+    setTimeout(() => {
+      container.style.outline = '';
+      container.style.padding = '';
+      if (label) label.style.color = '';
+    }, 2500);
+  }
+}
+
+function onMemoInput() {
+  const ta = document.getElementById('memo-input');
+  if (!ta) return;
+  memos[currentPhase] = ta.value;
+  // ナビボタンをリアルタイム更新
+  const nav = document.getElementById('nav-area');
+  if (!nav) return;
+  const chosenCard = selectedCards[currentPhase] !== null ? CARDS.find(x => x.num === selectedCards[currentPhase]) : null;
+  const hasName = participantName.trim() !== '';
+  const hasMemo    = ta.value.trim() !== '';
+  const hasKeyword = pickedKeywords[currentPhase] && pickedKeywords[currentPhase].length > 0;
+  const canNext    = chosenCard && hasMemo && hasKeyword && (currentPhase > 0 || hasName);
+  let h = `<span class="progress">${currentPhase + 1} / 10</span>`;
+  if (currentPhase > 0) h += `<button class="nav-btn" onclick="jumpTo(${currentPhase - 1})">← 前へ</button>`;
+  h += `<button class="nav-btn" onclick="resetPhase()">やり直す</button>`;
+  if (chosenCard && !hasMemo) {
+    h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="showMemoError()">次へ →</button>`;
+  } else if (chosenCard && hasMemo && !hasKeyword) {
+    h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="showKeywordError()">次へ →</button>`;
+  } else if (canNext && currentPhase < 9) {
+    h += `<button class="nav-btn primary" onclick="next()">次へ →</button>`;
+  } else if (canNext && currentPhase === 9) {
+    h += `<button class="nav-btn primary" onclick="complete()">完了</button>`;
+  }
+  nav.innerHTML = h;
+}
+
+function onNameInput() {
+  const el = document.getElementById('participant-name');
+  if (el) participantName = el.value;
+  // フェーズ1のナビボタンを再描画
+  const nav = document.getElementById('nav-area');
+  if (!nav) return;
+  const hasName = el && el.value.trim() !== '';
+  const chosenCard = selectedCards[0] !== null ? CARDS.find(x => x.num === selectedCards[0]) : null;
+  let html = `<span class="progress">1 / 10</span>`;
+  if (!hasName) html += `<span style="font-size:12px;color:#e05c5c;">※ 名前を入力してください</span>`;
+  html += `<button class="nav-btn" onclick="resetPhase()">やり直す</button>`;
+  if (chosenCard && hasName) html += `<button class="nav-btn primary" onclick="next()">次へ →</button>`;
+  nav.innerHTML = html;
+}
+
+function onOpinionInput() {
+  const el = document.getElementById('opinion-input');
+  if (el) initialOpinion = el.value;
+  const btn = document.getElementById('opinion-next-btn');
+  if (btn) {
+    const hasInput = el && el.value.trim() !== '';
+    btn.disabled = !hasInput;
+    btn.style.opacity = hasInput ? '1' : '0.4';
+    btn.style.cursor  = hasInput ? 'pointer' : 'not-allowed';
+  }
+}
+
+function startFromIntro() {
+  screen = 'theme';
+  render();
+}
+
+function startMain() {
+  const el = document.getElementById('opinion-input');
+  if (el) initialOpinion = el.value;
+  screen = 'main';
+  saveDraft();
+  startPhaseTimer();
+  render();
+}
+
+function render() {
+  const el = document.getElementById('main');
+
+  if (screen === 'intro')    { el.innerHTML = renderIntro();   return; }
+  if (screen === 'theme')    { el.innerHTML = renderTheme();   return; }
+  if (screen === 'opinion')  { el.innerHTML = renderOpinion(); return; }
+
+  const allDone = selectedCards.every(c => c !== null) && completed;
+  let html = '';
+
+  if (!allDone) {
+    html += '<div class="phase-bar"><span class="phase-label">フェーズ</span>';
+    for (let i = 0; i < 10; i++) {
+      const done   = selectedCards[i] !== null;
+      const active = i === currentPhase && !completed;
+      html += `<button class="phase-btn ${active ? 'active' : done ? 'done' : ''}" onclick="jumpTo(${i})">${i+1}${done ? ' ✓' : ''}</button>`;
+    }
+    html += '</div>';
+  }
+
+  // ===== 完了サマリー =====
+  if (allDone) {
+    const saves = loadSaves();
+    const themeDisplay = selectedTheme && selectedTheme.id === 99 ? customThemeText : (selectedTheme ? selectedTheme.question : '');
+    html += '<div class="done-banner">';
+    html += '<div class="done-title">全フェーズ完了</div>';
+    if (themeDisplay) html += `<div class="done-meta">テーマ：${themeDisplay}</div>`;
+    const totalMs = phaseTimers.reduce((a, b) => a + b, 0);
+    if (participantName) html += `<div class="done-meta">氏名：${participantName}　／　実施日：${todayStr()}</div>`;
+    else html += `<div class="done-meta">実施日：${todayStr()}</div>`;
+    html += `<div class="done-meta">合計思考時間：${formatTime(totalMs)}</div>`;
+    html += '</div>';
+
+    html += '<div class="summary-list">';
+    for (let i = 0; i < 10; i++) {
+      const c = CARDS.find(x => x.num === selectedCards[i]);
+      const o = orientations[i];
+      const keywords = o === 'up' ? c.up : c.down;
+      const tagClass = o === 'up' ? 'up' : 'down';
+      html += `<div class="summary-item">
+        <div class="summary-top">
+          <span class="summary-phase">${PHASES[i].num}. ${PHASES[i].name}</span>
+          <span class="summary-card">第${c.gnum}番 ${c.name}</span>
+          <span class="summary-orient ${o}">${o === 'up' ? '正位置' : '逆位置'}</span>
+        </div>
+        <div class="summary-keywords">${keywords.map(k => `<span class="tag ${tagClass}">${k}</span>`).join('')}</div>`;
+      const structSent = getStructSentence(i);
+      if (structSent) html += `<div style="font-size:13px;color:#534AB7;font-weight:500;margin-bottom:4px;padding:6px 12px;background:#eeedfe;border-radius:6px;">📝 ${structSent}</div>`;
+      if (pickedKeywords[i] && pickedKeywords[i].length > 0) {
+        const ori = orientations[i];
+        const tagCls = ori === 'up' ? 'up' : 'down';
+        html += `<div style="margin-bottom:4px;font-size:11px;color:#aaa;">選択したキーワード：</div>`;
+        html += `<div class="summary-keywords">${pickedKeywords[i].map(k => `<span class="tag ${tagCls}" style="font-weight:700;">${k}</span>`).join('')}</div>`;
+      }
+      if (memos[i]) html += `<div class="summary-memo">${memos[i]}</div>`;
+      const tMs = phaseTimers[i];
+      html += `<div style="font-size:11px;color:#bbb;margin-top:4px;text-align:right;">思考時間：${formatTime(tMs)}</div>`;
+      html += `</div>`;
+    }
+    html += '</div>';
+
+    if (initialOpinion) {
+      html += `<div class="initial-opinion-box" style="margin-top:1rem;">
+        <div class="initial-opinion-label">タロット使用前の意見</div>
+        <div class="initial-opinion-text">${initialOpinion}</div>
+      </div>`;
+    }
+
+    html += `<div class="nav-row">
+      <button class="nav-btn" onclick="resetAll()">新しく始める</button>
+      <button class="nav-btn primary" onclick="saveResult()">この結果を保存</button>
+      <button class="nav-btn" id="csv-btn-main" onclick="exportCSV('csv-btn-main')" style="border-color:#5dcaa5;color:#0f6e56;">CSVでダウンロード</button>
+    </div>`;
+
+    if (saves.length > 0) {
+      html += '<div class="saves-section">';
+      html += `<div class="saves-title" style="display:flex;align-items:center;justify-content:space-between;">保存済みデータ（${saves.length}件）<button class="nav-btn" id="csv-btn-list" onclick="exportCSV('csv-btn-list')" style="font-size:12px;padding:4px 10px;border-color:#5dcaa5;color:#0f6e56;">CSVでダウンロード</button></div>`;
+      for (const s of saves) {
+        const label = s.name ? `${s.name}` : '（名前なし）';
+        html += `<div class="save-item">
+          <div class="save-info">
+            <div class="save-name">${label}</div>
+            <div class="save-date">${formatSaveDate(s.savedAt)}</div>
+          </div>
+          <div class="save-actions">
+            <button class="save-btn" onclick="loadSave(${s.id})">表示</button>
+            <button class="save-btn del" onclick="deleteSave(${s.id})">削除</button>
+          </div>
+        </div>`;
+      }
+      html += '</div>';
+    }
+
+    el.innerHTML = html;
+    return;
+  }
+
+  // ===== 入力フェーズ =====
+  const phase = PHASES[currentPhase];
+  const chosenCard = selectedCards[currentPhase] !== null ? CARDS.find(x => x.num === selectedCards[currentPhase]) : null;
+  const themeDisplay = selectedTheme && selectedTheme.id === 99 ? customThemeText : (selectedTheme ? selectedTheme.question : '');
+
+  html += '<div class="layout">';
+  html += '<div class="left-panel">';
+
+  if (currentPhase === 0) {
+    html += `<div class="meta-card">
+      <label class="meta-label" for="participant-name">氏名</label>
+      <input class="meta-input" id="participant-name" type="text" placeholder="名前を入力してください" value="${participantName}" oninput="onNameInput()">
+      <span class="meta-date">${todayStr()}</span>
+    </div>`;
+  }
+
+  html += '<div class="phase-card">';
+  html += `<div class="guide-wrap">
+    <div class="guide-chara">🧙</div>
+    <div class="guide-balloon">${GUIDE_MESSAGES[currentPhase]}</div>
+  </div>`;
+  html += `<div class="phase-header"><span class="phase-num">フェーズ ${phase.num}</span><span class="phase-name">${phase.name}</span></div>`;
+  html += `<div class="phase-desc">${phase.desc}</div>`;
+  if (themeDisplay) html += `<div style="font-size:12px;color:#534AB7;padding:6px 12px;background:#eeedfe;border-radius:8px;margin-bottom:1rem;">テーマ：${themeDisplay}</div>`;
+  html += '<div class="card-section">';
+  html += '<div class="card-select-label">カードを選択（0〜XXI）</div>';
+  html += '<div class="card-buttons">';
+  for (let i = 0; i < 22; i++) {
+    const isSelected = selectedCards[currentPhase] === i;
+    html += `<button class="card-btn ${isSelected ? 'selected' : ''}" style="cursor:default;opacity:${isSelected?'1':'0.5'};" disabled>${CARDS[i].gnum}</button>`;
+  }
+  html += '</div>';
+  const randUsed = randomUsed[currentPhase];
+  const randDone = selectedCards[currentPhase] !== null;
+  const hasCandidates = randomCandidates[currentPhase] && randomCandidates[currentPhase].length === 2;
+  html += `<button class="random-btn" onclick="${randUsed||randDone?'':'randomTwoCards()'}" style="${randUsed||randDone?'opacity:0.4;cursor:not-allowed;':''}">
+    ${randUsed && !randDone ? '2枚を表示中...' : randDone ? 'カード選択済み ✓' : 'ランダムで2枚選ぶ'}
+  </button>`;
+  if (hasCandidates && selectedCards[currentPhase] === null) {
+    const [n1, n2] = randomCandidates[currentPhase];
+    const [c1, c2] = [CARDS.find(x => x.num === n1), CARDS.find(x => x.num === n2)];
+    const [o1, o2] = randomOrientations[currentPhase] || ['up','up'];
+    html += `<div style="background:#f5f4f0;border-radius:10px;padding:12px 14px;margin-bottom:1rem;">
+      <div style="font-size:12px;color:#aaa;margin-bottom:8px;">どちらか選んでください</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <button onclick="selectCard(${n1}, '${o1}')" style="padding:10px;border:1.5px solid #afa9ec;border-radius:10px;background:#fff;cursor:pointer;text-align:left;" onmouseover="this.style.background='#eeedfe'" onmouseout="this.style.background='#fff'">
+          <div style="font-size:13px;font-weight:600;color:#534AB7;margin-bottom:4px;">${c1.gnum}：${c1.name}</div>
+          <div style="font-size:11px;color:${o1==='up'?'#0f6e56':'#993c1d'};">${o1==='up'?'正位置':'逆位置'}</div>
+          <div style="font-size:11px;color:#666;margin-top:4px;">${(o1==='up'?c1.up:c1.down).join('・')}</div>
+        </button>
+        <button onclick="selectCard(${n2}, '${o2}')" style="padding:10px;border:1.5px solid #afa9ec;border-radius:10px;background:#fff;cursor:pointer;text-align:left;" onmouseover="this.style.background='#eeedfe'" onmouseout="this.style.background='#fff'">
+          <div style="font-size:13px;font-weight:600;color:#534AB7;margin-bottom:4px;">${c2.gnum}：${c2.name}</div>
+          <div style="font-size:11px;color:${o2==='up'?'#0f6e56':'#993c1d'};">${o2==='up'?'正位置':'逆位置'}</div>
+          <div style="font-size:11px;color:#666;margin-top:4px;">${(o2==='up'?c2.up:c2.down).join('・')}</div>
+        </button>
+      </div>
+    </div>`;
+  }
+
+  if (chosenCard) {
+    html += `<div class="card-result"><div class="card-name">第${chosenCard.gnum}番 ${chosenCard.name}（${orientations[currentPhase] === 'up' ? '正位置' : '逆位置'}）</div><div class="meaning-row">`;
+    html += `<div class="meaning-box up" style="opacity:${orientations[currentPhase]==='up'?'1':'0.4'}"><div class="meaning-title">正位置</div><div class="meaning-tags">${chosenCard.up.map(t=>`<span class="tag up">${t}</span>`).join('')}</div></div>`;
+    html += `<div class="meaning-box down" style="opacity:${orientations[currentPhase]==='down'?'1':'0.4'}"><div class="meaning-title">逆位置</div><div class="meaning-tags">${chosenCard.down.map(t=>`<span class="tag down">${t}</span>`).join('')}</div></div>`;
+    html += `</div>`;
+    html += renderKeywordPicker(chosenCard, orientations[currentPhase]);
+    html += `</div>`;
+  }
+
+  // 前のフェーズの回答を振り返るオプション（フェーズ2以降のみ表示）
+  if (true) {
+    // 今回の前フェーズ回答（フェーズ1以降）・同テーマ過去回答（全フェーズ）
+    const prevAnswered = [];
+    for (let pi = 0; pi < currentPhase; pi++) {
+      if (memos[pi] && memos[pi].trim() !== '') {
+        const c = selectedCards[pi] !== null ? CARDS.find(x => x.num === selectedCards[pi]) : null;
+        prevAnswered.push({ phase: pi, card: c, memo: memos[pi], ori: orientations[pi] });
+      }
+    }
+    // 同テーマの過去保存データから同フェーズの回答
+    const themeDisp = selectedTheme && selectedTheme.id === 99 ? customThemeText : (selectedTheme ? selectedTheme.question : '');
+    const sameThemePast = loadSaves().filter(s => {
+      const st = s.selectedTheme && s.selectedTheme.id === 99 ? s.customThemeText : (s.selectedTheme ? s.selectedTheme.question : '');
+      return st === themeDisp && s.memos && s.memos[currentPhase] && s.memos[currentPhase].trim() !== '';
+    });
+
+    const hasAnyBtn = (prevAnswered.length > 0 && currentPhase > 0) || sameThemePast.length > 0;
+    if (hasAnyBtn) html += `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">`;
+    if (prevAnswered.length > 0 && currentPhase > 0) {
+      html += `<button onclick="showPastAnswers=!showPastAnswers;showSameThemePast=false;render();" style="font-size:11px;padding:3px 10px;border:0.5px solid #ccc;border-radius:7px;background:${showPastAnswers?'#eeedfe':'#fff'};color:${showPastAnswers?'#534AB7':'#888'};cursor:pointer;">
+        ${showPastAnswers ? '▲ 今回の前の回答を隠す' : '▼ 今回の前の回答を見る（任意）'}
+      </button>`;
+    }
+    if (sameThemePast.length > 0) {
+      html += `<button onclick="showSameThemePast=!showSameThemePast;showPastAnswers=false;render();" style="font-size:11px;padding:3px 10px;border:0.5px solid #5dcaa5;border-radius:7px;background:${showSameThemePast?'#e1f5ee':'#fff'};color:${showSameThemePast?'#0f6e56':'#5dcaa5'};cursor:pointer;">
+        ${showSameThemePast ? '▲ 同テーマの過去回答を隠す' : '▼ 同テーマの過去回答を見る（任意）'}
+      </button>`;
+    }
+    if (hasAnyBtn) html += `</div>`;
+
+    if (showPastAnswers && prevAnswered.length > 0 && currentPhase > 0) {
+      html += `<div style="background:#f9f8f4;border:0.5px solid #e0dfd8;border-radius:8px;padding:10px 14px;margin-bottom:10px;max-height:200px;overflow-y:auto;">`;
+      for (const p of prevAnswered) {
+        const oriLabel = p.ori === 'up' ? '正位置' : '逆位置';
+        const tagCls   = p.ori === 'up' ? 'up' : 'down';
+        html += `<div style="margin-bottom:10px;padding-bottom:10px;border-bottom:0.5px solid #eee;">
+          <div style="font-size:11px;font-weight:600;color:#534AB7;margin-bottom:3px;">
+            フェーズ${p.phase + 1}：${PHASES[p.phase].name}
+            ${p.card ? `／ <span class="tag ${tagCls}" style="font-size:11px;">${p.card.name}（${oriLabel}）</span>` : ''}
+          </div>
+          <div style="font-size:13px;color:#444;white-space:pre-wrap;line-height:1.6;">${p.memo}</div>
+        </div>`;
+      }
+      html += `</div>`;
+    }
+
+    if (showSameThemePast && sameThemePast.length > 0) {
+      html += `<div style="background:#f0faf5;border:0.5px solid #5dcaa5;border-radius:8px;padding:10px 14px;margin-bottom:10px;max-height:200px;overflow-y:auto;">
+        <div style="font-size:11px;color:#0f6e56;margin-bottom:8px;">同じテーマのこのフェーズでの過去の回答（${sameThemePast.length}件）</div>`;
+      for (const s of sameThemePast) {
+        const label = s.name || '（名前なし）';
+        const date  = formatSaveDate(s.savedAt);
+        html += `<div style="margin-bottom:10px;padding-bottom:10px;border-bottom:0.5px solid #c0e8d5;">
+          <div style="font-size:11px;color:#aaa;margin-bottom:3px;">${label}　${date}</div>
+          <div style="font-size:13px;color:#444;white-space:pre-wrap;line-height:1.6;">${s.memos[currentPhase]}</div>
+        </div>`;
+      }
+      html += `</div>`;
+    }
+  }
+  const memoDisabled = !chosenCard;
+  html += `<div class="memo-label" style="color:${memoDisabled?'#ccc':'#aaa'};">メモ${memoDisabled?' （先にカードを選んでください）':''}</div>`;
+  html += `<textarea class="memo-area" id="memo-input" placeholder="${memoDisabled?'先にカードを選んでください':'このフェーズのメモを入力...'}" ${memoDisabled?'disabled style="background:#f5f4f0;color:#bbb;cursor:not-allowed;"':'oninput="onMemoInput()"'} >${memos[currentPhase]}</textarea>`;
+  html += renderStructSection();
+  html += '</div></div>';
+
+  const hasName    = participantName.trim() !== '';
+  const hasMemo    = memos[currentPhase].trim() !== '';
+  const hasKeyword = pickedKeywords[currentPhase] && pickedKeywords[currentPhase].length > 0;
+  const canNext    = chosenCard && hasMemo && hasKeyword && (currentPhase > 0 || hasName);
+
+  html += '<div class="nav-row" id="nav-area">';
+  html += `<span class="progress">${currentPhase + 1} / 10</span>`;
+  if (currentPhase > 0) html += `<button class="nav-btn" onclick="jumpTo(${currentPhase - 1})">← 前へ</button>`;
+  html += `<button class="nav-btn" onclick="resetPhase()">やり直す</button>`;
+  if (currentPhase === 0 && !hasName) {
+    html += `<span style="font-size:12px;color:#e05c5c;margin-left:4px;">※ 名前を入力してください</span>`;
+  } else if (chosenCard && !hasMemo) {
+    html += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="showMemoError()">次へ →</button>`;
+  } else if (chosenCard && hasMemo && !hasKeyword) {
+    html += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="showKeywordError()">次へ →</button>`;
+  } else if (canNext && currentPhase < 9) {
+    html += `<button class="nav-btn primary" onclick="next()">次へ →</button>`;
+  } else if (canNext && currentPhase === 9) {
+    html += `<button class="nav-btn primary" onclick="complete()">完了</button>`;
+  }
+  html += '</div>';
+  html += '</div>';
+
+  // 右パネル
+  html += '<div class="right-panel">';
+  // フェーズ10のみ「振り返りリスト」、それ以外は「配置図」
+  if (currentPhase === 9) {
+    html += '<div class="right-title">これまでの振り返り (1〜9)</div>';
+    html += renderReviewList();
+  } else {
+    html += '<div class="right-title">ケルト十字 配置図</div>';
+    html += renderCeltic();
+  }
+
+  const saves = loadSaves();
+  if (saves.length > 0) {
+    html += `<div style="margin-top:1rem;border-top:0.5px solid #e8e7e0;padding-top:0.75rem;">`;
+    html += `<div style="font-size:11px;color:#aaa;margin-bottom:6px;">保存済み（${saves.length}件）</div>`;
+    for (const s of saves.slice(0, 3)) {
+      const label = s.name || '（名前なし）';
+      html += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+        <div style="flex:1;font-size:12px;color:#555;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">${label}<span style="font-size:11px;color:#aaa;margin-left:4px;">${formatSaveDate(s.savedAt)}</span></div>
+        <button class="save-btn" style="font-size:11px;padding:2px 8px;" onclick="loadSave(${s.id})">表示</button>
+      </div>`;
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+render();
+</script>
+</body>
+</html>
