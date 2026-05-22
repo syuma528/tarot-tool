@@ -136,6 +136,29 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 .save-btn.del:hover { background: #faece7; }
 .no-saves { font-size: 13px; color: #aaa; text-align: center; padding: 1rem 0; }
 
+/* 納得度・評価スライダー */
+.satisfaction-section { background: #fff; border: 0.5px solid #e0dfd8; border-radius: 10px; padding: 12px 14px; margin-bottom: 0.75rem; }
+.satisfaction-label { font-size: 12px; color: #aaa; margin-bottom: 8px; }
+.satisfaction-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.satisfaction-slider { flex: 1; min-width: 120px; accent-color: #534AB7; }
+.satisfaction-val { font-size: 16px; font-weight: 700; color: #534AB7; min-width: 24px; text-align: center; }
+.satisfaction-desc { font-size: 11px; color: #888; }
+.supplement-area { width: 100%; border: 0.5px solid #ddd; border-radius: 8px; padding: 8px 10px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 50px; color: #1a1a1a; background: #fff; margin-top: 6px; }
+.supplement-area:focus { outline: none; border-color: #afa9ec; }
+
+/* 最終評価画面 */
+.final-eval-screen { max-width: 620px; margin: 0 auto; }
+.final-eval-card { background: #fff; border: 0.5px solid #e0dfd8; border-radius: 16px; padding: 1.5rem; margin-bottom: 1rem; }
+.final-eval-title { font-size: 17px; font-weight: 600; margin-bottom: 0.5rem; }
+.final-eval-sub { font-size: 13px; color: #888; margin-bottom: 1.25rem; line-height: 1.7; }
+.eval-item { margin-bottom: 1.25rem; }
+.eval-item-label { font-size: 13px; font-weight: 500; color: #1a1a1a; margin-bottom: 6px; }
+.eval-stars { display: flex; gap: 6px; }
+.eval-star { font-size: 24px; cursor: pointer; transition: transform 0.1s; line-height: 1; }
+.eval-star:hover { transform: scale(1.2); }
+.eval-free { width: 100%; border: 0.5px solid #ddd; border-radius: 8px; padding: 8px 10px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 70px; }
+.eval-free:focus { outline: none; border-color: #afa9ec; }
+
 /* 案内キャラクター */
 .guide-wrap { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 1rem; }
 .guide-chara { width: 64px; height: 64px; flex-shrink: 0; }
@@ -287,7 +310,12 @@ const PHASES = [
 ];
 
 let screen = 'intro';
-let showPastAnswers    = false; // 今回の前フェーズ回答を表示するか
+let showPastAnswers    = false;
+let satisfaction       = new Array(10).fill(0);   // 各フェーズの納得度(1-7) 0=未選択
+let supplements        = new Array(10).fill('');  // 各フェーズの補足メモ
+let confirmDegree      = new Array(10).fill(0);   // 各フェーズの確信度(1-5) 0=未選択
+let screen2            = 'main'; // 'main' | 'final_eval'
+let finalEval          = { useful: 0, expanded: 0, overall: 0, freeText: '' }; // 今回の前フェーズ回答を表示するか
 let showSameThemePast  = false; // 同テーマ過去回答を表示するか
 let randomUsed         = new Array(10).fill(false); // ランダムボタン使用済みか
 let randomCandidates   = new Array(10).fill(null).map(() => []); // ランダム2枚候補
@@ -406,6 +434,10 @@ function saveResult() {
     selectedTheme:  selectedTheme,
     customThemeText: customThemeText,
     initialOpinion: initialOpinion,
+    satisfaction:   [...satisfaction],
+    supplements:    [...supplements],
+    confirmDegree:  [...confirmDegree],
+    finalEval:      {...finalEval},
     selectedCards: [...selectedCards],
     orientations:  [...orientations],
     memos:         [...memos],
@@ -430,7 +462,7 @@ function exportCSV(btnId) {
   const saves = loadSaves();
   if (saves.length === 0) { alert('保存済みデータがありません。'); return; }
 
-  const headers = ['氏名', '実施日時', 'テーマ', '開始前の意見'];
+  const headers = ['氏名', '実施日時', 'テーマ', '開始前の意見', '最終:タロット有用度(1-5)', '最終:思考拡張度(1-5)', '最終:総合満足度(1-5)', '最終:自由記述'];
   for (let i = 0; i < 10; i++) {
     headers.push(`フェーズ${i+1}(${PHASES[i].name})_カード`);
     headers.push(`フェーズ${i+1}_向き`);
@@ -439,6 +471,11 @@ function exportCSV(btnId) {
     headers.push(`フェーズ${i+1}_視点(5W1H)`);
     headers.push(`フェーズ${i+1}_構造化文`);
     headers.push(`フェーズ${i+1}_選択キーワード`);
+    headers.push(`フェーズ${i+1}_非選択カード`);
+    headers.push(`フェーズ${i+1}_非選択カード向き`);
+    headers.push(`フェーズ${i+1}_納得度(1-7)`);
+    headers.push(`フェーズ${i+1}_確信度(1-5)`);
+    headers.push(`フェーズ${i+1}_補足メモ`);
     headers.push(`フェーズ${i+1}_思考時間(秒)`);
   }
 
@@ -447,7 +484,8 @@ function exportCSV(btnId) {
     const d = new Date(s.savedAt);
     const dateStr = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
     const themeDisplay = s.selectedTheme && s.selectedTheme.id === 99 ? s.customThemeText : (s.selectedTheme ? s.selectedTheme.question : '');
-    const row = [s.name || '', dateStr, themeDisplay, s.initialOpinion || ''];
+    const fe = s.finalEval || {};
+    const row = [s.name || '', dateStr, themeDisplay, s.initialOpinion || '', fe.useful||'', fe.expanded||'', fe.overall||'', (fe.freeText||'').replace(/\n/g,' ')];
     for (let i = 0; i < 10; i++) {
       const cardNum = s.selectedCards[i];
       const card = cardNum !== null ? CARDS.find(c => c.num === cardNum) : null;
@@ -464,8 +502,18 @@ function exportCSV(btnId) {
         return def ? (structSel.w5h1 === 'Why' ? `${s1}、${s2}ことを${def.verb}` : `${s1}が、${s2}を${def.verb}`) : '';
       })() : '';
       const picked = s.pickedKeywords ? (s.pickedKeywords[i] || []).join('・') : '';
+      // 非選択カード
+      const cands = s.randomCandidates ? (s.randomCandidates[i] || []) : [];
+      const rejectedNum = cands.find(n => n !== cardNum);
+      const rejectedCard = rejectedNum !== undefined ? CARDS.find(c => c.num === rejectedNum) : null;
+      const rejectedOri  = s.randomOrientations ? (s.randomOrientations[i] || [])[cands.indexOf(rejectedNum)] : '';
+      const rejectedName = rejectedCard ? rejectedCard.name : '';
+      const rejectedOriLabel = rejectedOri === 'up' ? '正位置' : rejectedOri === 'down' ? '逆位置' : '';
+      const sat  = s.satisfaction  ? (s.satisfaction[i]  || '') : '';
+      const conf = s.confirmDegree ? (s.confirmDegree[i] || '') : '';
+      const sup  = s.supplements   ? (s.supplements[i]   || '').replace(/\n/g,' ') : '';
       const tSec = s.phaseTimers ? Math.floor((s.phaseTimers[i] || 0) / 1000) : '';
-      row.push(cardName, oriLabel, keywords, memo, w5h1key, structSentCSV, picked, tSec);
+      row.push(cardName, oriLabel, keywords, memo, w5h1key, structSentCSV, picked, rejectedName, rejectedOriLabel, sat, conf, sup, tSec);
     }
     rows.push(row);
   }
@@ -509,6 +557,11 @@ function loadSave(id) {
   selectedTheme    = s.selectedTheme || null;
   customThemeText  = s.customThemeText || '';
   initialOpinion   = s.initialOpinion || '';
+  satisfaction     = s.satisfaction   || new Array(10).fill(4);
+  supplements      = s.supplements    || new Array(10).fill('');
+  confirmDegree    = s.confirmDegree  || new Array(10).fill(3);
+  finalEval        = s.finalEval      || { useful: 0, expanded: 0, overall: 0, freeText: '' };
+  screen2          = 'main';
   structSelections = s.structs ? s.structs.map(x => ({...x})) : new Array(10).fill(null).map(() => ({ w5h1: null, slot1: '', slot2: '' }));
   pickedKeywords   = s.pickedKeywords ? s.pickedKeywords.map(a => [...a]) : new Array(10).fill(null).map(() => []);
   phaseTimers      = s.phaseTimers ? [...s.phaseTimers] : new Array(10).fill(0);
@@ -554,28 +607,16 @@ function toggleKeyword(kw) {
       }).join('');
     }
   }
-  // ナビボタンも再描画
-  const nav = document.getElementById('nav-area');
-  if (nav) {
-    const chosenCard2 = selectedCards[currentPhase] !== null ? CARDS.find(x => x.num === selectedCards[currentPhase]) : null;
-    const hasName    = participantName.trim() !== '';
-    const hasMemo    = memos[currentPhase].trim() !== '';
-    const hasKeyword = pickedKeywords[currentPhase].length > 0;
-    const canNext    = chosenCard2 && hasMemo && hasKeyword && (currentPhase > 0 || hasName);
-    let h = `<span class="progress">${currentPhase + 1} / 10</span>`;
-    if (currentPhase > 0) h += `<button class="nav-btn" onclick="jumpTo(${currentPhase - 1})">← 前へ</button>`;
-    h += `<button class="nav-btn" onclick="resetPhase()">やり直す</button>`;
-    if (chosenCard2 && !hasMemo) {
-      h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="showMemoError()">次へ →</button>`;
-    } else if (chosenCard2 && hasMemo && !hasKeyword) {
-      h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="showKeywordError()">次へ →</button>`;
-    } else if (canNext && currentPhase < 9) {
-      h += `<button class="nav-btn primary" onclick="next()">次へ →</button>`;
-    } else if (canNext && currentPhase === 9) {
-      h += `<button class="nav-btn primary" onclick="complete()">完了</button>`;
-    }
-    nav.innerHTML = h;
+  // メモ+キーワード両方揃ったらフル再描画（吹き出し表示のため）
+  const _hasMemoNow    = memos[currentPhase].trim() !== '';
+  const _hasKeywordNow = pickedKeywords[currentPhase].length > 0;
+  if (_hasMemoNow && _hasKeywordNow) {
+    saveMemo();
+    render();
+    return;
   }
+  // それ以外はナビだけ更新
+  updateNavArea();
 }
 
 function renderKeywordPicker(chosenCard, ori) {
@@ -609,6 +650,12 @@ function saveMemo() {
   const s2 = document.getElementById('struct-slot2');
   if (s1) structSelections[currentPhase].slot1 = s1.value;
   if (s2) structSelections[currentPhase].slot2 = s2.value;
+  const sup = document.getElementById('supplement-input');
+  if (sup && supplements[currentPhase] !== '__none__') supplements[currentPhase] = sup.value;
+  const sat = document.getElementById('satisfaction-slider');
+  if (sat) satisfaction[currentPhase] = parseInt(sat.value);
+  const conf = document.getElementById('confirm-slider');
+  if (conf) confirmDegree[currentPhase] = parseInt(conf.value);
 }
 
 function selectW5H1(key) {
@@ -713,14 +760,32 @@ function selectCard(num, forcedOri) {
   render();
 }
 
-function next()       { recordPhaseTime(); saveMemo(); saveName(); if (currentPhase < 9) { currentPhase++; startPhaseTimer(); saveDraft(); render(); } }
+function next()       { recordPhaseTime(); saveMemo(); saveName(); if (currentPhase < 9) { currentPhase++; startPhaseTimer(); saveDraft(); render(); setTimeout(() => { const el = document.getElementById('phase-top'); if(el) el.scrollIntoView({behavior:'smooth'}); else window.scrollTo({top:0,behavior:'smooth'}); }, 50); } }
 function jumpTo(i)    { recordPhaseTime(); saveMemo(); saveName(); currentPhase = i; showPastAnswers = false; showSameThemePast = false; startPhaseTimer(); saveDraft(); render(); }
 function resetPhase() { saveMemo(); saveName(); selectedCards[currentPhase] = null; orientations[currentPhase] = null; pickedKeywords[currentPhase] = []; saveDraft(); render(); }
-function complete()   { recordPhaseTime(); saveMemo(); saveName(); completed = true; clearDraft(); render(); }
+function complete()   { recordPhaseTime(); saveMemo(); saveName(); screen2 = 'final_eval'; render(); }
+function submitFinalEval() {
+  const fe = document.getElementById('fe-freetext');
+  if (fe) finalEval.freeText = fe.value;
+  screen2 = 'main';
+  completed = true;
+  clearDraft();
+  render();
+  setTimeout(() => window.scrollTo({top:0, behavior:'smooth'}), 50);
+}
+function setFinalStar(key, val) {
+  finalEval[key] = val;
+  render();
+}
 function resetAll()   {
   screen           = 'intro';
   showPastAnswers    = false;
   showSameThemePast  = false;
+  satisfaction       = new Array(10).fill(0);
+  supplements        = new Array(10).fill('');
+  confirmDegree      = new Array(10).fill(0);
+  screen2            = 'main';
+  finalEval          = { useful: 0, expanded: 0, overall: 0, freeText: '' };
   randomUsed         = new Array(10).fill(false);
   randomCandidates   = new Array(10).fill(null).map(() => []);
   randomOrientations = new Array(10).fill(null).map(() => []);
@@ -934,6 +999,102 @@ function showMemoError() {
   }
 }
 
+function setSat(v) {
+  satisfaction[currentPhase] = v;
+  saveDraft();
+  // ボタン表示のみ更新
+  const section = document.getElementById('sat-section');
+  if (section) {
+    const satDescs = ['','全く納得できない（1）','あまり納得できない（2）','やや納得できない（3）','どちらとも言えない（4）','やや納得できる（5）','かなり納得できる（6）','完全に納得できる（7）'];
+    const btns = section.querySelectorAll('button');
+    btns.forEach((btn, i) => {
+      const n = i+1;
+      btn.style.border = n===v ? '2px solid #534AB7' : '2px solid #ddd';
+      btn.style.background = n===v ? '#534AB7' : '#f5f4f0';
+      btn.style.color = n===v ? '#fff' : '#555';
+    });
+    const desc = section.querySelector('div:last-child');
+    if (desc) desc.textContent = satDescs[v] || '';
+  }
+  updateNavArea();
+}
+function setConf(v) {
+  confirmDegree[currentPhase] = v;
+  saveDraft();
+  const section = document.getElementById('conf-section');
+  if (section) {
+    const confDescs = ['','全く自信がない（1）','あまり自信がない（2）','どちらとも言えない（3）','やや自信がある（4）','完全に自信がある（5）'];
+    const btns = section.querySelectorAll('button');
+    btns.forEach((btn, i) => {
+      const n = i+1;
+      btn.style.border = n===v ? '2px solid #534AB7' : '2px solid #ddd';
+      btn.style.background = n===v ? '#534AB7' : '#f5f4f0';
+      btn.style.color = n===v ? '#fff' : '#555';
+    });
+    const desc = section.querySelector('div:last-child');
+    if (desc) desc.textContent = confDescs[v] || '';
+  }
+  updateNavArea();
+}
+function toggleSupNone(checked) {
+  supplements[currentPhase] = checked ? '__none__' : '';
+  const ta = document.getElementById('supplement-input');
+  if (ta) {
+    ta.disabled = checked;
+    ta.style.background = checked ? '#f5f4f0' : '';
+    ta.style.color = checked ? '#bbb' : '';
+    if (!checked) supplements[currentPhase] = ta.value;
+  }
+  updateNavArea();
+}
+function updateNavArea() {
+  const nav = document.getElementById('nav-area');
+  if (nav) nav.innerHTML = buildNavHtml();
+}
+function getCanNext() {
+  const chosenCard = selectedCards[currentPhase] !== null;
+  const hasName    = participantName.trim() !== '';
+  const hasMemo    = memos[currentPhase].trim() !== '';
+  const hasKeyword = pickedKeywords[currentPhase] && pickedKeywords[currentPhase].length > 0;
+  const hasSat     = satisfaction[currentPhase] > 0;
+  const hasConf    = confirmDegree[currentPhase] > 0;
+  const hasSup     = supplements[currentPhase].trim() !== '' || supplements[currentPhase] === '__none__';
+  return { chosenCard, hasName, hasMemo, hasKeyword, hasSat, hasConf, hasSup,
+    canNext: chosenCard && hasMemo && hasKeyword && hasSat && hasConf && hasSup && (currentPhase > 0 || hasName) };
+}
+
+function buildNavHtml() {
+  const { chosenCard, hasName, hasMemo, hasKeyword, hasSat, hasConf, hasSup, canNext } = getCanNext();
+  let h = `<span class="progress">${currentPhase + 1} / 10</span>`;
+  if (currentPhase > 0) h += `<button class="nav-btn" onclick="jumpTo(${currentPhase - 1})">← 前へ</button>`;
+  h += `<button class="nav-btn" onclick="resetPhase()">やり直す</button>`;
+  if (currentPhase === 0 && !hasName) {
+    h += `<span style="font-size:12px;color:#e05c5c;">※ 名前を入力してください</span>`;
+  } else if (!chosenCard) {
+    h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="scrollToCard()">次へ → <span style='font-size:11px;'>（カードを選んでください）</span></button>`;
+  } else if (!hasMemo) {
+    h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="showMemoError()">次へ → <span style='font-size:11px;'>（メモを入力してください）</span></button>`;
+  } else if (!hasKeyword) {
+    h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="showKeywordError()">次へ → <span style='font-size:11px;'>（キーワードを選択してください）</span></button>`;
+  } else if (!hasSat) {
+    h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="document.getElementById('sat-section').scrollIntoView({behavior:'smooth'})">次へ → <span style='font-size:11px;'>（納得度を選択してください）</span></button>`;
+  } else if (!hasConf) {
+    h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="document.getElementById('conf-section').scrollIntoView({behavior:'smooth'})">次へ → <span style='font-size:11px;'>（確信度を選択してください）</span></button>`;
+  } else if (!hasSup) {
+    h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="document.getElementById('sup-section').scrollIntoView({behavior:'smooth'})">次へ → <span style='font-size:11px;'>（補足欄を入力またはチェックしてください）</span></button>`;
+  } else if (canNext && currentPhase < 9) {
+    h += `<button class="nav-btn primary" onclick="next()">次へ →</button>`;
+  } else if (canNext && currentPhase === 9) {
+    h += `<button class="nav-btn primary" onclick="complete()">完了</button>`;
+  }
+  return h;
+}
+function scrollToCard() {
+  const el = document.getElementById('phase-top');
+  if (el) el.scrollIntoView({behavior:'smooth'});
+  else window.scrollTo({top:0, behavior:'smooth'});
+}
+
 function showKeywordError() {
   const container = document.getElementById('kw-container');
   if (container) {
@@ -954,27 +1115,20 @@ function onMemoInput() {
   const ta = document.getElementById('memo-input');
   if (!ta) return;
   memos[currentPhase] = ta.value;
-  // ナビボタンをリアルタイム更新
-  const nav = document.getElementById('nav-area');
-  if (!nav) return;
-  const chosenCard = selectedCards[currentPhase] !== null ? CARDS.find(x => x.num === selectedCards[currentPhase]) : null;
-  const hasName = participantName.trim() !== '';
+  // 入力中はナビだけ更新（再描画しない）
+  updateNavArea();
+}
+
+function onMemoBlur() {
+  // メモ欄からフォーカスが外れたタイミングで吹き出しチェック
+  const ta = document.getElementById('memo-input');
+  if (!ta) return;
+  memos[currentPhase] = ta.value;
   const hasMemo    = ta.value.trim() !== '';
   const hasKeyword = pickedKeywords[currentPhase] && pickedKeywords[currentPhase].length > 0;
-  const canNext    = chosenCard && hasMemo && hasKeyword && (currentPhase > 0 || hasName);
-  let h = `<span class="progress">${currentPhase + 1} / 10</span>`;
-  if (currentPhase > 0) h += `<button class="nav-btn" onclick="jumpTo(${currentPhase - 1})">← 前へ</button>`;
-  h += `<button class="nav-btn" onclick="resetPhase()">やり直す</button>`;
-  if (chosenCard && !hasMemo) {
-    h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="showMemoError()">次へ →</button>`;
-  } else if (chosenCard && hasMemo && !hasKeyword) {
-    h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="showKeywordError()">次へ →</button>`;
-  } else if (canNext && currentPhase < 9) {
-    h += `<button class="nav-btn primary" onclick="next()">次へ →</button>`;
-  } else if (canNext && currentPhase === 9) {
-    h += `<button class="nav-btn primary" onclick="complete()">完了</button>`;
+  if (hasMemo && hasKeyword) {
+    render();
   }
-  nav.innerHTML = h;
 }
 
 function onNameInput() {
@@ -1018,12 +1172,51 @@ function startMain() {
   render();
 }
 
+function renderFinalEval() {
+  const starRow = (key, label) => {
+    const v = finalEval[key] || 0;
+    return `<div class="eval-item">
+      <div class="eval-item-label">${label}</div>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <span style="font-size:11px;color:#aaa;margin-right:4px;">1（低い）</span>
+        ${[1,2,3,4,5].map(n => `<span class="eval-star" onclick="setFinalStar('${key}',${n})">${n <= v ? '⭐' : '☆'}</span>`).join('')}
+        <span style="font-size:11px;color:#aaa;margin-left:4px;">5（高い）</span>
+        <span style="font-size:12px;color:#534AB7;font-weight:600;margin-left:8px;">${v > 0 ? v+'点' : '未選択'}</span>
+      </div>
+    </div>`;
+  };
+  const charaHtmlFinal = charaHtml('done', 72);
+  return `<div class="final-eval-screen">
+    <div class="final-eval-card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+        ${charaHtmlFinal}
+        <div>
+          <div class="final-eval-title">最終評価</div>
+          <div class="final-eval-sub" style="margin:0;">全フェーズお疲れさまでした！最後に全体を振り返って評価してください。</div>
+        </div>
+      </div>
+      ${starRow('useful',   'タロットカードは考えるのに役立ちましたか？')}
+      ${starRow('expanded', '普段とは違う視点で考えられましたか？')}
+      ${starRow('overall',  '全体的な満足度はどのくらいですか？')}
+      <div class="eval-item">
+        <div class="eval-item-label">自由記述（気づいたこと・感想など）</div>
+        <textarea class="eval-free" id="fe-freetext" placeholder="感想・気づき・改善してほしい点など自由にお書きください">${finalEval.freeText||''}</textarea>
+      </div>
+      <div class="nav-row" style="position:static;border-top:none;padding-top:1rem;">
+        <button class="nav-btn" onclick="screen2='main';render();">← 回答に戻る</button>
+        <button class="nav-btn primary" onclick="submitFinalEval()">結果を見る →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
 function render() {
   const el = document.getElementById('main');
 
   if (screen === 'intro')    { el.innerHTML = renderIntro();   return; }
   if (screen === 'theme')    { el.innerHTML = renderTheme();   return; }
   if (screen === 'opinion')  { el.innerHTML = renderOpinion(); return; }
+  if (screen2 === 'final_eval') { el.innerHTML = renderFinalEval(); return; }
 
   const allDone = selectedCards.every(c => c !== null) && completed;
   let html = '';
@@ -1074,7 +1267,12 @@ function render() {
       }
       if (memos[i]) html += `<div class="summary-memo">${memos[i]}</div>`;
       const tMs = phaseTimers[i];
-      html += `<div style="font-size:11px;color:#bbb;margin-top:4px;text-align:right;">思考時間：${formatTime(tMs)}</div>`;
+      html += `<div style="display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;">`;
+      html += `<span style="font-size:11px;color:#aaa;">納得度：<strong style="color:#534AB7;">${satisfaction[i]}/7</strong></span>`;
+      html += `<span style="font-size:11px;color:#aaa;">確信度：<strong style="color:#534AB7;">${confirmDegree[i]}/5</strong></span>`;
+      html += `<span style="font-size:11px;color:#bbb;margin-left:auto;">思考時間：${formatTime(tMs)}</span>`;
+      html += `</div>`;
+      if (supplements[i] && supplements[i] !== '__none__') html += `<div style="font-size:12px;color:#777;background:#f9f8f4;border-radius:6px;padding:6px 10px;margin-top:4px;white-space:pre-wrap;">💬 ${supplements[i]}</div>`;
       html += `</div>`;
     }
     html += '</div>';
@@ -1083,6 +1281,18 @@ function render() {
       html += `<div class="initial-opinion-box" style="margin-top:1rem;">
         <div class="initial-opinion-label">タロット使用前の意見</div>
         <div class="initial-opinion-text">${initialOpinion}</div>
+      </div>`;
+    }
+    // 最終評価サマリー
+    if (finalEval.useful || finalEval.expanded || finalEval.overall || finalEval.freeText) {
+      html += `<div style="background:#fff;border:0.5px solid #e0dfd8;border-radius:12px;padding:1rem 1.25rem;margin-top:1rem;">
+        <div style="font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:10px;">最終評価</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
+          <span style="font-size:12px;color:#555;">タロット有用度：<strong>${'⭐'.repeat(finalEval.useful)}${'☆'.repeat(5-finalEval.useful)}</strong></span>
+          <span style="font-size:12px;color:#555;">思考拡張度：<strong>${'⭐'.repeat(finalEval.expanded)}${'☆'.repeat(5-finalEval.expanded)}</strong></span>
+          <span style="font-size:12px;color:#555;">総合満足度：<strong>${'⭐'.repeat(finalEval.overall)}${'☆'.repeat(5-finalEval.overall)}</strong></span>
+        </div>
+        ${finalEval.freeText ? `<div style="font-size:13px;color:#444;white-space:pre-wrap;background:#f9f8f4;border-radius:8px;padding:8px 12px;">${finalEval.freeText}</div>` : ''}
       </div>`;
     }
 
@@ -1136,7 +1346,7 @@ function render() {
   }
 
   html += '<div class="phase-card">';
-  html += `<div class="phase-header"><span class="phase-num">フェーズ ${phase.num}</span><span class="phase-name">${phase.name}</span></div>`;
+  html += `<div id="phase-top"></div><div class="phase-header"><span class="phase-num">フェーズ ${phase.num}</span><span class="phase-name">${phase.name}</span></div>`;
   if (themeDisplay) html += `<div style="font-size:12px;color:#534AB7;padding:6px 12px;background:#eeedfe;border-radius:8px;margin-bottom:1rem;">テーマ：${themeDisplay}</div>`;
   html += '<div class="card-section">';
   html += '<div class="card-select-label">カードを選択（0〜XXI）</div>';
@@ -1200,18 +1410,22 @@ function render() {
     });
 
     const hasAnyBtn = (prevAnswered.length > 0 && currentPhase > 0) || sameThemePast.length > 0;
-    if (hasAnyBtn) html += `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">`;
-    if (prevAnswered.length > 0 && currentPhase > 0) {
-      html += `<button onclick="showPastAnswers=!showPastAnswers;showSameThemePast=false;render();" style="font-size:11px;padding:3px 10px;border:0.5px solid #ccc;border-radius:7px;background:${showPastAnswers?'#eeedfe':'#fff'};color:${showPastAnswers?'#534AB7':'#888'};cursor:pointer;">
-        ${showPastAnswers ? '▲ 今回の前の回答を隠す' : '▼ 今回の前の回答を見る（任意）'}
-      </button>`;
+    if (hasAnyBtn) {
+      html += `<div style="background:#f0effe;border:1px solid #afa9ec;border-radius:10px;padding:8px 12px;margin-bottom:10px;">`;
+      html += `<div style="font-size:11px;color:#534AB7;font-weight:600;margin-bottom:6px;">📖 前の回答を振り返る（任意）</div>`;
+      html += `<div style="display:flex;gap:8px;flex-wrap:wrap;">`;
+      if (prevAnswered.length > 0 && currentPhase > 0) {
+        html += `<button onclick="showPastAnswers=!showPastAnswers;showSameThemePast=false;render();" style="font-size:12px;padding:5px 12px;border:1.5px solid #534AB7;border-radius:8px;background:${showPastAnswers?'#534AB7':'#fff'};color:${showPastAnswers?'#fff':'#534AB7'};cursor:pointer;font-weight:500;">
+          ${showPastAnswers ? '▲ 今回の前の回答を隠す' : '▼ 今回の回答を見る'}
+        </button>`;
+      }
+      if (sameThemePast.length > 0) {
+        html += `<button onclick="showSameThemePast=!showSameThemePast;showPastAnswers=false;render();" style="font-size:12px;padding:5px 12px;border:1.5px solid #5dcaa5;border-radius:8px;background:${showSameThemePast?'#5dcaa5':'#fff'};color:${showSameThemePast?'#fff':'#0f6e56'};cursor:pointer;font-weight:500;">
+          ${showSameThemePast ? '▲ 過去の同テーマ回答を隠す' : '▼ 過去の同テーマ回答を見る'}
+        </button>`;
+      }
+      html += `</div></div>`;
     }
-    if (sameThemePast.length > 0) {
-      html += `<button onclick="showSameThemePast=!showSameThemePast;showPastAnswers=false;render();" style="font-size:11px;padding:3px 10px;border:0.5px solid #5dcaa5;border-radius:7px;background:${showSameThemePast?'#e1f5ee':'#fff'};color:${showSameThemePast?'#0f6e56':'#5dcaa5'};cursor:pointer;">
-        ${showSameThemePast ? '▲ 同テーマの過去回答を隠す' : '▼ 同テーマの過去回答を見る（任意）'}
-      </button>`;
-    }
-    if (hasAnyBtn) html += `</div>`;
 
     if (showPastAnswers && prevAnswered.length > 0 && currentPhase > 0) {
       html += `<div style="background:#f9f8f4;border:0.5px solid #e0dfd8;border-radius:8px;padding:10px 14px;margin-bottom:10px;max-height:200px;overflow-y:auto;">`;
@@ -1261,30 +1475,64 @@ function render() {
     </div>`;
   }
   html += `<div class="memo-label" style="color:${memoDisabled?'#ccc':'#aaa'};">メモ${memoDisabled?' （先にカードを選んでください）':''}</div>`;
-  html += `<textarea class="memo-area" id="memo-input" placeholder="${memoDisabled?'先にカードを選んでください':'このフェーズのメモを入力...'}" ${memoDisabled?'disabled style="background:#f5f4f0;color:#bbb;cursor:not-allowed;"':'oninput="onMemoInput()"'} >${memos[currentPhase]}</textarea>`;
-  html += renderStructSection();
+  html += `<textarea class="memo-area" id="memo-input" placeholder="${memoDisabled?'先にカードを選んでください':'このフェーズのメモを入力...'}" ${memoDisabled?'disabled style="background:#f5f4f0;color:#bbb;cursor:not-allowed;"':'oninput="onMemoInput()" onblur="onMemoBlur()"'} >${memos[currentPhase]}</textarea>`;
+  // 構造化文セクションは現在非表示（今後の追加機能として保留）
+  // html += renderStructSection();
+
+  // 納得度・確信度・補足メモ
+  const satVal  = satisfaction[currentPhase];
+  const confVal = confirmDegree[currentPhase];
+  const satSelected = satVal !== 4 || satisfaction[currentPhase] !== undefined;
+  const satDescs  = ['','全く納得できない（1）','あまり納得できない（2）','やや納得できない（3）','どちらとも言えない（4）','やや納得できる（5）','かなり納得できる（6）','完全に納得できる（7）'];
+  const confDescs = ['','全く自信がない（1）','あまり自信がない（2）','どちらとも言えない（3）','やや自信がある（4）','完全に自信がある（5）'];
+
+
+
+  // メモ+キーワード済みで吹き出し表示
+  const _hasMemo3    = memos[currentPhase].trim() !== '';
+  const _hasKeyword3 = pickedKeywords[currentPhase] && pickedKeywords[currentPhase].length > 0;
+  if (_hasMemo3 && _hasKeyword3) {
+    html += `<div class="guide-wrap" style="margin-bottom:0.75rem;">
+      ${charaHtml('guide')}
+      <div class="guide-balloon">メモとキーワードが入力できたね！次は<strong>納得度・確信度</strong>も選んで、補足欄も忘れずにね！</div>
+    </div>`;
+  }
+
+  // 納得度ボタン
+  const satUserTouched = satisfaction[currentPhase] >= 1;
+  html += `<div class="satisfaction-section" id="sat-section">
+    <div class="satisfaction-label">このフェーズの回答への納得度を選んでください<span style="font-size:11px;color:#aaa;margin-left:6px;">（1＝全く納得できない　7＝完全に納得できる）</span></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
+      ${[1,2,3,4,5,6,7].map(n => `<button onclick="setSat(${n})" style="width:40px;height:40px;border-radius:50%;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.15s;border:2px solid ${satVal===n?'#534AB7':'#ddd'};background:${satVal===n?'#534AB7':'#f5f4f0'};color:${satVal===n?'#fff':'#555'};">${n}</button>`).join('')}
+    </div>
+    <div style="font-size:12px;color:#534AB7;margin-top:6px;min-height:18px;">${satDescs[satVal]||''}</div>
+  </div>`;
+
+  // 確信度ボタン
+  html += `<div class="satisfaction-section" id="conf-section">
+    <div class="satisfaction-label">この回答への確信度を選んでください<span style="font-size:11px;color:#aaa;margin-left:6px;">（1＝全く自信がない　5＝完全に自信がある）</span></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
+      ${[1,2,3,4,5].map(n => `<button onclick="setConf(${n})" style="width:40px;height:40px;border-radius:50%;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.15s;border:2px solid ${confVal===n?'#534AB7':'#ddd'};background:${confVal===n?'#534AB7':'#f5f4f0'};color:${confVal===n?'#fff':'#555'};">${n}</button>`).join('')}
+    </div>
+    <div style="font-size:12px;color:#534AB7;margin-top:6px;min-height:18px;">${confDescs[confVal]||''}</div>
+  </div>`;
+
+  // 補足メモ＋「特にない」チェックボックス
+  const supChecked = supplements[currentPhase] === '__none__';
+  const supVal     = supChecked ? '' : supplements[currentPhase];
+  html += `<div class="satisfaction-section" id="sup-section">
+    <div class="satisfaction-label">補足メモ<span style="font-size:11px;color:#aaa;margin-left:6px;">（文章だけでは伝わりにくい補足・頭の中の注記など）</span></div>
+    <textarea class="supplement-area" id="supplement-input" placeholder="補足があれば書いてください" ${supChecked?'disabled style="background:#f5f4f0;color:#bbb;"':'oninput="supplements[currentPhase]=this.value;updateNavArea();"'}>${supVal}</textarea>
+    <label style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:13px;color:#666;cursor:pointer;">
+      <input type="checkbox" id="sup-none-check" ${supChecked?'checked':''} onchange="toggleSupNone(this.checked)" style="width:16px;height:16px;">
+      特に補足はありません
+    </label>
+  </div>`;
+
   html += '</div></div>';
 
-  const hasName    = participantName.trim() !== '';
-  const hasMemo    = memos[currentPhase].trim() !== '';
-  const hasKeyword = pickedKeywords[currentPhase] && pickedKeywords[currentPhase].length > 0;
-  const canNext    = chosenCard && hasMemo && hasKeyword && (currentPhase > 0 || hasName);
-
   html += '<div class="nav-row" id="nav-area">';
-  html += `<span class="progress">${currentPhase + 1} / 10</span>`;
-  if (currentPhase > 0) html += `<button class="nav-btn" onclick="jumpTo(${currentPhase - 1})">← 前へ</button>`;
-  html += `<button class="nav-btn" onclick="resetPhase()">やり直す</button>`;
-  if (currentPhase === 0 && !hasName) {
-    html += `<span style="font-size:12px;color:#e05c5c;margin-left:4px;">※ 名前を入力してください</span>`;
-  } else if (chosenCard && !hasMemo) {
-    html += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="showMemoError()">次へ →</button>`;
-  } else if (chosenCard && hasMemo && !hasKeyword) {
-    html += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="showKeywordError()">次へ →</button>`;
-  } else if (canNext && currentPhase < 9) {
-    html += `<button class="nav-btn primary" onclick="next()">次へ →</button>`;
-  } else if (canNext && currentPhase === 9) {
-    html += `<button class="nav-btn primary" onclick="complete()">完了</button>`;
-  }
+  html += buildNavHtml();
   html += '</div>';
   html += '</div>';
 
