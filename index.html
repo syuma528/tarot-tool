@@ -1081,8 +1081,7 @@ function switchHintTab(n) {
 function insertViewPoint(vp) {
   const ta = document.getElementById('memo-input');
   if (!ta) return;
-  ta.value = (ta.value ? ta.value + '
-' : '') + `【${vp}】`;
+  ta.value = (ta.value ? ta.value + '\n' : '') + `【${vp}】`;
   ta.focus();
   memos[currentPhase] = ta.value;
   updateNavArea();
@@ -1094,8 +1093,7 @@ function applyFillTemplate() {
   const ta = document.getElementById('memo-input');
   if (!ta) return;
   const text = `私は${f1}と感じている。なぜなら${f2}からだ。そのため${f3}と考える。`;
-  ta.value = (ta.value ? ta.value + '
-' : '') + text;
+  ta.value = (ta.value ? ta.value + '\n' : '') + text;
   ta.focus();
   memos[currentPhase] = ta.value;
   updateNavArea();
