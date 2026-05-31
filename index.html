@@ -6,7 +6,7 @@
 <title>タロット：ケルト十字</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif; background: #E1F5EE; color: #1a1a1a; min-height: 100vh; padding: 1.25rem; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif; background: #E1F5EE; color: #1a1a1a; min-height: 100vh; padding: 1.5rem; }
 h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.03em; }
 
 .phase-bar { display: flex; align-items: center; gap: 5px; margin-bottom: 1rem; flex-wrap: wrap; }
@@ -28,7 +28,7 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 .meta-input:focus { outline: none; border-color: #afa9ec; }
 .meta-date { font-size: 12px; color: #888; white-space: nowrap; }
 
-.phase-card { background: #fff; border: 0.5px solid #5DCAA5; border-radius: 12px; padding: 1rem 1.25rem; }
+.phase-card { background: #fff; border: 0.5px solid #5DCAA5; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
 .phase-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px; }
 .phase-num { font-size: 12px; color: #aaa; }
 .phase-name { font-size: 16px; font-weight: 500; }
@@ -36,7 +36,7 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 
 .card-section { border-top: 0.5px solid #e8e7e0; padding-top: 1rem; }
 .card-select-label { font-size: 12px; color: #aaa; margin-bottom: 8px; }
-.card-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.75rem; }
+.card-buttons { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
 .card-btn { width: 44px; height: 44px; border: 0.5px solid #ccc; border-radius: 8px; background: #f5f4f0; color: #1a1a1a; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
 .card-btn:hover { background: #eeedfe; border-color: #afa9ec; color: #3c3489; }
 .card-btn.selected { background: #3D1F0D; color: #eeedfe; border-color: #3D1F0D; }
@@ -53,7 +53,7 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
   animation: pulse-border 1.8s ease-in-out infinite;
 }
 
-.card-result { background: #f5f4f0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+.card-result { background: #f5f4f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; }
 .card-name { font-size: 15px; font-weight: 700; margin-bottom: 10px; color: #333; }
 .meaning-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .meaning-box { border-radius: 8px; padding: 10px 12px; transition: opacity 0.2s; }
@@ -68,7 +68,7 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 .tag.down { background: #f5c4b3; color: #712b13; }
 
 .memo-label { font-size: 12px; color: #aaa; margin-bottom: 5px; }
-.memo-area { width: 100%; border: 1px solid #5DCAA5; border-radius: 8px; padding: 8px 10px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 70px; color: #1a1a1a; background: #F0FAF6; }
+.memo-area { width: 100%; border: 1px solid #5DCAA5; border-radius: 8px; padding: 8px 10px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 100px; color: #1a1a1a; background: #F0FAF6; }
 .memo-area:focus { outline: none; border-color: #0F6E56; }
 
 .nav-row { display: flex; gap: 8px; justify-content: flex-end; align-items: center; position: sticky; bottom: 0; background: #f5f4f0; padding: 10px 0; border-top: 1px solid #ddd; z-index: 10; }
@@ -80,8 +80,8 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 .nav-btn.danger { border-color: #f0997b; color: #993c1d; }
 .nav-btn.danger:hover { background: #faece7; }
 
-.right-panel { background: #fff; border: 0.5px solid #5DCAA5; border-radius: 12px; padding: 1rem; position: sticky; top: 1rem; max-height: 90vh; overflow-y: auto; }
-.right-title { font-size: 12px; color: #888; margin-bottom: 0.75rem; text-align: center; }
+.right-panel { background: #fff; border: 0.5px solid #5DCAA5; border-radius: 12px; padding: 1.5rem; position: sticky; top: 1rem; max-height: 90vh; overflow-y: auto; }
+.right-title { font-size: 12px; color: #888; margin-bottom: 1rem; text-align: center; }
 
 .celtic-grid { position: relative; width: 260px; height: 330px; margin: 0 auto; }
 .ccard { position: absolute; width: 54px; height: 76px; border-radius: 6px; background: #b2e4f5; border: 2px solid #7ecde8; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; cursor: pointer; transition: all 0.2s; user-select: none; text-shadow: 0 1px 3px rgba(0,0,0,0.2); text-align: center; line-height: 1.2; }
@@ -116,7 +116,7 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 .review-struct { font-size: 11px; color: #3D1F0D; margin-top: 4px; font-weight: 500; }
 
 /* 完了サマリー */
-.done-banner { background: #eaf3de; border: 0.5px solid #97c459; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.done-banner { background: #eaf3de; border: 0.5px solid #97c459; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
 .done-title { font-size: 15px; font-weight: 500; color: #3b6d11; margin-bottom: 4px; }
 .done-sub { font-size: 13px; color: #639922; }
 .done-meta { font-size: 12px; color: #639922; margin-top: 4px; }
@@ -133,8 +133,8 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 
 /* 保存済みデータ一覧 */
 .saves-section { margin-top: 2rem; }
-.saves-title { font-size: 14px; font-weight: 500; color: #555; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 0.5px solid #e0dfd8; }
-.save-item { background: #fff; border: 0.5px solid #e0dfd8; border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.saves-title { font-size: 14px; font-weight: 500; color: #555; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 0.5px solid #e0dfd8; }
+.save-item { background: #fff; border: 0.5px solid #e0dfd8; border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .save-info { flex: 1; }
 .save-name { font-size: 14px; font-weight: 500; color: #1a1a1a; }
 .save-date { font-size: 12px; color: #aaa; margin-top: 2px; }
@@ -146,7 +146,7 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 .no-saves { font-size: 13px; color: #aaa; text-align: center; padding: 1rem 0; }
 
 /* 納得度・評価スライダー */
-.satisfaction-section { background: #fff; border: 0.5px solid #5DCAA5; border-radius: 10px; padding: 12px 14px; margin-bottom: 0.75rem; }
+.satisfaction-section { background: #fff; border: 0.5px solid #5DCAA5; border-radius: 10px; padding: 16px 18px; margin-bottom: 1rem; }
 .satisfaction-label { font-size: 12px; color: #aaa; margin-bottom: 8px; }
 .satisfaction-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .satisfaction-slider { flex: 1; min-width: 120px; accent-color: #3D1F0D; }
@@ -157,19 +157,19 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 
 /* 書くヒント機能 */
 .hint-wrap { border: 1.5px solid #afa9ec; border-radius: 12px; margin-bottom: 1rem; overflow: hidden; }
-.hint-toggle { width: 100%; padding: 10px 14px; background: #eeedfe; border: none; text-align: left; font-size: 13px; font-weight: 500; color: #3D1F0D; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+.hint-toggle { width: 100%; padding: 14px 16px; background: #eeedfe; border: none; text-align: left; font-size: 13px; font-weight: 500; color: #3D1F0D; cursor: pointer; display: flex; align-items: center; gap: 8px; }
 .hint-toggle:hover { background: #e0dcfc; }
-.hint-body { padding: 12px 14px; background: #fff; display: none; }
+.hint-body { padding: 16px 18px; background: #fff; display: none; }
 .hint-body.open { display: block; }
 .hint-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
 .hint-tab { font-size: 12px; padding: 4px 12px; border: 1.5px solid #ddd; border-radius: 999px; background: #fff; color: #555; cursor: pointer; transition: all 0.15s; }
 .hint-tab.active { background: #3D1F0D; color: #fff; border-color: #3D1F0D; }
 .hint-content { display: none; }
 .hint-content.active { display: block; }
-.q-card { background: #f5f4f0; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; font-size: 13px; color: #444; line-height: 1.7; border-left: 3px solid #afa9ec; }
+.q-card { background: #f5f4f0; border-radius: 8px; padding: 14px 16px; margin-bottom: 8px; font-size: 14px; color: #444; line-height: 1.7; border-left: 3px solid #afa9ec; }
 .view-btn { font-size: 12px; padding: 5px 12px; border: 1px solid #afa9ec; border-radius: 8px; background: #fff; color: #3D1F0D; cursor: pointer; margin: 3px; transition: all 0.15s; }
 .view-btn:hover { background: #eeedfe; }
-.fill-template { background: #f5f4f0; border-radius: 8px; padding: 12px 14px; font-size: 13px; color: #444; line-height: 2.2; }
+.fill-template { background: #f5f4f0; border-radius: 8px; padding: 16px 18px; font-size: 14px; color: #444; line-height: 2.2; }
 .fill-input { border: none; border-bottom: 1.5px solid #3D1F0D; background: transparent; font-size: 13px; color: #1a1a1a; min-width: 80px; padding: 0 4px; outline: none; font-family: inherit; }
 .fill-apply { margin-top: 10px; font-size: 12px; padding: 5px 14px; background: #3D1F0D; color: #fff; border: none; border-radius: 8px; cursor: pointer; }
 .fill-apply:hover { background: #3c3489; }
@@ -184,21 +184,21 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 .eval-stars { display: flex; gap: 6px; }
 .eval-star { font-size: 24px; cursor: pointer; transition: transform 0.1s; line-height: 1; }
 .eval-star:hover { transform: scale(1.2); }
-.eval-free { width: 100%; border: 0.5px solid #ddd; border-radius: 8px; padding: 8px 10px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 70px; }
+.eval-free { width: 100%; border: 0.5px solid #ddd; border-radius: 8px; padding: 8px 10px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 100px; }
 .eval-free:focus { outline: none; border-color: #afa9ec; }
 
 /* 案内キャラクター */
 .guide-wrap { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 1rem; }
 .guide-chara { width: 64px; height: 64px; flex-shrink: 0; }
 .guide-chara img { width: 100%; height: 100%; object-fit: contain; }
-.guide-balloon { position: relative; background: #fff; border: 1.5px solid #afa9ec; border-radius: 12px; padding: 10px 14px; font-size: 13px; color: #3c3489; line-height: 1.7; flex: 1; }
+.guide-balloon { position: relative; background: #fff; border: 1.5px solid #afa9ec; border-radius: 12px; padding: 14px 16px; font-size: 13px; color: #3c3489; line-height: 1.7; flex: 1; }
 .guide-balloon::before { content: ''; position: absolute; left: -10px; top: 16px; border: 6px solid transparent; border-right-color: #afa9ec; }
 .guide-balloon::after { content: ''; position: absolute; left: -8px; top: 16px; border: 6px solid transparent; border-right-color: #fff; }
 .phase-prompt { background: #f0effe; border-left: 4px solid #3D1F0D; border-radius: 0 10px 10px 0; padding: 12px 16px; margin-bottom: 1rem; font-size: 15px; font-weight: 500; color: #2a1a6e; line-height: 1.7; }
 .phase-prompt-label { font-size: 11px; color: #8878cc; margin-bottom: 4px; font-weight: 600; letter-spacing: 0.05em; }
 
 /* 途中再開バナー */
-.resume-banner { background: #fff8e1; border: 1.5px solid #f0c040; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; max-width: 620px; margin-left: auto; margin-right: auto; }
+.resume-banner { background: #fff8e1; border: 1.5px solid #f0c040; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; max-width: 620px; margin-left: auto; margin-right: auto; }
 .resume-title { font-size: 14px; font-weight: 600; color: #7a5c00; margin-bottom: 4px; }
 .resume-sub { font-size: 12px; color: #a07800; margin-bottom: 10px; line-height: 1.6; }
 .resume-actions { display: flex; gap: 8px; }
@@ -209,7 +209,7 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 
 /* テーマ選択画面 */
 .theme-screen { max-width: 620px; margin: 0 auto; }
-.theme-card { background: #fff; border: 0.5px solid #e0dfd8; border-radius: 16px; padding: 1.75rem 2rem; margin-bottom: 1rem; }
+.theme-card { background: #fff; border: 0.5px solid #e0dfd8; border-radius: 16px; padding: 2rem 2.25rem; margin-bottom: 1rem; }
 .theme-title { font-size: 17px; font-weight: 600; margin-bottom: 0.5rem; }
 .theme-sub { font-size: 13px; color: #888; line-height: 1.7; margin-bottom: 1.25rem; }
 .theme-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.25rem; }
@@ -223,19 +223,19 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 
 /* インストラクション画面 */
 .intro-screen { max-width: 620px; margin: 0 auto; }
-.intro-card { background: #fff; border: 0.5px solid #5DCAA5; border-radius: 16px; padding: 1.75rem 2rem; margin-bottom: 1rem; }
+.intro-card { background: #fff; border: 0.5px solid #5DCAA5; border-radius: 16px; padding: 2rem 2.25rem; margin-bottom: 1rem; }
 .intro-title { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 0.5rem; }
 .intro-sub { font-size: 13px; color: #aaa; margin-bottom: 1.5rem; }
 .intro-section { margin-bottom: 1.25rem; }
 .intro-section-title { font-size: 13px; font-weight: 600; color: #3D1F0D; margin-bottom: 6px; }
-.intro-text { font-size: 13px; color: #444; line-height: 1.8; }
-.intro-highlight { background: #eeedfe; border-left: 3px solid #3D1F0D; border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 13px; color: #3c3489; line-height: 1.8; margin: 8px 0; }
+.intro-text { font-size: 14px; color: #444; line-height: 1.8; }
+.intro-highlight { background: #eeedfe; border-left: 3px solid #3D1F0D; border-radius: 0 8px 8px 0; padding: 14px 16px; font-size: 13px; color: #3c3489; line-height: 1.8; margin: 8px 0; }
 .intro-start-btn { width: 100%; padding: 12px; background: #3D1F0D; color: #eeedfe; border: 1.5px solid #3D1F0D; border-radius: 10px; font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.15s; letter-spacing: 0.03em; }
 .intro-start-btn:hover { background: #3c3489; }
 
 /* 初期意見入力 */
 .opinion-screen { max-width: 620px; margin: 0 auto; }
-.opinion-card { background: #fff; border: 0.5px solid #5DCAA5; border-radius: 16px; padding: 1.75rem 2rem; margin-bottom: 1rem; }
+.opinion-card { background: #fff; border: 0.5px solid #5DCAA5; border-radius: 16px; padding: 2rem 2.25rem; margin-bottom: 1rem; }
 .opinion-title { font-size: 17px; font-weight: 600; margin-bottom: 0.5rem; }
 .opinion-sub { font-size: 13px; color: #888; line-height: 1.7; margin-bottom: 1.25rem; }
 .opinion-input { width: 100%; border: 0.5px solid #ddd; border-radius: 8px; padding: 10px 12px; font-size: 14px; font-family: inherit; resize: vertical; min-height: 80px; color: #1a1a1a; background: #fff; margin-bottom: 1rem; }
@@ -269,11 +269,117 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 .struct-fixed { font-size: 13px; color: #555; white-space: nowrap; }
 .struct-input { flex: 1; min-width: 120px; border: 0.5px solid #ddd; border-radius: 8px; padding: 6px 10px; font-size: 13px; font-family: inherit; color: #1a1a1a; background: #fff; }
 .struct-input:focus { outline: none; border-color: #afa9ec; }
-.struct-result { background: #eeedfe; border: 0.5px solid #afa9ec; border-radius: 8px; padding: 10px 14px; font-size: 14px; color: #3c3489; font-weight: 500; min-height: 40px; }
+.struct-result { background: #eeedfe; border: 0.5px solid #afa9ec; border-radius: 8px; padding: 14px 16px; font-size: 14px; color: #3c3489; font-weight: 500; min-height: 40px; }
 .struct-result-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+
+/* 履歴フローティングボタン */
+.history-fab {
+  position: fixed;
+  top: 14px;
+  right: 16px;
+  z-index: 1000;
+  background: #3D1F0D;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: opacity 0.15s;
+}
+.history-fab:hover { opacity: 0.85; }
+
+/* サイドパネル */
+.history-panel {
+  position: fixed;
+  top: 0; right: -360px;
+  width: 340px;
+  height: 100vh;
+  background: #fff;
+  border-left: 1.5px solid #5DCAA5;
+  box-shadow: -4px 0 18px rgba(0,0,0,0.12);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.28s cubic-bezier(.4,0,.2,1);
+  overflow: hidden;
+}
+.history-panel.open { right: 0; }
+.history-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: #E1F5EE;
+  border-bottom: 1px solid #5DCAA5;
+  font-size: 14px;
+  font-weight: 600;
+  color: #3D1F0D;
+}
+.history-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 18px;
+}
+.history-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.18);
+  z-index: 998;
+}
+.history-overlay.open { display: block; }
+
+/* トースト通知 */
+#toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: #3D1F0D;
+  color: #fff;
+  font-size: 13px;
+  padding: 8px 20px;
+  border-radius: 999px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  white-space: nowrap;
+  z-index: 2000;
+}
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
 </style>
 </head>
 <body>
+
+<!-- トースト通知 -->
+<div id="toast"></div>
+
+<!-- 履歴フローティングボタン -->
+<button class="history-fab" onclick="toggleHistoryPanel()">💾 保存済み</button>
+
+<!-- オーバーレイ -->
+<div class="history-overlay" id="history-overlay" onclick="toggleHistoryPanel()"></div>
+
+<!-- サイドパネル -->
+<div class="history-panel" id="history-panel">
+  <div class="history-panel-header">
+    <span>💾 保存済み一覧</span>
+    <button onclick="toggleHistoryPanel()" style="background:none;border:none;font-size:18px;cursor:pointer;color:#3D1F0D;">✕</button>
+  </div>
+  <div class="history-panel-body" id="history-panel-body">
+    <!-- JSで描画 -->
+  </div>
+</div>
 
 <h1>タロット：ケルト十字</h1>
 <div id="main"></div>
@@ -339,16 +445,16 @@ const PHASES = [
 
 let screen = 'intro';
 let showPastAnswers    = false;
-let satisfaction       = new Array(10).fill(0);   // 各フェーズの評価(1-5) 0=未選択
-let finalSupplement    = '';  // 最終アンケートの補足メモ
+let satisfaction       = new Array(10).fill(0);
+let finalSupplement    = '';
 let hintOpen           = false;
 let hintTab            = 0;
-let screen2            = 'main'; // 'main' | 'final_eval'
-let finalEval          = { useful: 0, expanded: 0, overall: 0, freeText: '' }; // 今回の前フェーズ回答を表示するか
-let showSameThemePast  = false; // 同テーマ過去回答を表示するか
-let randomUsed         = new Array(10).fill(false); // ランダムボタン使用済みか
-let randomCandidates   = new Array(10).fill(null).map(() => []); // ランダム2枚候補
-let randomOrientations = new Array(10).fill(null).map(() => []); // ランダム2枚の向き // 'intro' | 'theme' | 'opinion' | 'main'
+let screen2            = 'main';
+let finalEval          = { useful: 0, expanded: 0, overall: 0, freeText: '' };
+let showSameThemePast  = false;
+let randomUsed         = new Array(10).fill(false);
+let randomCandidates   = new Array(10).fill(null).map(() => []);
+let randomOrientations = new Array(10).fill(null).map(() => []);
 let selectedTheme = null;
 let customThemeText = '';
 let initialOpinion = '';
@@ -358,6 +464,22 @@ let orientations  = new Array(10).fill(null);
 let memos         = new Array(10).fill('');
 let completed     = false;
 let participantName = '';
+
+// 操作ログ
+let opLog = []; // { time, phase, type, detail }
+let changeScore = 0; // 思考変化度（最終画面で入力）
+// ヒント記録
+let hintOpenLog    = new Array(10).fill(null).map(() => []); // [{tab, vp, time}]
+// 各操作の最終時刻（操作間隔計算用）
+let lastOpTime     = new Array(10).fill(null).map(() => ({})); // {card, kw, memo, sat}
+
+function logOp(phase, type, detail) {
+  const now = new Date().toISOString();
+  opLog.push({ time: now, phase: phase + 1, type, detail: detail || '' });
+  // 操作間隔を記録
+  if (!lastOpTime[phase]) lastOpTime[phase] = {};
+  lastOpTime[phase][type] = now;
+}
 
 // 構造化文
 const W5H1_DEFS = {
@@ -392,6 +514,16 @@ function formatSaveDate(iso) {
 // ===== 保存機能 =====
 const DRAFT_KEY = 'tarot_draft';
 
+let toastTimer = null;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
+}
+
 function saveDraft() {
   const draft = {
     screen, selectedTheme, customThemeText, initialOpinion, participantName,
@@ -406,6 +538,7 @@ function saveDraft() {
     savedAt: new Date().toISOString(),
   };
   localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  showToast('💾 自動保存しました');
 }
 
 function loadDraft() {
@@ -454,8 +587,32 @@ function loadSaves() {
   try { return JSON.parse(localStorage.getItem('tarot_saves') || '[]'); } catch { return []; }
 }
 
+function saveOpLog(id, log) {
+  try {
+    localStorage.setItem(`tarot_oplog_${id}`, JSON.stringify(log));
+  } catch(e) {
+    console.warn('opLog保存失敗:', e.message);
+  }
+}
+
+function loadOpLog(id) {
+  try { return JSON.parse(localStorage.getItem(`tarot_oplog_${id}`) || '[]'); } catch { return []; }
+}
+
+function deleteOpLog(id) {
+  localStorage.removeItem(`tarot_oplog_${id}`);
+}
+
 function storeSaves(arr) {
-  localStorage.setItem('tarot_saves', JSON.stringify(arr));
+  try {
+    localStorage.setItem('tarot_saves', JSON.stringify(arr));
+    // 書き込み後に読み返して件数を確認
+    const check = JSON.parse(localStorage.getItem('tarot_saves') || '[]');
+    return check.length;
+  } catch(e) {
+    alert('保存容量が不足しています。古いデータを削除してください。エラー：' + e.message);
+    return -1;
+  }
 }
 
 function saveResult() {
@@ -472,6 +629,7 @@ function saveResult() {
     satisfaction:   [...satisfaction],
     finalSupplement: finalSupplement,
     finalEval:      {...finalEval},
+    changeScore:    changeScore,
     selectedCards: [...selectedCards],
     orientations:  [...orientations],
     memos:         [...memos],
@@ -482,8 +640,11 @@ function saveResult() {
     randomOrientations: randomOrientations.map(a => [...a]),
   };
   saves.unshift(entry);
-  storeSaves(saves);
-  alert('保存しました！');
+  const count = storeSaves(saves);
+  if (count >= 0) {
+    saveOpLog(entry.id, opLog);
+    alert(`保存しました！（保存済み${count}件）`);
+  }
   render();
 }
 
@@ -491,21 +652,101 @@ function deleteSave(id) {
   if (!confirm('この記録を削除しますか？')) return;
   const saves = loadSaves().filter(s => s.id !== id);
   storeSaves(saves);
+  deleteOpLog(id);
   render();
 }
 
-function exportCSV(btnId) {
-  const saves = loadSaves();
-  if (saves.length === 0) { alert('保存済みデータがありません。'); return; }
+function exportSingleCSV(btnId) {
+  // 現在のセッションデータを1件だけCSV出力（保存済みデータを使わず現在の変数から直接生成）
+  const fe = finalEval || {};
+  const themeDisplay = selectedTheme && selectedTheme.id === 99 ? customThemeText : (selectedTheme ? selectedTheme.question : '');
+  const d = new Date();
+  const dateStr = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 
-  const headers = ['氏名', '実施日時', 'テーマ', '開始前の意見', '最終:タロット有用度(1-5)', '最終:思考拡張度(1-5)', '最終:総合満足度(1-5)', '最終:自由記述', '最終:補足メモ'];
+  const headers = ['氏名','実施日時','テーマ','開始前の意見','最終:タロット有用度(1-5)','最終:思考拡張度(1-5)','最終:総合満足度(1-5)','最終:思考変化度(1-5)','最終:自由記述','最終:補足メモ'];
   for (let i = 0; i < 10; i++) {
     headers.push(`フェーズ${i+1}(${PHASES[i].name})_カード`);
     headers.push(`フェーズ${i+1}_向き`);
     headers.push(`フェーズ${i+1}_キーワード`);
     headers.push(`フェーズ${i+1}_メモ`);
-    headers.push(`フェーズ${i+1}_視点(5W1H)`);
-    headers.push(`フェーズ${i+1}_構造化文`);
+    headers.push(`フェーズ${i+1}_選択キーワード`);
+    headers.push(`フェーズ${i+1}_非選択カード`);
+    headers.push(`フェーズ${i+1}_非選択カード向き`);
+    headers.push(`フェーズ${i+1}_評価(1-5)`);
+    headers.push(`フェーズ${i+1}_思考時間(秒)`);
+  }
+
+  const row = [participantName, dateStr, themeDisplay, initialOpinion, fe.useful||'', fe.expanded||'', fe.overall||'', changeScore||'', (fe.freeText||'').replace(/\n/g,' '), (finalSupplement||'').replace(/\n/g,' ')];
+  for (let i = 0; i < 10; i++) {
+    const cardNum = selectedCards[i];
+    const card = cardNum !== null ? CARDS.find(c => c.num === cardNum) : null;
+    const o = orientations[i];
+    const cardName = card ? card.name : '';
+    const oriLabel = o === 'up' ? '正位置' : o === 'down' ? '逆位置' : '';
+    const keywords = card && o ? (o === 'up' ? card.up : card.down).join('・') : '';
+    const memo = (memos[i] || '').replace(/\n/g,' ');
+    const picked = (pickedKeywords[i] || []).join('・');
+    const cands = randomCandidates[i] || [];
+    const rejectedNum = cands.find(n => n !== cardNum);
+    const rejectedCard = rejectedNum !== undefined ? CARDS.find(c => c.num === rejectedNum) : null;
+    const rejectedOri = randomOrientations[i] ? randomOrientations[i][cands.indexOf(rejectedNum)] : '';
+    const rejectedName = rejectedCard ? rejectedCard.name : '';
+    const rejectedOriLabel = rejectedOri === 'up' ? '正位置' : rejectedOri === 'down' ? '逆位置' : '';
+    const sat = satisfaction[i] || '';
+    const tSec = Math.floor((phaseTimers[i] || 0) / 1000);
+    row.push(cardName, oriLabel, keywords, memo, picked, rejectedName, rejectedOriLabel, sat, tSec);
+  }
+
+  // 操作ログ
+  const logRows = [['#','時刻','フェーズ','操作種別','詳細']];
+  if (opLog.length === 0) {
+    logRows.push(['（ログなし）','','','','']);
+  } else {
+    opLog.forEach((l, i) => {
+      const t = new Date(l.time);
+      const tStr = `${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}:${String(t.getSeconds()).padStart(2,'0')}`;
+      logRows.push([i+1, tStr, `フェーズ${l.phase}`, l.type, l.detail]);
+    });
+  }
+
+  const escape = cell => `"${String(cell).replace(/"/g,'""')}"`;
+  const mainCsv = '\uFEFF' + [headers, row].map(r => r.map(escape).join(',')).join('\r\n');
+  const logCsv  = '\r\n\r\n操作ログ\r\n' + logRows.map(r => r.map(escape).join(',')).join('\r\n');
+
+  const blob = new Blob([mainCsv + logCsv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  const today = new Date();
+  const dateTag = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  a.download = `tarot_${participantName || 'noname'}_${dateTag}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  if (btnId) {
+    const btn = document.getElementById(btnId);
+    if (btn) {
+      const orig = btn.innerHTML;
+      const origStyle = btn.getAttribute('style') || '';
+      btn.innerHTML = 'ダウンロード完了 ✓';
+      btn.setAttribute('style', origStyle + ';background:#e0ede0;color:#2a7a2a;border-color:#5dcaa5;cursor:default;');
+      btn.disabled = true;
+      setTimeout(() => { btn.innerHTML = orig; btn.setAttribute('style', origStyle); btn.disabled = false; }, 3000);
+    }
+  }
+}
+
+function exportCSV(btnId) {
+  const saves = loadSaves();
+  if (saves.length === 0) { alert('保存済みデータがありません。'); return; }
+  console.log('CSV出力: ' + saves.length + '件', saves.map(s => s.name + ' ' + s.savedAt));
+
+  const headers = ['氏名', '実施日時', 'テーマ', '開始前の意見', '最終:タロット有用度(1-5)', '最終:思考拡張度(1-5)', '最終:総合満足度(1-5)', '最終:思考変化度(1-5)', '最終:自由記述', '最終:補足メモ'];
+  for (let i = 0; i < 10; i++) {
+    headers.push(`フェーズ${i+1}(${PHASES[i].name})_カード`);
+    headers.push(`フェーズ${i+1}_向き`);
+    headers.push(`フェーズ${i+1}_キーワード`);
+    headers.push(`フェーズ${i+1}_メモ`);
     headers.push(`フェーズ${i+1}_選択キーワード`);
     headers.push(`フェーズ${i+1}_非選択カード`);
     headers.push(`フェーズ${i+1}_非選択カード向き`);
@@ -519,7 +760,7 @@ function exportCSV(btnId) {
     const dateStr = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
     const themeDisplay = s.selectedTheme && s.selectedTheme.id === 99 ? s.customThemeText : (s.selectedTheme ? s.selectedTheme.question : '');
     const fe = s.finalEval || {};
-    const row = [s.name || '', dateStr, themeDisplay, s.initialOpinion || '', fe.useful||'', fe.expanded||'', fe.overall||'', (fe.freeText||'').replace(/\n/g,' '), (s.finalSupplement||'').replace(/\n/g,' ')];
+    const row = [s.name || '', dateStr, themeDisplay, s.initialOpinion || '', fe.useful||'', fe.expanded||'', fe.overall||'', s.changeScore||'', (fe.freeText||'').replace(/\n/g,' '), (s.finalSupplement||'').replace(/\n/g,' ')];
     for (let i = 0; i < 10; i++) {
       const cardNum = s.selectedCards[i];
       const card = cardNum !== null ? CARDS.find(c => c.num === cardNum) : null;
@@ -528,15 +769,7 @@ function exportCSV(btnId) {
       const oriLabel = o === 'up' ? '正位置' : o === 'down' ? '逆位置' : '';
       const keywords = card && o ? (o === 'up' ? card.up : card.down).join('・') : '';
       const memo = (s.memos[i] || '').replace(/\n/g, ' ');
-      const structSel = s.structs ? s.structs[i] : null;
-      const w5h1key = structSel ? (structSel.w5h1 || '') : '';
-      const structSentCSV = structSel && structSel.w5h1 ? (() => {
-        const def = W5H1_DEFS[structSel.w5h1];
-        const s1 = structSel.slot1 || '___'; const s2 = structSel.slot2 || '___';
-        return def ? (structSel.w5h1 === 'Why' ? `${s1}、${s2}ことを${def.verb}` : `${s1}が、${s2}を${def.verb}`) : '';
-      })() : '';
       const picked = s.pickedKeywords ? (s.pickedKeywords[i] || []).join('・') : '';
-      // 非選択カード
       const cands = s.randomCandidates ? (s.randomCandidates[i] || []) : [];
       const rejectedNum = cands.find(n => n !== cardNum);
       const rejectedCard = rejectedNum !== undefined ? CARDS.find(c => c.num === rejectedNum) : null;
@@ -545,20 +778,40 @@ function exportCSV(btnId) {
       const rejectedOriLabel = rejectedOri === 'up' ? '正位置' : rejectedOri === 'down' ? '逆位置' : '';
       const sat  = s.satisfaction  ? (s.satisfaction[i]  || '') : '';
       const tSec = s.phaseTimers ? Math.floor((s.phaseTimers[i] || 0) / 1000) : '';
-      row.push(cardName, oriLabel, keywords, memo, w5h1key, structSentCSV, picked, rejectedName, rejectedOriLabel, sat, tSec);
+      row.push(cardName, oriLabel, keywords, memo, picked, rejectedName, rejectedOriLabel, sat, tSec);
     }
     rows.push(row);
   }
 
-  const csv = '\uFEFF' + rows.map(r =>
-    r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
-  ).join('\r\n');
+  // 操作ログ（保存データごとに別キーから読み込み）
+  const logRows = [['氏名', '実施日時', '#', '時刻', 'フェーズ', '操作種別', '詳細']];
+  for (const s of saves) {
+    const sLog = loadOpLog(s.id);
+    const label = s.name || '（名前なし）';
+    const d = new Date(s.savedAt);
+    const dateStr = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    if (sLog.length === 0) {
+      logRows.push([label, dateStr, '（ログなし）', '', '', '', '']);
+    } else {
+      sLog.forEach((l, i) => {
+        const t = new Date(l.time);
+        const tStr = `${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}:${String(t.getSeconds()).padStart(2,'0')}`;
+        logRows.push([i === 0 ? label : '', i === 0 ? dateStr : '', i+1, tStr, `フェーズ${l.phase}`, l.type, l.detail]);
+      });
+    }
+  }
 
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const escape = cell => `"${String(cell).replace(/"/g, '""')}"`;
+  const mainCsv = '\uFEFF' + rows.map(r => r.map(escape).join(',')).join('\r\n');
+  const logCsv  = '\r\n\r\n操作ログ（今回のセッション）\r\n' + logRows.map(r => r.map(escape).join(',')).join('\r\n');
+
+  const blob = new Blob([mainCsv + logCsv], { type: 'text/csv;charset=utf-8;' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
-  a.download = `tarot_data_${new Date().toISOString().slice(0,10)}.csv`;
+  const today = new Date();
+  const dateTag = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  a.download = `tarot_data_${dateTag}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 
@@ -592,6 +845,7 @@ function loadSave(id) {
   satisfaction     = s.satisfaction   || new Array(10).fill(0);
   finalSupplement  = s.finalSupplement || '';
   finalEval        = s.finalEval      || { useful: 0, expanded: 0, overall: 0, freeText: '' };
+  changeScore      = s.changeScore    || 0;
   screen2          = 'main';
   structSelections = s.structs ? s.structs.map(x => ({...x})) : new Array(10).fill(null).map(() => ({ w5h1: null, slot1: '', slot2: '' }));
   pickedKeywords   = s.pickedKeywords ? s.pickedKeywords.map(a => [...a]) : new Array(10).fill(null).map(() => []);
@@ -620,9 +874,11 @@ function toggleKeyword(kw) {
   const idx = arr.indexOf(kw);
   if (idx !== -1) {
     arr.splice(idx, 1);
+    logOp(currentPhase, 'kw_deselect', kw);
   } else {
     if (arr.length >= 2) return;
     arr.push(kw);
+    logOp(currentPhase, 'kw_select', kw);
   }
   const container = document.getElementById('kw-container');
   if (container) {
@@ -681,7 +937,12 @@ function saveMemo() {
   const s2 = document.getElementById('struct-slot2');
   if (s1) structSelections[currentPhase].slot1 = s1.value;
   if (s2) structSelections[currentPhase].slot2 = s2.value;
-  // 評価はボタン押しで直接更新
+}
+
+function onMemoBlur() {
+  saveMemo();
+  const len = (memos[currentPhase] || '').length;
+  if (len > 0) logOp(currentPhase, 'memo_input', `${len}文字`);
 }
 
 function selectW5H1(key) {
@@ -752,20 +1013,20 @@ function saveName() {
 }
 
 function randomTwoCards() {
-  if (randomUsed[currentPhase]) return; // 1回のみ
+  if (randomUsed[currentPhase]) return;
   saveMemo(); saveName();
   randomUsed[currentPhase] = true;
+  logOp(currentPhase, 'random_draw', 'ランダム2枚を引いた');
   const used = selectedCards.filter((v, i) => i !== currentPhase && v !== null);
   const available = CARDS.map(c => c.num).filter(n => !used.includes(n));
   if (available.length < 2) return;
-  // シャッフルして2枚選ぶ
   const shuffled = available.sort(() => Math.random() - 0.5);
   const picks = shuffled.slice(0, 2);
   randomCandidates[currentPhase] = picks;
   randomOrientations[currentPhase] = picks.map((_, i) =>
     currentPhase === 1 ? 'up' : (Math.random() < 0.5 ? 'up' : 'down')
   );
-  selectedCards[currentPhase] = null; // 一旦リセット
+  selectedCards[currentPhase] = null;
   render();
 }
 
@@ -783,6 +1044,8 @@ function selectCard(num, forcedOri) {
   saveMemo(); saveName();
   selectedCards[currentPhase] = num;
   orientations[currentPhase]  = forcedOri ? forcedOri : (currentPhase === 1 ? 'up' : (Math.random() < 0.5 ? 'up' : 'down'));
+  const card = CARDS.find(x => x.num === num);
+  logOp(currentPhase, 'card_select', `${card ? card.name : num}（${orientations[currentPhase] === 'up' ? '正位置' : '逆位置'}）`);
   render();
 }
 
@@ -1028,8 +1291,17 @@ function showMemoError() {
   }
 }
 
+function setChangeScore(n) {
+  changeScore = n;
+  const stars = document.querySelectorAll('#change-stars .eval-star');
+  stars.forEach((el, i) => el.textContent = i < n ? '⭐' : '☆');
+  const label = document.getElementById('change-score-label');
+  if (label) label.textContent = n + '点';
+}
+
 function setSat(v) {
   satisfaction[currentPhase] = v;
+  logOp(currentPhase, 'sat_select', `評価${v}`);
   saveDraft();
   const section = document.getElementById('sat-section');
   if (section) {
@@ -1109,6 +1381,7 @@ function buildNavHtml() {
 }
 function toggleHint() {
   hintOpen = !hintOpen;
+  logOp(currentPhase, hintOpen ? 'hint_open' : 'hint_close', `タブ${hintTab}`);
   const body = document.querySelector('.hint-body');
   const arrow = document.getElementById('hint-arrow');
   if (body)  body.classList.toggle('open', hintOpen);
@@ -1116,6 +1389,8 @@ function toggleHint() {
 }
 function switchHintTab(n) {
   hintTab = n;
+  const tabLabels = ['質問カード','視点×質問'];
+  logOp(currentPhase, 'hint_tab', tabLabels[n] || `タブ${n}`);
   document.querySelectorAll('.hint-tab').forEach((t,i) => t.classList.toggle('active', i===n));
   document.querySelectorAll('.hint-content').forEach((c,i) => c.classList.toggle('active', i===n));
 }
@@ -1155,6 +1430,8 @@ function switchFusionSubTab(tab) {
 
 function selectFusionVP(idx) {
   fusionVpIdx = idx;
+  const vpLabels = ['自分の視点','相手の視点','社会・環境の視点','過去の経験','未来への影響'];
+  logOp(currentPhase, 'hint_vp', vpLabels[idx] || `視点${idx}`);
   const chosenCard = selectedCards[currentPhase] !== null ? CARDS.find(x => x.num === selectedCards[currentPhase]) : null;
   if (!chosenCard) return;
   const ori = orientations[currentPhase];
@@ -1607,6 +1884,17 @@ function renderFinalEval() {
       ${starRow('expanded', '普段とは違う視点で考えられましたか？')}
       ${starRow('overall',  '全体的な満足度はどのくらいですか？')}
       <div class="eval-item">
+        <div class="eval-item-label">最初の意見と比べて、考えはどのくらい変わりましたか？</div>
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span style="font-size:11px;color:#aaa;margin-right:4px;">1（変わらない）</span>
+          <span id="change-stars" style="display:flex;gap:2px;">
+            ${[1,2,3,4,5].map(n => `<span class="eval-star" onclick="setChangeScore(${n})">${n <= changeScore ? '⭐' : '☆'}</span>`).join('')}
+          </span>
+          <span style="font-size:11px;color:#aaa;margin-left:4px;">5（大きく変わった）</span>
+          <span id="change-score-label" style="font-size:12px;color:#3D1F0D;font-weight:600;margin-left:8px;">${changeScore > 0 ? changeScore+'点' : '未選択'}</span>
+        </div>
+      </div>
+      <div class="eval-item">
         <div class="eval-item-label">自由記述（気づいたこと・感想など）</div>
         <textarea class="eval-free" id="fe-freetext" placeholder="感想・気づき・改善してほしい点など自由にお書きください">${finalEval.freeText||''}</textarea>
       </div>
@@ -1620,6 +1908,49 @@ function renderFinalEval() {
       </div>
     </div>
   </div>`;
+}
+
+function toggleHistoryPanel() {
+  const panel   = document.getElementById('history-panel');
+  const overlay = document.getElementById('history-overlay');
+  const isOpen  = panel.classList.contains('open');
+  if (isOpen) {
+    panel.classList.remove('open');
+    overlay.classList.remove('open');
+  } else {
+    renderHistoryPanel();
+    panel.classList.add('open');
+    overlay.classList.add('open');
+  }
+}
+
+function renderHistoryPanel() {
+  const body  = document.getElementById('history-panel-body');
+  const saves = loadSaves();
+  if (!body) return;
+  if (saves.length === 0) {
+    body.innerHTML = `<div style="font-size:13px;color:#aaa;text-align:center;padding:2rem 0;">保存済みデータはありません</div>`;
+    return;
+  }
+  let h = `<div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+    <button class="nav-btn" onclick="exportCSV('csv-fab')" style="font-size:12px;padding:4px 10px;border-color:#5dcaa5;color:#0f6e56;">CSVでダウンロード</button>
+  </div>`;
+  for (const s of saves) {
+    const label = s.name || '（名前なし）';
+    const theme = s.selectedTheme && s.selectedTheme.id === 99 ? s.customThemeText : (s.selectedTheme ? s.selectedTheme.question : '');
+    h += `<div class="save-item">
+      <div class="save-info">
+        <div class="save-name">${label}</div>
+        <div class="save-date">${formatSaveDate(s.savedAt)}</div>
+        ${theme ? `<div style="font-size:11px;color:#888;margin-top:2px;">${theme}</div>` : ''}
+      </div>
+      <div class="save-actions">
+        <button class="save-btn" onclick="loadSave(${s.id});toggleHistoryPanel()">表示</button>
+        <button class="save-btn del" onclick="deleteSave(${s.id});renderHistoryPanel()">削除</button>
+      </div>
+    </div>`;
+  }
+  body.innerHTML = h;
 }
 
 function render() {
@@ -1695,22 +2026,24 @@ function render() {
       </div>`;
     }
     // 最終評価サマリー
-    if (finalEval.useful || finalEval.expanded || finalEval.overall || finalEval.freeText) {
+    if (finalEval.useful || finalEval.expanded || finalEval.overall || finalEval.freeText || changeScore) {
       html += `<div style="background:#fff;border:0.5px solid #e0dfd8;border-radius:12px;padding:1rem 1.25rem;margin-top:1rem;">
         <div style="font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:10px;">最終評価</div>
         <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
           <span style="font-size:12px;color:#555;">タロット有用度：<strong>${'⭐'.repeat(finalEval.useful)}${'☆'.repeat(5-finalEval.useful)}</strong></span>
           <span style="font-size:12px;color:#555;">思考拡張度：<strong>${'⭐'.repeat(finalEval.expanded)}${'☆'.repeat(5-finalEval.expanded)}</strong></span>
           <span style="font-size:12px;color:#555;">総合満足度：<strong>${'⭐'.repeat(finalEval.overall)}${'☆'.repeat(5-finalEval.overall)}</strong></span>
+          ${changeScore ? `<span style="font-size:12px;color:#555;">思考変化度：<strong>${'⭐'.repeat(changeScore)}${'☆'.repeat(5-changeScore)}</strong></span>` : ''}
         </div>
-        ${finalEval.freeText ? `<div style="font-size:13px;color:#444;white-space:pre-wrap;background:#f9f8f4;border-radius:8px;padding:8px 12px;">${finalEval.freeText}</div>` : ''}
+        ${finalEval.freeText ? `<div style="font-size:14px;color:#444;white-space:pre-wrap;background:#f9f8f4;border-radius:8px;padding:8px 12px;">${finalEval.freeText}</div>` : ''}
       </div>`;
     }
 
     html += `<div class="nav-row">
       <button class="nav-btn" onclick="resetAll()">新しく始める</button>
       <button class="nav-btn primary" onclick="saveResult()">この結果を保存</button>
-      <button class="nav-btn" id="csv-btn-main" onclick="exportCSV('csv-btn-main')" style="border-color:#5dcaa5;color:#0f6e56;">CSVでダウンロード</button>
+      <button class="nav-btn" id="csv-btn-main" onclick="exportCSV('csv-btn-main')" style="border-color:#5dcaa5;color:#0f6e56;">CSVでダウンロード（全件）</button>
+      <button class="nav-btn" id="csv-btn-single" onclick="exportSingleCSV('csv-btn-single')" style="border-color:#3D1F0D;color:#3D1F0D;">今回の結果のみCSV</button>
     </div>`;
 
     if (saves.length > 0) {
@@ -1718,15 +2051,21 @@ function render() {
       html += `<div class="saves-title" style="display:flex;align-items:center;justify-content:space-between;">保存済みデータ（${saves.length}件）<button class="nav-btn" id="csv-btn-list" onclick="exportCSV('csv-btn-list')" style="font-size:12px;padding:4px 10px;border-color:#5dcaa5;color:#0f6e56;">CSVでダウンロード</button></div>`;
       for (const s of saves) {
         const label = s.name ? `${s.name}` : '（名前なし）';
-        html += `<div class="save-item">
-          <div class="save-info">
-            <div class="save-name">${label}</div>
-            <div class="save-date">${formatSaveDate(s.savedAt)}</div>
+        const themeDisp = s.selectedTheme && s.selectedTheme.id === 99 ? s.customThemeText : (s.selectedTheme ? s.selectedTheme.question : '');
+        const fe = s.finalEval || {};
+        html += `<div class="save-item" style="flex-direction:column;align-items:flex-start;gap:0;">
+          <div style="display:flex;width:100%;align-items:center;">
+            <div class="save-info">
+              <div class="save-name">${label}</div>
+              <div class="save-date">${formatSaveDate(s.savedAt)}${themeDisp ? '　' + themeDisp : ''}</div>
+            </div>
+            <div class="save-actions">
+              <button class="save-btn" onclick="loadSave(${s.id})">表示</button>
+              <button class="save-btn del" onclick="deleteSave(${s.id})">削除</button>
+            </div>
           </div>
-          <div class="save-actions">
-            <button class="save-btn" onclick="loadSave(${s.id})">表示</button>
-            <button class="save-btn del" onclick="deleteSave(${s.id})">削除</button>
-          </div>
+          ${fe.freeText ? `<div style="font-size:12px;color:#666;margin-top:6px;padding-top:6px;border-top:0.5px solid #eee;white-space:pre-wrap;width:100%;">${fe.freeText}</div>` : ''}
+          ${s.finalSupplement ? `<div style="font-size:12px;color:#888;margin-top:4px;white-space:pre-wrap;width:100%;">補足：${s.finalSupplement}</div>` : ''}
         </div>`;
       }
       html += '</div>';
@@ -1799,59 +2138,33 @@ function render() {
         💡 書くヒントを見る（任意）
       </button>
       <div class="hint-body${hintOpen ? ' open' : ''}">
-        <div class="hint-tabs">
-          <button class="hint-tab${hintTab===0?' active':''}" onclick="switchHintTab(0)">①質問カード</button>
-          <button class="hint-tab${hintTab===2?' active':''}" onclick="switchHintTab(2)">②視点×質問</button>
-        </div>
-        <div class="hint-content${hintTab===0?' active':''}" id="hint-0">
-          ${hintQuestions.map(q => `<div class="q-card">Q. ${q}</div>`).join('')}
-          <div style="font-size:11px;color:#aaa;margin-top:6px;">上の質問を参考にメモ欄に書いてみてください</div>
-        </div>
-        <div class="hint-content${hintTab===1?' active':''}" id="hint-1">
-          <div style="font-size:12px;color:#666;margin-bottom:8px;">視点を選ぶと、その書き出し文がメモ欄に追加されます</div>
-          ${viewPoints.map(v => `<button class="view-btn" onclick="insertViewPoint('${v}')">${v}</button>`).join('')}
-        </div>
-        <div class="hint-content${hintTab===2?' active':''}" id="hint-2">
-          <!-- サブタブ -->
-          <div style="display:flex;gap:6px;margin-bottom:10px;border-bottom:1.5px solid #e0dfd8;padding-bottom:8px;">
-            <button id="sub-tab-a" onclick="switchFusionSubTab('A')" style="font-size:11px;padding:3px 12px;border-radius:999px;border:1.5px solid #3D1F0D;background:#3D1F0D;color:#fff;cursor:pointer;">Aパターン<br><span style='font-size:10px;font-weight:400;'>「カードを参考に」</span></button>
-            <button id="sub-tab-b" onclick="switchFusionSubTab('B')" style="font-size:11px;padding:3px 12px;border-radius:999px;border:1.5px solid #ccc;background:#fff;color:#555;cursor:pointer;">Bパターン<br><span style='font-size:10px;font-weight:400;'>全キーワード提示</span></button>
-          </div>
-          <!-- 視点ボタン（共通） -->
+          <!-- 視点ボタン -->
           <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;" id="fusion-vp-btns">
             ${['自分の視点','相手の視点','社会・環境の視点','過去の経験','未来への影響'].map((v,i) =>
               `<button class="hint-tab" style="font-size:12px;" onclick="selectFusionVP(${i})">${v}</button>`
             ).join('')}
           </div>
-          <!-- Aパターン：「カードのキーワードを参考に」とだけ言う -->
-          <div id="fusion-sub-A" style="display:block;">
+          <div id="fusion-sub-A">
             <div id="fusion-questions-A" style="display:none;">
               <div id="fusion-q-list-A"></div>
               <div style="font-size:11px;color:#aaa;margin-top:6px;">上の質問を参考にメモ欄に書いてみてください</div>
             </div>
           </div>
-          <!-- Bパターン：全キーワードを並列提示 -->
-          <div id="fusion-sub-B" style="display:none;">
-            <div id="fusion-questions-B" style="display:none;">
-              <div id="fusion-q-list-B"></div>
-              <div style="font-size:11px;color:#aaa;margin-top:6px;">上の質問を参考にメモ欄に書いてみてください</div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>`;
   }
 
   const memoDisabled = !chosenCard;
   // メモ欄の直上にキャラ＋質問文を強調表示
+  html += `<div class="phase-prompt">
+    <div class="phase-prompt-label">📝 このフェーズで考えること</div>
+    ${phase.desc}
+  </div>`;
+
   if (!memoDisabled) {
     html += `<div class="guide-wrap" style="margin-bottom:0.75rem;">
       ${charaHtml('guide')}
       <div class="guide-balloon">${GUIDE_MESSAGES[currentPhase]}</div>
-    </div>`;
-    html += `<div class="phase-prompt">
-      <div class="phase-prompt-label">📝 このフェーズで考えること</div>
-      ${phase.desc}
     </div>`;
   } else {
     html += `<div class="guide-wrap" style="margin-bottom:0.75rem;">
