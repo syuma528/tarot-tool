@@ -47,10 +47,12 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 /* 次の操作をハイライト */
 @keyframes pulse-border {
   0%, 100% { box-shadow: 0 0 0 0px rgba(61,31,13,0.4); }
-  50%       { box-shadow: 0 0 0 4px rgba(61,31,13,0.18); }
+  50%       { box-shadow: 0 0 0 6px rgba(61,31,13,0.15); }
 }
 .next-action {
-  animation: pulse-border 1.8s ease-in-out infinite;
+  animation: pulse-border 1.4s ease-in-out infinite;
+  outline: 2.5px solid #3D1F0D !important;
+  outline-offset: 2px;
 }
 
 .card-result { background: #f5f4f0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem; }
@@ -386,7 +388,7 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 
 <!-- バージョン表記 -->
 <div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:#aaa;z-index:900;pointer-events:none;">
-  Ver. 2.17 (2026.06.01)
+  Ver. 2.18 (2026.06.02)
 </div>
 
 <script>
@@ -899,16 +901,16 @@ function toggleKeyword(kw) {
       }).join('');
     }
   }
-  // メモ+キーワード両方揃ったらフル再描画（吹き出し表示のため）
-  const _hasMemoNow    = memos[currentPhase].trim() !== '';
-  const _hasKeywordNow = pickedKeywords[currentPhase].length > 0;
-  if (_hasMemoNow && _hasKeywordNow) {
-    saveMemo();
-    render();
-    return;
-  }
-  // それ以外はナビだけ更新
-  updateNavArea();
+  // キーワード選択状態が変わったら再描画（段階的表示のためメモ欄を出す）
+  saveDraft();
+  render();
+}
+
+function renderKeywordSection() {
+  const chosenCard = selectedCards[currentPhase] !== null ? CARDS.find(c => c.num === selectedCards[currentPhase]) : null;
+  const ori = orientations[currentPhase];
+  if (!chosenCard || !ori) return '';
+  return renderKeywordPicker(chosenCard, ori);
 }
 
 function renderKeywordPicker(chosenCard, ori) {
@@ -944,10 +946,17 @@ function saveMemo() {
   if (s2) structSelections[currentPhase].slot2 = s2.value;
 }
 
-function onMemoBlur() {
-  saveMemo();
-  const len = (memos[currentPhase] || '').length;
+function onMemoConfirm() {
+  const ta = document.getElementById('memo-input');
+  if (!ta || ta.value.trim() === '') {
+    if (ta) { ta.focus(); ta.placeholder = 'メモを入力してから進んでください'; }
+    return;
+  }
+  memos[currentPhase] = ta.value;
+  const len = ta.value.trim().length;
   if (len > 0) logOp(currentPhase, 'memo_input', `${len}文字`);
+  saveDraft();
+  render();
 }
 
 function selectW5H1(key) {
@@ -1275,24 +1284,10 @@ function renderOpinion() {
 function showMemoError() {
   const ta = document.getElementById('memo-input');
   if (ta) {
-    ta.style.border = '1.5px solid #e05c5c';
-    ta.style.background = '#fff5f5';
-    ta.placeholder = '⚠️ メモを入力してから次へ進んでください';
+    ta.scrollIntoView({behavior:'smooth'});
     ta.focus();
-    // バルーンのメッセージを一時的にエラー表示
-    const balloon = document.querySelector('.guide-balloon');
-    if (balloon) {
-      const orig = balloon.innerHTML;
-      balloon.innerHTML = '⚠️ メモを書いてから次へ進んでね！';
-      balloon.style.borderColor = '#e05c5c';
-      balloon.style.color = '#c03030';
-      setTimeout(() => { balloon.innerHTML = orig; balloon.style.borderColor = ''; balloon.style.color = ''; }, 2500);
-    }
-    setTimeout(() => {
-      ta.style.border = '';
-      ta.style.background = '';
-      ta.placeholder = 'このフェーズのメモを入力...';
-    }, 2500);
+    ta.placeholder = '⚠️ メモを入力してから次へ進んでください';
+    setTimeout(() => { ta.placeholder = 'このフェーズのメモを入力...'; }, 3000);
   }
 }
 
@@ -1371,12 +1366,12 @@ function buildNavHtml() {
   h += `<button class="nav-btn" onclick="resetPhase()">やり直す</button>`;
   if (!chosenCard) {
     h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="scrollToCard()">次へ → <span style='font-size:11px;'>（カードを選んでください）</span></button>`;
+  } else if (!hasKeyword) {
+    h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="document.getElementById('kw-container')?.scrollIntoView({behavior:'smooth'})">次へ → <span style='font-size:11px;'>（キーワードを選択してください）</span></button>`;
   } else if (!hasMemo) {
     h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="showMemoError()">次へ → <span style='font-size:11px;'>（メモを入力してください）</span></button>`;
-  } else if (!hasKeyword) {
-    h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="showKeywordError()">次へ → <span style='font-size:11px;'>（キーワードを選択してください）</span></button>`;
   } else if (!hasSat) {
-    h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="document.getElementById('sat-section').scrollIntoView({behavior:'smooth'})">次へ → <span style='font-size:11px;'>（評価を選択してください）</span></button>`;
+    h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="document.getElementById('sat-section')?.scrollIntoView({behavior:'smooth'})">次へ → <span style='font-size:11px;'>（評価を選択してください）</span></button>`;
   } else if (canNext && currentPhase < 9) {
     h += `<button class="nav-btn primary" onclick="next()">次へ →</button>`;
   } else if (canNext && currentPhase === 9) {
@@ -1773,15 +1768,12 @@ function onMemoInput() {
 }
 
 function onMemoBlur() {
-  // メモ欄からフォーカスが外れたタイミングで吹き出しチェック
   const ta = document.getElementById('memo-input');
   if (!ta) return;
   memos[currentPhase] = ta.value;
-  const hasMemo    = ta.value.trim() !== '';
-  const hasKeyword = pickedKeywords[currentPhase] && pickedKeywords[currentPhase].length > 0;
-  if (hasMemo && hasKeyword) {
-    render();
-  }
+  const len = ta.value.trim().length;
+  if (len > 0) logOp(currentPhase, 'memo_input', `${len}文字`);
+  render();
 }
 
 function onNameInput() {
@@ -2125,7 +2117,6 @@ function render() {
     html += `<div class="meaning-box up" style="opacity:${orientations[currentPhase]==='up'?'1':'0.4'}"><div class="meaning-title">正位置</div><div class="meaning-tags">${chosenCard.up.map(t=>`<span class="tag up">${t}</span>`).join('')}</div></div>`;
     html += `<div class="meaning-box down" style="opacity:${orientations[currentPhase]==='down'?'1':'0.4'}"><div class="meaning-title">逆位置</div><div class="meaning-tags">${chosenCard.down.map(t=>`<span class="tag down">${t}</span>`).join('')}</div></div>`;
     html += `</div>`;
-    html += renderKeywordPicker(chosenCard, orientations[currentPhase]);
     html += `</div>`;
   }
 
@@ -2160,48 +2151,61 @@ function render() {
   }
 
   const memoDisabled = !chosenCard;
-  // メモ欄の直上にキャラ＋質問文を強調表示
+  const kwSelected   = (pickedKeywords[currentPhase] || []).length > 0;
+  const memoFilled   = (memos[currentPhase] || '').trim().length > 0;
+  const satSelected  = satisfaction[currentPhase] > 0;
+
+  // ── 説明文（常に表示）──
   html += `<div class="phase-prompt">
     <div class="phase-prompt-label">📝 このフェーズで考えること</div>
     ${phase.desc}
   </div>`;
 
-  if (!memoDisabled) {
-    html += `<div class="guide-wrap" style="margin-bottom:0.75rem;">
-      ${charaHtml('guide')}
-      <div class="guide-balloon">${GUIDE_MESSAGES[currentPhase]}</div>
-    </div>`;
-  } else {
+  // ── カード未選択：ガイドのみ ──
+  if (!chosenCard) {
     html += `<div class="guide-wrap" style="margin-bottom:0.75rem;">
       ${charaHtml('hint')}
       <div class="guide-balloon">まずランダムボタンを押して、カードを選んでね！</div>
     </div>`;
-  }
-  html += `<div class="memo-label" style="color:${memoDisabled?'#ccc':'#aaa'};">メモ${memoDisabled?' （先にカードを選んでください）':''}</div>`;
-  html += `<textarea class="memo-area" id="memo-input" placeholder="${memoDisabled?'先にカードを選んでください':'このフェーズのメモを入力...'}" ${memoDisabled?'disabled style="background:#f5f4f0;color:#bbb;cursor:not-allowed;"':'oninput="onMemoInput()" onblur="onMemoBlur()"'} >${memos[currentPhase]}</textarea>`;
-  // 構造化文セクションは現在非表示（今後の追加機能として保留）
-  // html += renderStructSection();
 
-  // メモ+キーワード済みで吹き出し表示
-  const _hasMemo3    = memos[currentPhase].trim() !== '';
-  const _hasKeyword3 = pickedKeywords[currentPhase] && pickedKeywords[currentPhase].length > 0;
-  if (_hasMemo3 && _hasKeyword3) {
-    html += `<div class="guide-wrap" style="margin-bottom:0.75rem;">
-      ${charaHtml('guide')}
-      <div class="guide-balloon">メモとキーワードが入力できたね！次は<strong>このフェーズへの評価</strong>を選んでね。</div>
-    </div>`;
-  }
+  } else {
+    // ── カード選択済み：キーワード欄 ──
+    html += renderKeywordSection();
 
-  // 5段階評価（統合）
-  const satVal5 = satisfaction[currentPhase];
-  const sat5Descs = ['','全く納得できない','あまり納得できない','どちらとも言えない','まあ納得できる','完全に納得できる'];
-  html += `<div class="satisfaction-section" id="sat-section">
-    <div class="satisfaction-label">このフェーズの回答への評価<span style="font-size:11px;color:#aaa;margin-left:6px;">（1＝全く納得できない　5＝完全に納得できる）</span></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center;">
-      ${[1,2,3,4,5].map(n => `<button onclick="setSat(${n})" style="width:44px;height:44px;border-radius:50%;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.15s;border:2px solid ${satVal5===n?'#3D1F0D':'#ddd'};background:${satVal5===n?'#3D1F0D':'#f5f4f0'};color:${satVal5===n?'#fff':'#888'};">${n}</button>`).join('')}
-    </div>
-    <div style="font-size:12px;color:#3D1F0D;margin-top:6px;min-height:18px;font-weight:500;">${sat5Descs[satVal5]||'未選択'}</div>
-  </div>`;
+    // ── キーワード選択済み：メモ欄 ──
+    if (kwSelected) {
+      html += `<div class="guide-wrap" style="margin-bottom:0.75rem;">
+        ${charaHtml('guide')}
+        <div class="guide-balloon">${GUIDE_MESSAGES[currentPhase]}</div>
+      </div>`;
+      html += `<div class="memo-label" style="color:#aaa;">メモ</div>`;
+      html += `<textarea class="memo-area" id="memo-input" placeholder="このフェーズのメモを入力..." oninput="onMemoInput()" onblur="onMemoBlur()">${memos[currentPhase]}</textarea>`;
+      if (!memoFilled) {
+        html += `<button onclick="onMemoConfirm()" style="margin-top:8px;padding:8px 20px;background:#3D1F0D;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600;">メモを入力した　→</button>`;
+      }
+    } else {
+      // キーワード未選択：メモは非表示
+    }
+
+    // ── メモ入力済み：評価欄 ──
+    if (memoFilled) {
+      if (kwSelected && !satSelected) {
+        html += `<div class="guide-wrap" style="margin-bottom:0.75rem;">
+          ${charaHtml('guide')}
+          <div class="guide-balloon">メモが書けたね！次は<strong>このフェーズへの評価</strong>を選んでね。</div>
+        </div>`;
+      }
+      const satVal5 = satisfaction[currentPhase];
+      const sat5Descs = ['','全く納得できない','あまり納得できない','どちらとも言えない','まあ納得できる','完全に納得できる'];
+      html += `<div class="satisfaction-section" id="sat-section">
+        <div class="satisfaction-label">このフェーズの回答への評価<span style="font-size:11px;color:#aaa;margin-left:6px;">（1＝全く納得できない　5＝完全に納得できる）</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center;">
+          ${[1,2,3,4,5].map(n => `<button onclick="setSat(${n})" style="width:44px;height:44px;border-radius:50%;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.15s;border:2px solid ${satVal5===n?'#3D1F0D':'#ddd'};background:${satVal5===n?'#3D1F0D':'#f5f4f0'};color:${satVal5===n?'#fff':'#888'};">${n}</button>`).join('')}
+        </div>
+        <div style="font-size:12px;color:#3D1F0D;margin-top:6px;min-height:18px;font-weight:500;">${sat5Descs[satVal5]||'未選択'}</div>
+      </div>`;
+    }
+  }
 
   html += '</div></div>';
 
