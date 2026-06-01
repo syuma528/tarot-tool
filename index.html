@@ -384,6 +384,11 @@ h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.0
 <h1>タロット：ケルト十字</h1>
 <div id="main"></div>
 
+<!-- バージョン表記 -->
+<div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:#aaa;z-index:900;pointer-events:none;">
+  Ver. 2.17 (2026.06.01)
+</div>
+
 <script>
 const THEMES = [
   { id: 1, label: '遊びに行くなら…',       question: '遊びに行くなら「遊園地」と「水族館」、どちらが良いか？' },
@@ -574,7 +579,7 @@ function resumeDraft() {
 
 function hasDraft() {
   const d = loadDraft();
-  return d && (d.currentPhase > 0 || d.screen === 'opinion' || d.screen === 'theme');
+  return d && (d.currentPhase > 0 || d.screen === 'opinion' || d.screen === 'theme' || d.screen === 'main');
 }
 
 function formatDraftDate(iso) {
