@@ -6,10 +6,10 @@
 <title>タロット：ケルト十字</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif; background: #E1F5EE; color: #1a1a1a; min-height: 100vh; padding: 1.5rem; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif; background: #E1F5EE; color: #1a1a1a; min-height: 100vh; padding: 1.5rem 1.5rem 1.5rem 5rem; }
 h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.03em; }
 
-.phase-bar { display: flex; align-items: center; gap: 5px; margin-bottom: 1rem; flex-wrap: wrap; }
+.phase-bar { display: flex; align-items: center; gap: 5px; margin-bottom: 1rem; flex-wrap: wrap; padding-left: 4rem; }
 .phase-label { font-size: 12px; color: #888; margin-right: 4px; }
 .phase-btn { font-size: 11px; padding: 3px 9px; border: 0.5px solid #ccc; border-radius: 7px; background: #fff; color: #555; cursor: pointer; transition: all 0.15s; }
 .phase-btn:hover { background: #f0effe; border-color: #afa9ec; color: #3c3489; }
@@ -385,7 +385,7 @@ button.next-action {
 <div id="toast"></div>
 
 <!-- ヘルプボタン -->
-<button class="history-fab" onclick="toggleHelpModal()" style="right:160px;">❓ 使い方</button>
+<button class="history-fab" onclick="toggleHelpModal()" style="left:8px;right:auto;">❓ 使い方</button>
 
 <!-- ヘルプモーダル -->
 <div id="help-overlay" class="history-overlay" onclick="toggleHelpModal()"></div>
@@ -457,7 +457,6 @@ button.next-action {
   </div>
 </div>
 
-<h1>タロット：ケルト十字</h1>
 <div id="main"></div>
 
 <!-- バージョン表記 -->
@@ -1330,6 +1329,11 @@ function renderIntro() {
       </div>
 
       <div class="intro-section">
+        <div class="intro-section-title">進め方</div>
+        <div class="intro-text">全部で10の「フェーズ（場面）」があります。各フェーズでは異なる視点からテーマについて考えます。カードの意味を参考にしながら回答欄に記入してください。正解はありません。思ったことをそのまま書いていただければ大丈夫です。</div>
+      </div>
+
+      <div class="intro-section">
         <div class="intro-section-title">各フェーズの操作の流れ</div>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
           <div style="display:flex;align-items:center;gap:12px;">
@@ -1374,10 +1378,6 @@ function renderIntro() {
         </div>
       </div>
 
-      <div class="intro-section">
-        <div class="intro-section-title">進め方</div>
-        <div class="intro-text">全部で10のフェーズがあります。各フェーズでカードを選び、カードの意味を参考にしながら回答欄に記入してください。正解はありません。思ったことをそのまま書いていただければ大丈夫です。</div>
-      </div>
       <button class="intro-start-btn" onclick="startFromIntro()">内容を確認しました　→　次へ</button>
     </div>
   </div>`;
