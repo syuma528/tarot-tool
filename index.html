@@ -2062,9 +2062,7 @@ function renderHistoryPanel() {
     body.innerHTML = `<div style="font-size:13px;color:#aaa;text-align:center;padding:2rem 0;">保存済みデータはありません</div>`;
     return;
   }
-  let h = `<div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
-    <button class="nav-btn" onclick="exportCSV('csv-fab')" style="font-size:12px;padding:4px 10px;border-color:#5dcaa5;color:#0f6e56;">CSVでダウンロード</button>
-  </div>`;
+  let h = ``;
   for (const s of saves) {
     const label = s.name || '（名前なし）';
     const theme = s.selectedTheme && s.selectedTheme.id === 99 ? s.customThemeText : (s.selectedTheme ? s.selectedTheme.question : '');
@@ -2172,13 +2170,12 @@ function render() {
     html += `<div class="nav-row">
       <button class="nav-btn" onclick="resetAll()">新しく始める</button>
       <button class="nav-btn primary" onclick="saveResult()">この結果を保存</button>
-      <button class="nav-btn" id="csv-btn-main" onclick="exportCSV('csv-btn-main')" style="border-color:#5dcaa5;color:#0f6e56;">CSVでダウンロード（全件）</button>
-      <button class="nav-btn" id="csv-btn-single" onclick="exportSingleCSV('csv-btn-single')" style="border-color:#3D1F0D;color:#3D1F0D;">今回の結果のみCSV</button>
+      <button class="nav-btn" id="csv-btn-single" onclick="exportSingleCSV('csv-btn-single')" style="border-color:#3D1F0D;color:#3D1F0D;">結果をCSV形式で保存</button>
     </div>`;
 
     if (saves.length > 0) {
       html += '<div class="saves-section">';
-      html += `<div class="saves-title" style="display:flex;align-items:center;justify-content:space-between;">保存済みデータ（${saves.length}件）<button class="nav-btn" id="csv-btn-list" onclick="exportCSV('csv-btn-list')" style="font-size:12px;padding:4px 10px;border-color:#5dcaa5;color:#0f6e56;">CSVでダウンロード</button></div>`;
+      html += `<div class="saves-title">保存済みデータ（${saves.length}件）</div>`;
       for (const s of saves) {
         const label = s.name ? `${s.name}` : '（名前なし）';
         const themeDisp = s.selectedTheme && s.selectedTheme.id === 99 ? s.customThemeText : (s.selectedTheme ? s.selectedTheme.question : '');
