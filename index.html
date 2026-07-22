@@ -387,6 +387,19 @@ button.next-action {
 <!-- ヘルプボタン -->
 <button class="history-fab" onclick="toggleHelpModal()" style="left:8px;right:auto;">❓ 使い方</button>
 
+<!-- 回答例ボタン -->
+<button class="history-fab" onclick="toggleExampleModal()" style="left:8px;right:auto;top:56px;">📝 回答例</button>
+
+<!-- 回答例モーダル -->
+<div id="example-overlay" class="history-overlay" onclick="toggleExampleModal()"></div>
+<div id="example-modal" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(520px,92vw);max-height:80vh;background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.18);z-index:1001;display:none;flex-direction:column;overflow:hidden;">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:#E1F5EE;border-bottom:1px solid #5DCAA5;">
+    <span style="font-size:14px;font-weight:600;color:#3D1F0D;">📝 回答例（見たいときにどうぞ）</span>
+    <button onclick="toggleExampleModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:#3D1F0D;">✕</button>
+  </div>
+  <div id="example-modal-body" style="overflow-y:auto;padding:16px 18px;"></div>
+</div>
+
 <!-- ヘルプモーダル -->
 <div id="help-overlay" class="history-overlay" onclick="toggleHelpModal()"></div>
 <div id="help-modal" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(480px,92vw);max-height:80vh;background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.18);z-index:1001;display:none;flex-direction:column;overflow:hidden;">
@@ -461,7 +474,7 @@ button.next-action {
 
 <!-- バージョン表記 -->
 <div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:#aaa;z-index:900;pointer-events:none;">
-  Ver. 2.19 (2026.06.03)
+  Ver. 2.20 (2026.07.08)
 </div>
 
 <script>
@@ -508,22 +521,22 @@ function charaHtml(pose, size) {
   </div>`;
 }
 
-const GUIDE_MESSAGES = ["今のテーマについて、あなたが今どんな状況にいるか感じたことを回答欄に書いてみよう！", "このフェーズでは「障害と対策」を考えるよ。カードは正位置が固定だよ。立ちはだかっていると感じることを書いてみよう！", "表に見えていること・意識していることを書いてみよう。カードのキーワードをヒントにしてね！", "普段は見えていない、深いところにある気持ちや本音を書いてみよう。難しければカードのキーワードから連想してみて！", "過去のことを振り返るフェーズだよ。このテーマに影響を与えた出来事や経験を書いてみよう！", "近い未来を想像してみよう。このテーマについて、これから起こりそうなことを自由に書いてね！", "あなた自身がこのテーマにどう関わっているか書いてみよう。立場や関わり方を考えてみてね！", "自分以外の人たちはどう感じているかな？周りの人の視点を想像して書いてみよう！", "理想や恐れを書くフェーズだよ。このテーマについて、こうなってほしい・こうはなりたくない、を書いてみて！", "いよいよ最後！ここまでの9枚を振り返って、テーマに対するあなたの最終的な考えをまとめてみよう！"];
+const GUIDE_MESSAGES = ["今のテーマについて、あなたが今どんな状況にいるか感じたことを回答欄に書いてみよう！", "このフェーズでは「障害と対策」を考えるよ。立ちはだかっていると感じることを書いてみよう！", "表に見えていること・意識していることを書いてみよう。カードのキーワードをヒントにしてね！", "普段は見えていない、深いところにある気持ちや本音を書いてみよう。難しければカードのキーワードから連想してみて！", "過去のことを振り返るフェーズだよ。このテーマに影響を与えた出来事や経験を書いてみよう！", "近い未来を想像してみよう。このテーマについて、これから起こりそうなことを自由に書いてね！", "あなた自身がこのテーマにどう関わっているか書いてみよう。立場や関わり方を考えてみてね！", "自分以外の人たちはどう感じているかな？周りの人の視点を想像して書いてみよう！", "理想や恐れを書くフェーズだよ。このテーマについて、こうなってほしい・こうはなりたくない、を書いてみて！", "いよいよ最後！ここまでの9枚を振り返って、テーマに対するあなたの最終的な考えをまとめてみよう！"];
 
 const PHASES = [
-  { num: 1,  name: '現在の状況', desc: '質問者が今どのような状況に置かれているかを示す' },
-  { num: 2,  name: '障害と対策', desc: '現状に対して対立するもの、乗り越えていくものを示す' },
-  { num: 3,  name: '顕在意識',   desc: '表に見えることで、これから問題に対してどうなるか可能性を示す' },
-  { num: 4,  name: '潜在意識',   desc: '表には見えていない、現状に対して問題の根底にあることを示す' },
-  { num: 5,  name: '近い過去',   desc: '現状に対して影響を及ぼした過去のことを示す' },
-  { num: 6,  name: '近い未来',   desc: '現状から近い未来で起こる可能性があることを示す' },
-  { num: 7,  name: '質問者の立場', desc: '質問者が占う内容や問題に対してどんな関わり方をしているかを示す' },
-  { num: 8,  name: '周囲の状況', desc: '質問者以外の人物の心理や状況などを示す' },
-  { num: 9,  name: '期待と恐れ', desc: '理想や恐れなど質問者の問題に対しての態度を示す' },
-  { num: 10, name: '最終結果',   desc: '質問に対する最終的な結果を示す' },
+  { num: 1,  name: '現在の状況', desc: '今、あなたはこのテーマについて、どんな状況にいますか？' },
+  { num: 2,  name: '障害と対策', desc: 'このテーマの前に立ちはだかっていること、それを乗り越えるための対策は何ですか？' },
+  { num: 3,  name: '顕在意識',   desc: 'このテーマについて、表面的に意識していること・これからどうなりそうかを考えてみましょう' },
+  { num: 4,  name: '潜在意識',   desc: '表には出ていない、心の奥にある本音や、問題の根っこにあるものは何ですか？' },
+  { num: 5,  name: '近い過去',   desc: 'このテーマに影響を与えた、少し前の出来事は何ですか？' },
+  { num: 6,  name: '近い未来',   desc: 'このテーマについて、近い将来起こりそうなことは何ですか？' },
+  { num: 7,  name: 'あなたの立場', desc: 'このテーマに対して、あなた自身はどのように関わっていますか？' },
+  { num: 8,  name: '周囲の状況', desc: 'あなた以外の人は、このテーマについてどう感じていそうですか？' },
+  { num: 9,  name: '期待と恐れ', desc: 'このテーマについて、期待していることと、恐れていることは何ですか？' },
+  { num: 10, name: '最終結果',   desc: 'ここまでを振り返って、このテーマについての今の考えをまとめてみましょう' },
 ];
 
-let screen = 'intro';
+let screen = 'name';
 let showPastAnswers    = false;
 let satisfaction       = new Array(10).fill(0);
 let finalSupplement    = '';
@@ -654,7 +667,7 @@ function resumeDraft() {
 
 function hasDraft() {
   const d = loadDraft();
-  return d && (d.currentPhase > 0 || d.screen === 'opinion' || d.screen === 'theme' || d.screen === 'main');
+  return d && (d.currentPhase > 0 || d.screen === 'opinion' || d.screen === 'theme' || d.screen === 'main' || d.screen === 'tutorial' || d.screen === 'practice' || d.screen === 'practice2');
 }
 
 function formatDraftDate(iso) {
@@ -916,6 +929,11 @@ function exportCSV(btnId) {
 function loadSave(id) {
   const s = loadSaves().find(x => x.id === id);
   if (!s) return;
+  const inProgress = (screen === 'main' && !completed) || screen === 'opinion' || screen === 'theme' || screen === 'tutorial' || screen === 'practice' || screen === 'practice2';
+  if (inProgress) {
+    const ok = confirm('保存済みの回答を開くと、今取り組んでいる回答画面から離れます。\n（今の入力内容は「続きから再開」で自動的に保存されているので消えません。閉じるボタンで今の画面に戻れます）\n\n保存済みの回答を開きますか？');
+    if (!ok) return;
+  }
   selectedCards   = [...s.selectedCards];
   orientations    = [...s.orientations];
   memos           = [...s.memos];
@@ -993,6 +1011,7 @@ function renderKeywordPicker(chosenCard, ori) {
   const picked = pickedKeywords[currentPhase];
   let h = '<div class="keyword-select-label" id="kw-label">このフェーズで使うキーワードを選んでください（最低1つ・最大2つ）</div>';
   h += '<div class="keyword-select-note">出た向きのキーワードから、自分の考えに近いものを選んでください</div>';
+  h += '<div class="keyword-select-note" style="color:#0f6e56;">※ 選んだキーワードをもう一度タップすると、選択を取り消して選び直せます</div>';
   h += '<div class="meaning-tags" id="kw-container">';
   h += kwList.map(k => {
     const isPicked = picked.includes(k);
@@ -1136,9 +1155,46 @@ function selectCard(num, forcedOri) {
   render();
 }
 
-function next()       { recordPhaseTime(); saveMemo(); saveName(); if (currentPhase < 9) { currentPhase++; startPhaseTimer(); saveDraft(); render(); setTimeout(() => { const el = document.getElementById('phase-top'); if(el) el.scrollIntoView({behavior:'smooth'}); else window.scrollTo({top:0,behavior:'smooth'}); }, 50); } }
+function next()       { recordPhaseTime(); saveMemo(); saveName(); if (currentPhase < 9) { currentPhase++; hintOpen = false; hintTab = 0; startPhaseTimer(); saveDraft(); render(); setTimeout(() => { const el = document.getElementById('phase-top'); if(el) el.scrollIntoView({behavior:'smooth'}); else window.scrollTo({top:0,behavior:'smooth'}); }, 50); } }
 function jumpTo(i)    { recordPhaseTime(); saveMemo(); saveName(); currentPhase = i; showPastAnswers = false; showSameThemePast = false; hintOpen = false; hintTab = 0; startPhaseTimer(); saveDraft(); render(); }
-function resetPhase() { saveMemo(); saveName(); selectedCards[currentPhase] = null; orientations[currentPhase] = null; pickedKeywords[currentPhase] = []; saveDraft(); render(); }
+let lastResetBackup = null; // { phase, selectedCard, orientation, pickedKeywords, randomUsed, randomCandidates, randomOrientations }
+function resetPhase() {
+  saveMemo(); saveName();
+  const ok = confirm('「やり直す」を押すと、このフェーズで選んだカード・キーワードが最初の状態に戻ります。\n（すでに書いた回答欄の文章は消えません）\n\nやり直しますか？');
+  if (!ok) return;
+  lastResetBackup = {
+    phase: currentPhase,
+    selectedCard: selectedCards[currentPhase],
+    orientation: orientations[currentPhase],
+    pickedKeywords: [...pickedKeywords[currentPhase]],
+    randomUsed: randomUsed[currentPhase],
+    randomCandidates: randomCandidates[currentPhase] ? [...randomCandidates[currentPhase]] : null,
+    randomOrientations: randomOrientations[currentPhase] ? [...randomOrientations[currentPhase]] : null,
+  };
+  selectedCards[currentPhase] = null;
+  orientations[currentPhase] = null;
+  pickedKeywords[currentPhase] = [];
+  randomUsed[currentPhase] = false;
+  randomCandidates[currentPhase] = null;
+  randomOrientations[currentPhase] = null;
+  logOp(currentPhase, 'phase_reset', 'やり直しボタン');
+  saveDraft();
+  render();
+}
+function undoResetPhase() {
+  if (!lastResetBackup || lastResetBackup.phase !== currentPhase) return;
+  const b = lastResetBackup;
+  selectedCards[currentPhase] = b.selectedCard;
+  orientations[currentPhase] = b.orientation;
+  pickedKeywords[currentPhase] = [...b.pickedKeywords];
+  randomUsed[currentPhase] = b.randomUsed;
+  randomCandidates[currentPhase] = b.randomCandidates ? [...b.randomCandidates] : null;
+  randomOrientations[currentPhase] = b.randomOrientations ? [...b.randomOrientations] : null;
+  lastResetBackup = null;
+  logOp(currentPhase, 'phase_reset_undo', 'やり直しを元に戻した');
+  saveDraft();
+  render();
+}
 function complete()   { recordPhaseTime(); saveMemo(); saveName(); screen2 = 'final_eval'; render(); }
 function submitFinalEval() {
   const fe = document.getElementById('fe-freetext');
@@ -1194,9 +1250,7 @@ function renderCeltic() {
     const isHoriz  = i === 1;
     let label = '';
     if (isDone) {
-      const card = CARDS.find(c => c.num === selectedCards[i]);
-      const oriText = orientations[i] === 'up' ? '正' : '逆';
-      label = `<div style="font-size:10px">${card.name}</div><div style="font-size:11px">(${oriText})</div>`;
+      label = `<div style="font-size:18px">✓</div>`;
     } else {
       label = i + 1;
     }
@@ -1225,13 +1279,12 @@ function renderReviewList() {
   for (let i = 0; i < 9; i++) {
     const cardNum = selectedCards[i];
     if (cardNum === null) continue;
-    const card = CARDS.find(c => c.num === cardNum);
-    const ori = orientations[i] === 'up' ? '正' : '逆';
+    const kwText = (pickedKeywords[i] || []).join('・');
     const structSent = getStructSentence(i);
     
     h += `<div class="review-item">
       <div class="review-phase-name">フェーズ ${i+1}: ${PHASES[i].name}</div>
-      <div class="review-card-info">${card.name} (${ori})</div>`;
+      <div class="review-card-info">選んだキーワード: ${kwText}</div>`;
     if (structSent) h += `<div class="review-struct">📝 ${structSent}</div>`;
     if (memos[i])   h += `<div class="review-memo-text">${memos[i]}</div>`;
     h += `</div>`;
@@ -1261,12 +1314,183 @@ function renderTheme() {
     <div class="theme-card">
       <div class="theme-title">テーマを選んでください</div>
       <div class="theme-sub">以下の中から、今回考えてみたいテーマを1つ選んでください。</div>
+      <div style="background:#fff8e8;border:1px solid #f0c040;border-radius:10px;padding:10px 14px;margin-bottom:1rem;font-size:13px;color:#7a5c00;line-height:1.7;">
+        ⚠️ <strong>テーマ選びのポイント</strong><br>
+        「なんとなく馴染みがあるから」という理由だけで選ぶと、いざ書き始めると書きにくいと感じることがあります。<br>
+        選ぶ前に「このテーマについて、自分なりの意見や感じることがあるか」を少し考えてから選ぶと、回答しやすくなります。
+      </div>
       <div class="theme-options">${opts}</div>
       <div class="nav-row" style="position:static;border-top:none;padding-top:0;">
-        <button class="nav-btn" onclick="screen='intro'; render()">← 戻る</button>
+        <button class="nav-btn" onclick="stopSpeech(); screen='practice2'; render()">← 戻る</button>
         <button class="nav-btn primary" onclick="screen='opinion'; render()" ${canProceed ? '' : 'disabled style="opacity:0.4;cursor:not-allowed;"'}>次へ →</button>
       </div>
     </div>
+  </div>`;
+}
+
+const OPINION_EXAMPLE_TEXT = '正直、今の環境にうまく馴染めるか不安があります。周りとうまくやっていけるか自信がなく、毎日少し緊張しています。';
+const PHASE_EXAMPLE_ANSWERS = [
+  '新しい職場に来てまだ2週間ほどで、誰にどう話しかけたらいいか分からず様子を見ている状態です。休憩時間も一人で過ごすことが多いです。',
+  '人見知りな性格が壁になっていると思います。まずは自分から挨拶をすることから始めてみようと思います。',
+  '早くこの職場に馴染みたいと意識しています。少しずつですが、話しかけてくれる人も増えてきた気がします。',
+  '本当は前の職場が恋しくて、この変化についていけていない部分があるのかもしれません。',
+  '急に異動が決まり、心の準備をする時間がほとんどなかったことが影響していると思います。',
+  'このまま少しずつ話せる人が増えていきそうな予感がします。',
+  '実は自分から話しかけるのを避けてしまっていることに気づきました。',
+  '周りの人たちも、新しく来た自分にどう接したらいいか、様子を見ているだけなのかもしれません。',
+  '早く馴染みたいという期待と、浮いてしまうのではという恐れの両方があります。',
+  '時間はかかるかもしれませんが、焦らず少しずつ関係を築いていけそうだと思えました。',
+];
+
+function tutorialExamplesHtml() {
+  const opinionExample = `サイト使用前の意見の例：「${OPINION_EXAMPLE_TEXT}」`;
+  const phaseExamples = PHASE_EXAMPLE_ANSWERS;
+  let h = `<div style="background:#F5F4F0;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:#3D1F0D;line-height:1.7;">
+    ※ これはあくまで「書き方の一例」です。テーマはご自身が決めたもので、内容や感じ方は人それぞれで構いません。<br>
+    ${opinionExample}
+  </div>`;
+  for (let i = 0; i < 10; i++) {
+    const p = PHASES[i];
+    h += `<div style="border:0.5px solid #e0dfd8;border-radius:10px;padding:12px 16px;margin-bottom:10px;">
+      <div style="font-size:12px;font-weight:700;color:#3D1F0D;margin-bottom:4px;">フェーズ${p.num}：${p.name}</div>
+      <div style="font-size:12px;color:#8B6A4A;margin-bottom:6px;">❓ ${p.desc}</div>`;
+    if (i === 0) {
+      h += `<div style="font-size:12px;color:#3D1F0D;background:#F5F4F0;border-radius:8px;padding:8px 10px;margin-bottom:8px;">
+        <strong>操作の流れ：</strong><br>
+        ① 「ランダムでカードを引く」ボタンを押す →
+        ② 出てきた2択のうち、しっくりくるほうを選ぶ（カード名や正逆は気にしなくてOK、キーワードだけ見て選べば大丈夫）→
+        ③ 表示されたキーワードから1〜2個選ぶ →
+        ④ 回答欄に、キーワードを参考にしながら自由に文章を書く →
+        ⑤ 納得度を星で選ぶ →
+        ⑥ 「次へ」を押す
+      </div>`;
+    }
+    h += `<div style="font-size:12px;color:#444;">📝 回答例：「${phaseExamples[i]}」</div>`;
+    h += `</div>`;
+  }
+  h += `<div style="font-size:12px;color:#8B6A4A;margin-top:6px;line-height:1.6;">※ 上の回答例はあくまで「書き方」の参考です。テーマも感じ方も人それぞれなので、思ったことをそのまま自由に書いて大丈夫です。</div>`;
+  return h;
+}
+
+function renderTutorial() {
+  return `<div class="intro-screen">
+    <div class="intro-card">
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:1.2rem;">
+        ${charaHtml('guide', 72)}
+        <div class="guide-balloon" style="font-size:14px;">
+          「どう書けばいいかわからない」という声が多いので、<br>
+          先に<strong>回答例</strong>を見てみましょう！<br>
+          <span style="font-size:12px;color:#888;">※ 回答中もこの画面はいつでも見られます（画面左上「📝 回答例」）</span>
+        </div>
+      </div>
+      ${speechButtonsHtml('tutorial')}
+      ${tutorialExamplesHtml()}
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="nav-btn" onclick="stopSpeech(); screen='intro'; render()">← 戻る</button>
+        <button class="nav-btn primary" onclick="startFromTutorial()">次へ →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ===== 読み上げ機能（名前入力・目的説明・回答例の画面のみ） =====
+function buildSpeechText(key) {
+  if (key === 'name') {
+    return 'はじめまして。まず、あなたのお名前を入力してください。これは研究データに使用します。入力したら、次へボタンを押してください。';
+  }
+  if (key === 'intro') {
+    return [
+      '思考支援ツール。はじめる前に、このツールの使い方をお読みください。',
+      'このツールの目的。あるテーマについて、普段とは違う角度から多角的に考えるためのツールです。10の場面、フェーズを通じて、自分の考えを少しずつ整理・深めていくことができます。',
+      '大切なポイント。このツールに正解はありません。各フェーズで提示されるヒントを手がかりに、自由に考えてみてください。自分の意見はそのままで構いません。ヒントを見たとき、そういう見方もあるかもと感じることがあれば、それを回答に取り入れてみてください。無理に考えを変える必要はありません。',
+      '進め方。全部で10のフェーズがあります。各フェーズでは異なる視点からテーマについて考えます。表示されるヒントを参考にしながら、回答欄に自由に記入してください。正解はありません。思ったことをそのまま書いていただければ大丈夫です。',
+      '各フェーズの操作の流れです。1、カードを引く。ランダムボタンで2枚表示されるので、その中から1枚選びます。2、キーワードを選ぶ。出たカードのキーワードから1つか2つ選びます。3、回答欄に書く。カードを参考にテーマについて自由に記入します。4、評価する。このフェーズの回答への納得度を1から5で選びます。5、次のフェーズへ進みます。これを全10フェーズ繰り返します。',
+      '内容を確認したら、次へボタンを押してください。',
+    ].join(' ');
+  }
+  if (key === 'tutorial') {
+    const parts = [
+      'どう書けばいいか分からないという声が多いので、先に回答例を見てみましょう。これはあくまで書き方の一例です。テーマはご自身が決めたもので、内容や感じ方は人それぞれで構いません。',
+      `使用前の意見の例です。${OPINION_EXAMPLE_TEXT}`,
+    ];
+    for (let i = 0; i < 10; i++) {
+      const p = PHASES[i];
+      let block = `フェーズ${p.num}、${p.name}。質問は、${p.desc}`;
+      if (i === 0) {
+        block += ' 操作の流れは次のとおりです。まずランダムでカードを引くボタンを押します。次に、出てきた2択のうち、しっくりくるほうを選びます。カード名や正逆は気にしなくて大丈夫です。キーワードだけ見て選べば大丈夫です。次に、表示されたキーワードから1つか2つ選びます。次に、回答欄にキーワードを参考にしながら自由に文章を書きます。次に、納得度を星で選びます。最後に、次へを押します。';
+      }
+      block += ` 回答例は、${PHASE_EXAMPLE_ANSWERS[i]}`;
+      parts.push(block);
+    }
+    return parts.join(' ');
+  }
+  return '';
+}
+
+let speechRate = 1.1;
+let speechVoiceURI = '';
+let japaneseVoices = [];
+
+function loadJapaneseVoices() {
+  if (!('speechSynthesis' in window)) return;
+  const all = window.speechSynthesis.getVoices();
+  japaneseVoices = all.filter(v => v.lang && v.lang.toLowerCase().startsWith('ja'));
+  if (japaneseVoices.length === 0) japaneseVoices = all; // 日本語音声が見つからない端末用のフォールバック
+  const sel = document.getElementById('speech-voice-select');
+  if (sel && japaneseVoices.length > 0) {
+    sel.innerHTML = japaneseVoices.map((v, i) => `<option value="${i}">${v.name}</option>`).join('');
+    if (speechVoiceURI) {
+      const idx = japaneseVoices.findIndex(v => v.voiceURI === speechVoiceURI);
+      if (idx >= 0) sel.value = idx;
+    }
+  }
+}
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = loadJapaneseVoices;
+}
+
+function onSpeechVoiceChange() {
+  const sel = document.getElementById('speech-voice-select');
+  if (!sel) return;
+  const v = japaneseVoices[Number(sel.value)];
+  speechVoiceURI = v ? v.voiceURI : '';
+}
+
+function onSpeechRateChange() {
+  const sel = document.getElementById('speech-rate-select');
+  if (!sel) return;
+  speechRate = Number(sel.value);
+}
+
+function speakScreen(key) {
+  if (!('speechSynthesis' in window)) {
+    alert('お使いのブラウザは読み上げ機能に対応していません。');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(buildSpeechText(key));
+  utter.lang = 'ja-JP';
+  utter.rate = speechRate;
+  if (speechVoiceURI) {
+    const v = japaneseVoices.find(v => v.voiceURI === speechVoiceURI);
+    if (v) utter.voice = v;
+  }
+  window.speechSynthesis.speak(utter);
+}
+
+function stopSpeech() {
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+}
+
+function speechButtonsHtml(key) {
+  const rateOptions = [0.8, 1.0, 1.1, 1.25, 1.5].map(r =>
+    `<option value="${r}" ${r === speechRate ? 'selected' : ''}>${r}倍速</option>`
+  ).join('');
+  return `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px;">
+    <button class="nav-btn" onclick="speakScreen('${key}')">🔊 読み上げる</button>
+    <button class="nav-btn" onclick="stopSpeech()">■ 停止</button>
+    <select id="speech-rate-select" class="nav-btn" style="cursor:pointer;" onchange="onSpeechRateChange()">${rateOptions}</select>
+    <select id="speech-voice-select" class="nav-btn" style="cursor:pointer;max-width:180px;" onchange="onSpeechVoiceChange()"><option>声を読み込み中…</option></select>
   </div>`;
 }
 
@@ -1313,24 +1537,26 @@ function renderIntro() {
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:1rem;">
         ${introCharaHtml}
         <div>
-          <div class="intro-title" style="margin-bottom:0;">タロット：ケルト十字　思考支援ツール</div>
+          <div class="intro-title" style="margin-bottom:0;">思考支援ツール</div>
           <div class="intro-sub" style="margin-bottom:0;">はじめる前に、このツールの使い方をお読みください</div>
         </div>
       </div>
 
+      ${speechButtonsHtml('intro')}
+
       <div class="intro-section">
         <div class="intro-section-title">このツールの目的</div>
-        <div class="intro-text">タロットカードを使って、テーマについて多角的に考えるためのツールです。占いではありません。カードに描かれた意味をヒントに、普段とは異なる視点から考えることを目的としています。</div>
+        <div class="intro-text">あるテーマについて、普段とは違う角度から多角的に考えるためのツールです。10の「場面（フェーズ）」を通じて、自分の考えを少しずつ整理・深めていくことができます。</div>
       </div>
       <div class="intro-section">
         <div class="intro-section-title">大切なポイント</div>
-        <div class="intro-highlight">カードはあなたの「意見を変える」ものではありません。<br>今まで気づかなかった新しい「視点」を示すヒントです。</div>
-        <div class="intro-text">自分の意見を持ったままで構いません。カードの意味を見て、自分のテーマに当てはめたとき、別の角度から考えられることはないか、探してみてください。</div>
+        <div class="intro-highlight">このツールに「正解」はありません。<br>各フェーズで提示されるヒントを手がかりに、自由に考えてみてください。</div>
+        <div class="intro-text">自分の意見はそのままで構いません。ヒントを見たとき、「そういう見方もあるかも」と感じることがあれば、それを回答に取り入れてみてください。無理に考えを変える必要はありません。</div>
       </div>
 
       <div class="intro-section">
         <div class="intro-section-title">進め方</div>
-        <div class="intro-text">全部で10の「フェーズ（場面）」があります。各フェーズでは異なる視点からテーマについて考えます。カードの意味を参考にしながら回答欄に記入してください。正解はありません。思ったことをそのまま書いていただければ大丈夫です。</div>
+        <div class="intro-text">全部で10のフェーズがあります。各フェーズでは異なる視点からテーマについて考えます。表示されるヒントを参考にしながら、回答欄に自由に記入してください。正解はありません。思ったことをそのまま書いていただければ大丈夫です。</div>
       </div>
 
       <div class="intro-section">
@@ -1378,7 +1604,10 @@ function renderIntro() {
         </div>
       </div>
 
-      <button class="intro-start-btn" onclick="startFromIntro()">内容を確認しました　→　次へ</button>
+      <div style="display:flex;gap:8px;">
+        <button class="nav-btn" onclick="stopSpeech(); screen='name'; render()">← 戻る</button>
+        <button class="intro-start-btn" onclick="startFromIntro()">内容を確認しました　→　次へ</button>
+      </div>
     </div>
   </div>`;
 }
@@ -1394,7 +1623,7 @@ function renderOpinion() {
       <textarea class="opinion-input" id="opinion-input" placeholder="今のテーマについて、思うことを自由に書いてください…" oninput="onOpinionInput()">${initialOpinion}</textarea>
       <div class="opinion-note">※ この内容は最後のサマリーで振り返りに使います。研究データとして記録されます。</div>
       <div class="nav-row" style="position:static;border-top:none;padding-top:0;">
-        <button class="nav-btn" onclick="screen='intro'; render()">← 戻る</button>
+        <button class="nav-btn" onclick="stopSpeech(); screen='theme'; render()">← 戻る</button>
         <button class="nav-btn primary" id="opinion-next-btn" onclick="startMain()" ${hasInput ? '' : 'disabled style="opacity:0.4;cursor:not-allowed;"'}>フェーズ1へ進む →</button>
       </div>
     </div>
@@ -1483,7 +1712,10 @@ function buildNavHtml() {
   const { chosenCard, hasMemo, hasKeyword, hasSat, canNext } = getCanNext();
   let h = `<span class="progress">${currentPhase + 1} / 10</span>`;
   if (currentPhase > 0) h += `<button class="nav-btn" onclick="jumpTo(${currentPhase - 1})">← 前へ</button>`;
-  h += `<button class="nav-btn" onclick="resetPhase()">やり直す</button>`;
+  h += `<button class="nav-btn" onclick="resetPhase()" title="このフェーズのカード・キーワードの選択を最初に戻します（回答文は消えません）">やり直す</button>`;
+  if (lastResetBackup && lastResetBackup.phase === currentPhase) {
+    h += `<button class="nav-btn" onclick="undoResetPhase()" title="直前の「やり直す」を取り消して、選んでいたカード・キーワードに戻します">↩ 元に戻す</button>`;
+  }
   if (!chosenCard) {
     h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="scrollToCard()">次へ → <span style='font-size:11px;'>（カードを選んでください）</span></button>`;
   } else if (!hasKeyword) {
@@ -1506,6 +1738,9 @@ function toggleHint() {
   const arrow = document.getElementById('hint-arrow');
   if (body)  body.classList.toggle('open', hintOpen);
   if (arrow) arrow.textContent = hintOpen ? '▲' : '▼';
+  if (hintOpen) {
+    setTimeout(() => selectFusionVP(0), 50);
+  }
 }
 function switchHintTab(n) {
   hintTab = n;
@@ -1651,7 +1886,7 @@ function selectFusionVP(idx) {
       [`今の行動や選択が、このテーマの近い未来にどんな影響を与えそうですか？`,
        `カードのキーワード「${pickedLabel}」が示す展開を、具体的にイメージしてみてください。`],
     ],
-    // フェーズ7「質問者の立場」
+    // フェーズ7「あなたの立場」
     [
       [`このテーマに対して、あなた自身はどんな役割を担っていますか？`,
        `カードのキーワード「${pickedLabel}」は、あなたの立ち位置をどう表していますか？`],
@@ -1785,7 +2020,7 @@ function selectFusionVP(idx) {
       [`今の行動や選択が、このテーマの近い未来にどんな影響を与えそうですか？`,
        `出たキーワード（${kws.join('・')}）の中で、その展開を示しているものはありますか？`],
     ],
-    // フェーズ7「質問者の立場」
+    // フェーズ7「あなたの立場」
     [
       [`このテーマに対して、あなた自身はどんな役割を担っていますか？`,
        `出たキーワード（${kws.join('・')}）の中で、あなたの立ち位置を表しているものはありますか？`],
@@ -1924,13 +2159,298 @@ function onOpinionInput() {
 }
 
 function startFromIntro() {
-  screen = 'name';
+  stopSpeech();
+  screen = 'tutorial';
   render();
 }
 
 function startFromName() {
   const el = document.getElementById('name-input');
   if (el) participantName = el.value.trim();
+  stopSpeech();
+  screen = 'intro';
+  render();
+}
+
+function startFromTutorial() {
+  stopSpeech();
+  screen = 'practice';
+  render();
+}
+
+function startFromPractice() {
+  screen = 'practice2';
+  render();
+}
+
+// ===== 体験フェーズ（練習用。入力内容は保存されない） =====
+let practice = {
+  candidates: null,
+  orientations: null,
+  chosenNum: null,
+  chosenOri: null,
+  keywords: [],
+  memo: '',
+  satisfaction: 0,
+};
+
+function practiceReset() {
+  practice = { candidates: null, orientations: null, chosenNum: null, chosenOri: null, keywords: [], memo: '', satisfaction: 0 };
+  render();
+}
+
+function practiceDraw() {
+  const nums = CARDS.map(c => c.num);
+  const shuffled = [...nums].sort(() => Math.random() - 0.5);
+  practice.candidates   = shuffled.slice(0, 2);
+  practice.orientations = practice.candidates.map(() => (Math.random() < 0.5 ? 'up' : 'down'));
+  practice.chosenNum = null;
+  practice.chosenOri = null;
+  practice.keywords  = [];
+  practice.memo = '';
+  practice.satisfaction = 0;
+  render();
+}
+
+function practiceSelectCard(idx) {
+  practice.chosenNum = practice.candidates[idx];
+  practice.chosenOri = practice.orientations[idx];
+  render();
+}
+
+function practiceToggleKeyword(kw) {
+  const arr = practice.keywords;
+  const i = arr.indexOf(kw);
+  if (i !== -1) {
+    arr.splice(i, 1);
+  } else {
+    if (arr.length >= 2) return;
+    arr.push(kw);
+  }
+  render();
+}
+
+function practiceOnMemoInput() {
+  const el = document.getElementById('practice-memo');
+  if (el) practice.memo = el.value;
+  const satSection = document.getElementById('practice-sat-section');
+  if (satSection) satSection.style.display = practice.memo.trim() ? 'block' : 'none';
+}
+
+function practiceSetSat(n) {
+  practice.satisfaction = n;
+  render();
+}
+
+function renderPractice() {
+  const card1 = practice.candidates ? CARDS.find(c => c.num === practice.candidates[0]) : null;
+  const card2 = practice.candidates ? CARDS.find(c => c.num === practice.candidates[1]) : null;
+  const chosenCard = practice.chosenNum !== null ? CARDS.find(c => c.num === practice.chosenNum) : null;
+  const kwList = chosenCard ? (practice.chosenOri === 'up' ? chosenCard.up : chosenCard.down) : [];
+
+  let h = `<div class="intro-screen"><div class="intro-card">`;
+  h += `<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:1.2rem;">
+    ${charaHtml('guide', 72)}
+    <div class="guide-balloon" style="font-size:14px;">
+      実際に手を動かして、操作の流れをつかんでみましょう。<br>
+      <span style="font-size:12px;color:#888;">※ この画面はあくまで練習です。ここでの入力は結果として保存されません。</span>
+    </div>
+  </div>`;
+
+  h += `<div class="phase-card" style="border:1.5px dashed #afa9ec;">`;
+  h += `<div class="phase-header"><span class="phase-num">体験フェーズ</span><span class="phase-name">操作を練習してみましょう</span></div>`;
+  h += `<div class="phase-prompt"><div class="phase-prompt-label">❓ 練習用の質問（例）</div>今、あなたはこのテーマについて、どんな状況にいますか？</div>`;
+
+  if (!practice.candidates) {
+    h += `<button class="nav-btn primary" onclick="practiceDraw()">🎴 ランダムでカードを引く</button>`;
+  } else if (practice.chosenNum === null) {
+    h += `<div class="card-choice-wrap">
+      <div style="font-size:12px;color:#aaa;margin-bottom:8px;">どちらか、しっくりくる方を選んでください</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">`;
+    [0, 1].forEach(idx => {
+      const c   = idx === 0 ? card1 : card2;
+      const ori = practice.orientations[idx];
+      const kws = ori === 'up' ? c.up : c.down;
+      h += `<button onclick="practiceSelectCard(${idx})" style="padding:10px;border:1.5px solid #afa9ec;border-radius:10px;background:#fff;cursor:pointer;text-align:left;" onmouseover="this.style.background='#eeedfe'" onmouseout="this.style.background='#fff'">
+        <div style="font-size:13px;color:#3D1F0D;">${kws.join('・')}</div>
+      </button>`;
+    });
+    h += `</div></div>`;
+  } else {
+    h += `<div class="card-result"><div class="card-name">カードが出ました</div><div class="meaning-row">
+      <div class="meaning-box up"><div class="meaning-tags">${kwList.map(k => `<span class="tag up">${k}</span>`).join('')}</div></div>
+    </div></div>`;
+
+    h += `<div class="keyword-select-label">このフェーズで使うキーワードを選んでください（最低1つ・最大2つ）</div>`;
+    h += `<div class="keyword-select-note" style="color:#0f6e56;">※ 選んだキーワードをもう一度タップすると、選択を取り消して選び直せます</div>`;
+    h += `<div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;">`;
+    kwList.forEach(k => {
+      const picked   = practice.keywords.includes(k);
+      const disabled = !picked && practice.keywords.length >= 2;
+      h += `<span class="kw-tag up${picked ? ' picked' : ''}${disabled ? ' disabled' : ''}" onclick="practiceToggleKeyword('${k}')">${k}</span>`;
+    });
+    h += `</div>`;
+
+    if (practice.keywords.length > 0) {
+      h += `<textarea id="practice-memo" oninput="practiceOnMemoInput()" placeholder="キーワードを参考に、自由に書いてみてください（これは練習なので何を書いても大丈夫です）" style="width:100%;min-height:90px;border:1px solid #ddd;border-radius:8px;padding:10px;font-size:14px;box-sizing:border-box;font-family:inherit;">${practice.memo}</textarea>`;
+
+      h += `<div id="practice-sat-section" style="display:${practice.memo.trim() ? 'block' : 'none'};margin-top:12px;">
+        <div class="satisfaction-label">このフェーズの回答への評価（練習）</div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          ${[1, 2, 3, 4, 5].map(n => `<button onclick="practiceSetSat(${n})" style="width:40px;height:40px;border-radius:50%;font-weight:700;border:2px solid ${practice.satisfaction === n ? '#3D1F0D' : '#ddd'};background:${practice.satisfaction === n ? '#3D1F0D' : '#f5f4f0'};color:${practice.satisfaction === n ? '#fff' : '#888'};cursor:pointer;">${n}</button>`).join('')}
+        </div>
+      </div>`;
+    }
+  }
+
+  h += `</div>`; // phase-card
+
+  h += `<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+    <button class="nav-btn" onclick="stopSpeech(); screen='tutorial'; render()">← 戻る</button>`;
+  if (practice.candidates) h += `<button class="nav-btn" onclick="practiceReset()">🔄 練習をやり直す</button>`;
+  h += `<button class="nav-btn primary" onclick="startFromPractice()">練習を終えて次へ →</button>
+  </div>`;
+
+  h += `</div></div>`;
+  return h;
+}
+
+// ===== 体験フェーズ2（テーマ固定版。ゼミ比較用。入力内容は保存されない） =====
+const PRACTICE2_THEME = 'ストレスが溜まったら物や周りの人に当たってもよい';
+
+let practice2 = {
+  candidates: null,
+  orientations: null,
+  chosenNum: null,
+  chosenOri: null,
+  keywords: [],
+  memo: '',
+  satisfaction: 0,
+};
+
+function practice2Reset() {
+  practice2 = { candidates: null, orientations: null, chosenNum: null, chosenOri: null, keywords: [], memo: '', satisfaction: 0 };
+  render();
+}
+
+function practice2Draw() {
+  const nums = CARDS.map(c => c.num);
+  const shuffled = [...nums].sort(() => Math.random() - 0.5);
+  practice2.candidates   = shuffled.slice(0, 2);
+  practice2.orientations = practice2.candidates.map(() => (Math.random() < 0.5 ? 'up' : 'down'));
+  practice2.chosenNum = null;
+  practice2.chosenOri = null;
+  practice2.keywords  = [];
+  practice2.memo = '';
+  practice2.satisfaction = 0;
+  render();
+}
+
+function practice2SelectCard(idx) {
+  practice2.chosenNum = practice2.candidates[idx];
+  practice2.chosenOri = practice2.orientations[idx];
+  render();
+}
+
+function practice2ToggleKeyword(kw) {
+  const arr = practice2.keywords;
+  const i = arr.indexOf(kw);
+  if (i !== -1) {
+    arr.splice(i, 1);
+  } else {
+    if (arr.length >= 2) return;
+    arr.push(kw);
+  }
+  render();
+}
+
+function practice2OnMemoInput() {
+  const el = document.getElementById('practice2-memo');
+  if (el) practice2.memo = el.value;
+  const satSection = document.getElementById('practice2-sat-section');
+  if (satSection) satSection.style.display = practice2.memo.trim() ? 'block' : 'none';
+}
+
+function practice2SetSat(n) {
+  practice2.satisfaction = n;
+  render();
+}
+
+function renderPractice2() {
+  const card1 = practice2.candidates ? CARDS.find(c => c.num === practice2.candidates[0]) : null;
+  const card2 = practice2.candidates ? CARDS.find(c => c.num === practice2.candidates[1]) : null;
+  const chosenCard = practice2.chosenNum !== null ? CARDS.find(c => c.num === practice2.chosenNum) : null;
+  const kwList = chosenCard ? (practice2.chosenOri === 'up' ? chosenCard.up : chosenCard.down) : [];
+
+  let h = `<div class="intro-screen"><div class="intro-card">`;
+  h += `<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:1.2rem;">
+    ${charaHtml('guide', 72)}
+    <div class="guide-balloon" style="font-size:14px;">
+      もう一つ、実際のテーマで練習してみましょう。<br>
+      <span style="font-size:12px;color:#888;">※ この画面はあくまで練習です。ここでの入力は結果として保存されません。</span>
+    </div>
+  </div>`;
+
+  h += `<div class="phase-card" style="border:1.5px dashed #afa9ec;">`;
+  h += `<div class="phase-header"><span class="phase-num">体験フェーズ2</span><span class="phase-name">操作を練習してみましょう</span></div>`;
+  h += `<div style="font-size:13px;color:#3D1F0D;padding:8px 12px;background:#eeedfe;border:1.5px solid #afa9ec;border-radius:8px;margin-bottom:1rem;"><strong>📌 今回のテーマ：</strong>${PRACTICE2_THEME}</div>`;
+  h += `<div class="phase-prompt"><div class="phase-prompt-label">❓ 練習用の質問（例）</div>今、あなたはこのテーマについて、どんな状況にいますか？</div>`;
+
+  if (!practice2.candidates) {
+    h += `<button class="nav-btn primary" onclick="practice2Draw()">🎴 ランダムでカードを引く</button>`;
+  } else if (practice2.chosenNum === null) {
+    h += `<div class="card-choice-wrap">
+      <div style="font-size:12px;color:#aaa;margin-bottom:8px;">どちらか、しっくりくる方を選んでください</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">`;
+    [0, 1].forEach(idx => {
+      const c   = idx === 0 ? card1 : card2;
+      const ori = practice2.orientations[idx];
+      const kws = ori === 'up' ? c.up : c.down;
+      h += `<button onclick="practice2SelectCard(${idx})" style="padding:10px;border:1.5px solid #afa9ec;border-radius:10px;background:#fff;cursor:pointer;text-align:left;" onmouseover="this.style.background='#eeedfe'" onmouseout="this.style.background='#fff'">
+        <div style="font-size:13px;color:#3D1F0D;">${kws.join('・')}</div>
+      </button>`;
+    });
+    h += `</div></div>`;
+  } else {
+    h += `<div class="card-result"><div class="card-name">カードが出ました</div><div class="meaning-row">
+      <div class="meaning-box up"><div class="meaning-tags">${kwList.map(k => `<span class="tag up">${k}</span>`).join('')}</div></div>
+    </div></div>`;
+
+    h += `<div class="keyword-select-label">このフェーズで使うキーワードを選んでください(最低1つ・最大2つ)</div>`;
+    h += `<div class="keyword-select-note" style="color:#0f6e56;">※ 選んだキーワードをもう一度タップすると、選択を取り消して選び直せます</div>`;
+    h += `<div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;">`;
+    kwList.forEach(k => {
+      const picked   = practice2.keywords.includes(k);
+      const disabled = !picked && practice2.keywords.length >= 2;
+      h += `<span class="kw-tag up${picked ? ' picked' : ''}${disabled ? ' disabled' : ''}" onclick="practice2ToggleKeyword('${k}')">${k}</span>`;
+    });
+    h += `</div>`;
+
+    if (practice2.keywords.length > 0) {
+      h += `<textarea id="practice2-memo" oninput="practice2OnMemoInput()" placeholder="キーワードを参考に、このテーマについて自由に書いてみてください（これは練習なので何を書いても大丈夫です）" style="width:100%;min-height:90px;border:1px solid #ddd;border-radius:8px;padding:10px;font-size:14px;box-sizing:border-box;font-family:inherit;">${practice2.memo}</textarea>`;
+
+      h += `<div id="practice2-sat-section" style="display:${practice2.memo.trim() ? 'block' : 'none'};margin-top:12px;">
+        <div class="satisfaction-label">このフェーズの回答への評価（練習）</div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          ${[1, 2, 3, 4, 5].map(n => `<button onclick="practice2SetSat(${n})" style="width:40px;height:40px;border-radius:50%;font-weight:700;border:2px solid ${practice2.satisfaction === n ? '#3D1F0D' : '#ddd'};background:${practice2.satisfaction === n ? '#3D1F0D' : '#f5f4f0'};color:${practice2.satisfaction === n ? '#fff' : '#888'};cursor:pointer;">${n}</button>`).join('')}
+        </div>
+      </div>`;
+    }
+  }
+
+  h += `</div>`; // phase-card
+
+  h += `<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+    <button class="nav-btn" onclick="stopSpeech(); screen='practice'; render()">← 戻る</button>`;
+  if (practice2.candidates) h += `<button class="nav-btn" onclick="practice2Reset()">🔄 練習をやり直す</button>`;
+  h += `<button class="nav-btn primary" onclick="startFromPractice2()">練習を終えて次へ →</button>
+  </div>`;
+
+  h += `</div></div>`;
+  return h;
+}
+
+function startFromPractice2() {
   screen = 'theme';
   render();
 }
@@ -1945,6 +2465,7 @@ function renderName() {
           <span style="font-size:12px;color:#888;">（研究データに使用します）</span>
         </div>
       </div>
+      ${speechButtonsHtml('name')}
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem;">
         <label style="font-size:13px;color:#555;">お名前</label>
         <input
@@ -1958,7 +2479,6 @@ function renderName() {
         />
       </div>
       <div style="display:flex;gap:8px;">
-        <button class="nav-btn" onclick="screen='intro'; render()">← 戻る</button>
         <button class="nav-btn primary" onclick="startFromName()">次へ →</button>
       </div>
     </div>
@@ -2040,6 +2560,20 @@ function toggleHelpModal() {
   }
 }
 
+function toggleExampleModal() {
+  const modal   = document.getElementById('example-modal');
+  const overlay = document.getElementById('example-overlay');
+  const isOpen  = modal.style.display === 'flex';
+  if (isOpen) {
+    modal.style.display = 'none';
+    overlay.classList.remove('open');
+  } else {
+    document.getElementById('example-modal-body').innerHTML = tutorialExamplesHtml();
+    modal.style.display = 'flex';
+    overlay.classList.add('open');
+  }
+}
+
 function toggleHistoryPanel() {
   const panel   = document.getElementById('history-panel');
   const overlay = document.getElementById('history-overlay');
@@ -2084,8 +2618,11 @@ function renderHistoryPanel() {
 function render() {
   const el = document.getElementById('main');
 
-  if (screen === 'intro')    { el.innerHTML = renderIntro();   return; }
-  if (screen === 'name')     { el.innerHTML = renderName();    return; }
+  if (screen === 'intro')    { el.innerHTML = renderIntro();   setTimeout(loadJapaneseVoices, 0); return; }
+  if (screen === 'name')     { el.innerHTML = renderName();    setTimeout(loadJapaneseVoices, 0); return; }
+  if (screen === 'tutorial') { el.innerHTML = renderTutorial(); setTimeout(loadJapaneseVoices, 0); return; }
+  if (screen === 'practice') { el.innerHTML = renderPractice(); return; }
+  if (screen === 'practice2') { el.innerHTML = renderPractice2(); return; }
   if (screen === 'theme')    { el.innerHTML = renderTheme();   return; }
   if (screen === 'opinion')  { el.innerHTML = renderOpinion(); return; }
   if (screen2 === 'final_eval') { el.innerHTML = renderFinalEval(); return; }
@@ -2125,8 +2662,6 @@ function render() {
       html += `<div class="summary-item">
         <div class="summary-top">
           <span class="summary-phase">${PHASES[i].num}. ${PHASES[i].name}</span>
-          <span class="summary-card">第${c.gnum}番 ${c.name}</span>
-          <span class="summary-orient ${o}">${o === 'up' ? '正位置' : '逆位置'}</span>
         </div>
         <div class="summary-keywords">${keywords.map(k => `<span class="tag ${tagClass}">${k}</span>`).join('')}</div>`;
       const structSent = getStructSentence(i);
@@ -2212,7 +2747,7 @@ function render() {
 
   html += '<div class="phase-card">';
   html += `<div id="phase-top"></div><div class="phase-header"><span class="phase-num">フェーズ ${phase.num}</span><span class="phase-name">${phase.name}</span></div>`;
-  if (themeDisplay) html += `<div style="font-size:12px;color:#3D1F0D;padding:6px 12px;background:#eeedfe;border-radius:8px;margin-bottom:1rem;">テーマ：${themeDisplay}</div>`;
+  if (themeDisplay) html += `<div style="font-size:13px;color:#3D1F0D;padding:8px 12px;background:#eeedfe;border:1.5px solid #afa9ec;border-radius:8px;margin-bottom:1rem;"><strong>📌 今回のテーマ：</strong>${themeDisplay}</div>`;
   html += '<div class="card-section">';
   // カード選択ボタンは非表示（ランダムのみ）
   const randUsed = randomUsed[currentPhase];
@@ -2226,26 +2761,22 @@ function render() {
     const [c1, c2] = [CARDS.find(x => x.num === n1), CARDS.find(x => x.num === n2)];
     const [o1, o2] = randomOrientations[currentPhase] || ['up','up'];
     html += `<div class="card-choice-wrap">
-      <div style="font-size:12px;color:#aaa;margin-bottom:8px;">どちらか選んでください</div>
+      <div style="font-size:12px;color:#aaa;margin-bottom:8px;">どちらか、しっくりくる方を選んでください</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <button onclick="selectCard(${n1}, '${o1}')" style="padding:10px;border:1.5px solid #afa9ec;border-radius:10px;background:#fff;cursor:pointer;text-align:left;" onmouseover="this.style.background='#eeedfe'" onmouseout="this.style.background='#fff'">
-          <div style="font-size:13px;font-weight:600;color:#3D1F0D;margin-bottom:4px;">${c1.gnum}：${c1.name}</div>
-          <div style="font-size:11px;color:${o1==='up'?'#0f6e56':'#993c1d'};">${o1==='up'?'正位置':'逆位置'}</div>
-          <div style="font-size:11px;color:#666;margin-top:4px;">${(o1==='up'?c1.up:c1.down).join('・')}</div>
+          <div style="font-size:13px;color:#3D1F0D;">${(o1==='up'?c1.up:c1.down).join('・')}</div>
         </button>
         <button onclick="selectCard(${n2}, '${o2}')" style="padding:10px;border:1.5px solid #afa9ec;border-radius:10px;background:#fff;cursor:pointer;text-align:left;" onmouseover="this.style.background='#eeedfe'" onmouseout="this.style.background='#fff'">
-          <div style="font-size:13px;font-weight:600;color:#3D1F0D;margin-bottom:4px;">${c2.gnum}：${c2.name}</div>
-          <div style="font-size:11px;color:${o2==='up'?'#0f6e56':'#993c1d'};">${o2==='up'?'正位置':'逆位置'}</div>
-          <div style="font-size:11px;color:#666;margin-top:4px;">${(o2==='up'?c2.up:c2.down).join('・')}</div>
+          <div style="font-size:13px;color:#3D1F0D;">${(o2==='up'?c2.up:c2.down).join('・')}</div>
         </button>
       </div>
     </div>`;
   }
 
   if (chosenCard) {
-    html += `<div class="card-result"><div class="card-name">第${chosenCard.gnum}番 ${chosenCard.name}（${orientations[currentPhase] === 'up' ? '正位置' : '逆位置'}）</div><div class="meaning-row">`;
-    html += `<div class="meaning-box up" style="opacity:${orientations[currentPhase]==='up'?'1':'0.4'}"><div class="meaning-title">正位置</div><div class="meaning-tags">${chosenCard.up.map(t=>`<span class="tag up">${t}</span>`).join('')}</div></div>`;
-    html += `<div class="meaning-box down" style="opacity:${orientations[currentPhase]==='down'?'1':'0.4'}"><div class="meaning-title">逆位置</div><div class="meaning-tags">${chosenCard.down.map(t=>`<span class="tag down">${t}</span>`).join('')}</div></div>`;
+    const kws = orientations[currentPhase] === 'up' ? chosenCard.up : chosenCard.down;
+    html += `<div class="card-result"><div class="card-name">カードが出ました</div><div class="meaning-row">`;
+    html += `<div class="meaning-box up"><div class="meaning-tags">${kws.map(t=>`<span class="tag up">${t}</span>`).join('')}</div></div>`;
     html += `</div>`;
     html += `</div>`;
   }
