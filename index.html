@@ -9,14 +9,15 @@
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif; background: #E1F5EE; color: #1a1a1a; min-height: 100vh; padding: 1.5rem 1.5rem 1.5rem 5rem; }
 h1 { font-size: 17px; font-weight: 500; margin-bottom: 1rem; letter-spacing: 0.03em; }
 
-.phase-bar { display: flex; align-items: center; gap: 5px; margin-bottom: 1rem; flex-wrap: wrap; padding-left: 4rem; }
+.phase-bar { display: flex; align-items: center; gap: 5px; margin-bottom: 1rem; flex-wrap: wrap; padding-left: 4rem; max-width: 960px; margin-left: auto; margin-right: auto; }
 .phase-label { font-size: 12px; color: #888; margin-right: 4px; }
 .phase-btn { font-size: 11px; padding: 3px 9px; border: 0.5px solid #ccc; border-radius: 7px; background: #fff; color: #555; cursor: pointer; transition: all 0.15s; }
 .phase-btn:hover { background: #f0effe; border-color: #afa9ec; color: #3c3489; }
 .phase-btn.active { background: #3D1F0D; color: #eeedfe; border-color: #3D1F0D; font-weight: 500; }
 .phase-btn.done { border-color: #5dcaa5; color: #0f6e56; }
+.phase-btn.locked { color: #bbb; background: #f5f5f5; cursor: not-allowed; }
 
-.layout { display: grid; grid-template-columns: 1fr 300px; gap: 1rem; align-items: start; }
+.layout { display: grid; grid-template-columns: 1fr 300px; gap: 1rem; align-items: start; max-width: 960px; margin: 0 auto; }
 @media (max-width: 800px) { .layout { grid-template-columns: 1fr; } }
 
 .left-panel { display: flex; flex-direction: column; gap: 1rem; }
@@ -83,7 +84,7 @@ button.next-action {
 .meaning-box.up .meaning-title { color: #0f6e56; }
 .meaning-box.down .meaning-title { color: #993c1d; }
 .meaning-tags { display: flex; flex-wrap: wrap; gap: 4px; }
-.tag { font-size: 12px; padding: 2px 8px; border-radius: 999px; }
+.tag { font-size: 15px; padding: 5px 12px; border-radius: 999px; }
 .tag.up { background: #9fe1cb; color: #085041; }
 .tag.down { background: #f5c4b3; color: #712b13; }
 
@@ -94,6 +95,7 @@ button.next-action {
 .nav-row { display: flex; gap: 8px; justify-content: flex-end; align-items: center; position: sticky; bottom: 0; background: #f5f4f0; padding: 10px 0; border-top: 1px solid #ddd; z-index: 10; }
 .progress { font-size: 12px; color: #aaa; margin-right: auto; }
 .nav-btn { font-size: 13px; padding: 6px 14px; border: 0.5px solid #ccc; border-radius: 8px; background: #fff; color: #1a1a1a; cursor: pointer; transition: all 0.15s; }
+.speaking-glow { border: 2.5px solid #3D1F0D !important; animation: card-choice-pulse 1.4s ease-out infinite; }
 .nav-btn:hover { background: #f0effe; }
 .nav-btn.primary { background: #3D1F0D; color: #eeedfe; border-color: #3D1F0D; }
 .nav-btn.primary:hover { background: #3c3489; }
@@ -137,6 +139,7 @@ button.next-action {
 
 /* 完了サマリー */
 .done-banner { background: #eaf3de; border: 0.5px solid #97c459; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+.done-screen { max-width: 640px; margin: 0 auto; }
 .done-title { font-size: 15px; font-weight: 500; color: #3b6d11; margin-bottom: 4px; }
 .done-sub { font-size: 13px; color: #639922; }
 .done-meta { font-size: 12px; color: #639922; margin-top: 4px; }
@@ -270,7 +273,7 @@ button.next-action {
 /* キーワード選択 */
 .keyword-select-label { font-size: 12px; color: #aaa; margin-bottom: 6px; margin-top: 10px; }
 .keyword-select-note  { font-size: 11px; color: #bbb; margin-bottom: 8px; }
-.kw-tag { font-size: 12px; padding: 3px 10px; border-radius: 999px; cursor: pointer; border: 1.5px solid transparent; transition: all 0.15s; user-select: none; }
+.kw-tag { font-size: 16px; padding: 6px 14px; border-radius: 999px; cursor: pointer; border: 1.5px solid transparent; transition: all 0.15s; user-select: none; }
 .kw-tag.up   { background: #9fe1cb; color: #085041; }
 .kw-tag.down { background: #f5c4b3; color: #712b13; }
 .kw-tag.up.picked   { border-color: #0f6e56; box-shadow: 0 0 0 2px #5dcaa580; font-weight: 700; }
@@ -392,9 +395,9 @@ button.next-action {
 
 <!-- 回答例モーダル -->
 <div id="example-overlay" class="history-overlay" onclick="toggleExampleModal()"></div>
-<div id="example-modal" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(520px,92vw);max-height:80vh;background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.18);z-index:1001;display:none;flex-direction:column;overflow:hidden;">
+<div id="example-modal" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(640px,92vw);max-height:80vh;background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.18);z-index:1001;display:none;flex-direction:column;overflow:hidden;">
   <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:#E1F5EE;border-bottom:1px solid #5DCAA5;">
-    <span style="font-size:14px;font-weight:600;color:#3D1F0D;">📝 回答例（見たいときにどうぞ）</span>
+    <span id="example-modal-title" style="font-size:14px;font-weight:600;color:#3D1F0D;">📝 回答例（見たいときにどうぞ）</span>
     <button onclick="toggleExampleModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:#3D1F0D;">✕</button>
   </div>
   <div id="example-modal-body" style="overflow-y:auto;padding:16px 18px;"></div>
@@ -444,7 +447,7 @@ button.next-action {
       <div style="width:36px;height:36px;border-radius:50%;background:#3D1F0D;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">▶</div>
       <div style="flex:1;background:#F5F4F0;border-radius:8px;padding:8px 12px;">
         <div style="font-size:13px;font-weight:600;color:#3D1F0D;">5. 次のフェーズへ</div>
-        <div style="font-size:12px;color:#666;margin-top:2px;">全10フェーズ繰り返す</div>
+        <div style="font-size:12px;color:#666;margin-top:2px;">全7フェーズ繰り返す</div>
       </div>
     </div>
     <div style="margin-top:8px;padding:10px 14px;background:#E1F5EE;border-radius:8px;font-size:12px;color:#0F6E56;line-height:1.7;">
@@ -474,7 +477,7 @@ button.next-action {
 
 <!-- バージョン表記 -->
 <div style="position:fixed;bottom:8px;right:12px;font-size:11px;color:#aaa;z-index:900;pointer-events:none;">
-  Ver. 2.20 (2026.07.08)
+  Ver. 3.00 (2026.07.29)
 </div>
 
 <script>
@@ -521,40 +524,40 @@ function charaHtml(pose, size) {
   </div>`;
 }
 
-const GUIDE_MESSAGES = ["今のテーマについて、あなたが今どんな状況にいるか感じたことを回答欄に書いてみよう！", "このフェーズでは「障害と対策」を考えるよ。立ちはだかっていると感じることを書いてみよう！", "表に見えていること・意識していることを書いてみよう。カードのキーワードをヒントにしてね！", "普段は見えていない、深いところにある気持ちや本音を書いてみよう。難しければカードのキーワードから連想してみて！", "過去のことを振り返るフェーズだよ。このテーマに影響を与えた出来事や経験を書いてみよう！", "近い未来を想像してみよう。このテーマについて、これから起こりそうなことを自由に書いてね！", "あなた自身がこのテーマにどう関わっているか書いてみよう。立場や関わり方を考えてみてね！", "自分以外の人たちはどう感じているかな？周りの人の視点を想像して書いてみよう！", "理想や恐れを書くフェーズだよ。このテーマについて、こうなってほしい・こうはなりたくない、を書いてみて！", "いよいよ最後！ここまでの9枚を振り返って、テーマに対するあなたの最終的な考えをまとめてみよう！"];
+const GUIDE_MESSAGES = ["今のテーマについて、あなたが今どんな状況にいるか感じたことを回答欄に書いてみよう！", "このフェーズでは「障害と対策」を考えるよ。立ちはだかっていると感じることを書いてみよう！", "表に見えていること・意識していることと、近い将来起こりそうなことを、カードのキーワードをヒントに書いてみよう！", "普段は見えていない深い気持ちや、それに影響した少し前の出来事を振り返って書いてみよう！", "あなた自身がこのテーマにどう関わっているか、そして周りの人はどう感じていそうか、両方の視点で書いてみよう！", "理想や恐れを書くフェーズだよ。このテーマについて、こうなってほしい・こうはなりたくない、を書いてみて！", "いよいよ最後！ここまでの6枚を振り返って、テーマに対するあなたの最終的な考えをまとめてみよう！"];
 
 const PHASES = [
-  { num: 1,  name: '現在の状況', desc: '今、あなたはこのテーマについて、どんな状況にいますか？' },
-  { num: 2,  name: '障害と対策', desc: 'このテーマの前に立ちはだかっていること、それを乗り越えるための対策は何ですか？' },
-  { num: 3,  name: '顕在意識',   desc: 'このテーマについて、表面的に意識していること・これからどうなりそうかを考えてみましょう' },
-  { num: 4,  name: '潜在意識',   desc: '表には出ていない、心の奥にある本音や、問題の根っこにあるものは何ですか？' },
-  { num: 5,  name: '近い過去',   desc: 'このテーマに影響を与えた、少し前の出来事は何ですか？' },
-  { num: 6,  name: '近い未来',   desc: 'このテーマについて、近い将来起こりそうなことは何ですか？' },
-  { num: 7,  name: 'あなたの立場', desc: 'このテーマに対して、あなた自身はどのように関わっていますか？' },
-  { num: 8,  name: '周囲の状況', desc: 'あなた以外の人は、このテーマについてどう感じていそうですか？' },
-  { num: 9,  name: '期待と恐れ', desc: 'このテーマについて、期待していることと、恐れていることは何ですか？' },
-  { num: 10, name: '最終結果',   desc: 'ここまでを振り返って、このテーマについての今の考えをまとめてみましょう' },
+  { num: 1, name: '現在の状況',       desc: '今、あなたはこのテーマについて、どんな状況にいますか？' },
+  { num: 2, name: '障害と対策',       desc: 'このテーマの前に立ちはだかっていること、それを乗り越えるための対策は何ですか？' },
+  { num: 3, name: '意識と近い未来',   desc: 'このテーマについて、表面的に意識していること・近い将来起こりそうなことを考えてみましょう' },
+  { num: 4, name: '本音と過去の影響', desc: '心の奥にある本音や、それに影響を与えた少し前の出来事は何ですか？' },
+  { num: 5, name: 'あなたと周囲',     desc: 'このテーマに対して、あなた自身はどう関わっていますか？また、あなた以外の人はどう感じていそうですか？' },
+  { num: 6, name: '期待と恐れ',       desc: 'このテーマについて、期待していることと、恐れていることは何ですか？' },
+  { num: 7, name: '考えをまとめる',   desc: 'ここまでの6つの答えを振り返って、このテーマについての今のあなたの考えをまとめてみましょう' },
 ];
+const PHASE_COUNT = PHASES.length; // 7（ヘキサグラムスプレッド）
+// 新フェーズ番号(0始まり) → 旧10フェーズ構成での対応インデックス（深掘りヒント文の再利用に使用）
+const PHASE_MAP = [[0], [1], [2, 5], [3, 4], [6, 7], [8], [9]];
 
 let screen = 'name';
 let showPastAnswers    = false;
-let satisfaction       = new Array(10).fill(0);
+let satisfaction       = new Array(PHASE_COUNT).fill(0);
 let finalSupplement    = '';
 let hintOpen           = false;
 let hintTab            = 0;
 let screen2            = 'main';
 let finalEval          = { useful: 0, expanded: 0, overall: 0, freeText: '' };
 let showSameThemePast  = false;
-let randomUsed         = new Array(10).fill(false);
-let randomCandidates   = new Array(10).fill(null).map(() => []);
-let randomOrientations = new Array(10).fill(null).map(() => []);
+let randomUsed         = new Array(PHASE_COUNT).fill(false);
+let randomCandidates   = new Array(PHASE_COUNT).fill(null).map(() => []);
+let randomOrientations = new Array(PHASE_COUNT).fill(null).map(() => []);
 let selectedTheme = null;
 let customThemeText = '';
 let initialOpinion = '';
 let currentPhase = 0;
-let selectedCards = new Array(10).fill(null);
-let orientations  = new Array(10).fill(null);
-let memos         = new Array(10).fill('');
+let selectedCards = new Array(PHASE_COUNT).fill(null);
+let orientations  = new Array(PHASE_COUNT).fill(null);
+let memos         = new Array(PHASE_COUNT).fill('');
 let completed     = false;
 let participantName = '';
 
@@ -562,9 +565,9 @@ let participantName = '';
 let opLog = []; // { time, phase, type, detail }
 let changeScore = 0; // 思考変化度（最終画面で入力）
 // ヒント記録
-let hintOpenLog    = new Array(10).fill(null).map(() => []); // [{tab, vp, time}]
+let hintOpenLog    = new Array(PHASE_COUNT).fill(null).map(() => []); // [{tab, vp, time}]
 // 各操作の最終時刻（操作間隔計算用）
-let lastOpTime     = new Array(10).fill(null).map(() => ({})); // {card, kw, memo, sat}
+let lastOpTime     = new Array(PHASE_COUNT).fill(null).map(() => ({})); // {card, kw, memo, sat}
 
 function logOp(phase, type, detail) {
   const now = new Date().toISOString();
@@ -583,13 +586,13 @@ const W5H1_DEFS = {
   Why:   { label: 'Why（なぜ）',   slot1: 'なぜなら', slot2: 'だから',       verb: '考えた' },
   How:   { label: 'How（どのように）',slot1: 'どのように',slot2: 'どんなことを', verb: '考えた' },
 };
-let structSelections = new Array(10).fill(null).map(() => ({ w5h1: null, slot1: '', slot2: '' }));
+let structSelections = new Array(PHASE_COUNT).fill(null).map(() => ({ w5h1: null, slot1: '', slot2: '' }));
 
 // キーワード選択（各フェーズ最大2つ）
-let pickedKeywords = new Array(10).fill(null).map(() => []);
+let pickedKeywords = new Array(PHASE_COUNT).fill(null).map(() => []);
 
 // 思考時間計測（ミリ秒）
-let phaseTimers    = new Array(10).fill(0);   // 各フェーズの累計時間
+let phaseTimers    = new Array(PHASE_COUNT).fill(0);   // 各フェーズの累計時間
 let phaseStartedAt = null;                     // 現在フェーズの開始時刻
 
 function todayStr() {
@@ -606,6 +609,13 @@ function formatSaveDate(iso) {
 
 // ===== 保存機能 =====
 const DRAFT_KEY = 'tarot_draft';
+const TUTORIAL_SEEN_KEY = 'tarot_tutorial_seen';
+function hasSeenTutorialBefore() {
+  try { return localStorage.getItem(TUTORIAL_SEEN_KEY) === '1'; } catch { return false; }
+}
+function markTutorialSeen() {
+  try { localStorage.setItem(TUTORIAL_SEEN_KEY, '1'); } catch {}
+}
 
 let toastTimer = null;
 function showToast(msg) {
@@ -651,15 +661,15 @@ function resumeDraft() {
   initialOpinion   = d.initialOpinion || '';
   participantName  = d.participantName || '';
   currentPhase     = d.currentPhase || 0;
-  selectedCards    = d.selectedCards || new Array(10).fill(null);
-  orientations     = d.orientations  || new Array(10).fill(null);
-  memos            = d.memos         || new Array(10).fill('');
-  structSelections = d.structSelections ? d.structSelections.map(s => ({...s})) : new Array(10).fill(null).map(() => ({ w5h1: null, slot1: '', slot2: '' }));
-  pickedKeywords     = d.pickedKeywords ? d.pickedKeywords.map(a => [...a]) : new Array(10).fill(null).map(() => []);
-  phaseTimers        = d.phaseTimers   || new Array(10).fill(0);
-  randomUsed         = d.randomUsed    || new Array(10).fill(false);
-  randomCandidates   = d.randomCandidates   ? d.randomCandidates.map(a => [...a])   : new Array(10).fill(null).map(() => []);
-  randomOrientations = d.randomOrientations ? d.randomOrientations.map(a => [...a]) : new Array(10).fill(null).map(() => []);
+  selectedCards    = d.selectedCards || new Array(PHASE_COUNT).fill(null);
+  orientations     = d.orientations  || new Array(PHASE_COUNT).fill(null);
+  memos            = d.memos         || new Array(PHASE_COUNT).fill('');
+  structSelections = d.structSelections ? d.structSelections.map(s => ({...s})) : new Array(PHASE_COUNT).fill(null).map(() => ({ w5h1: null, slot1: '', slot2: '' }));
+  pickedKeywords     = d.pickedKeywords ? d.pickedKeywords.map(a => [...a]) : new Array(PHASE_COUNT).fill(null).map(() => []);
+  phaseTimers        = d.phaseTimers   || new Array(PHASE_COUNT).fill(0);
+  randomUsed         = d.randomUsed    || new Array(PHASE_COUNT).fill(false);
+  randomCandidates   = d.randomCandidates   ? d.randomCandidates.map(a => [...a])   : new Array(PHASE_COUNT).fill(null).map(() => []);
+  randomOrientations = d.randomOrientations ? d.randomOrientations.map(a => [...a]) : new Array(PHASE_COUNT).fill(null).map(() => []);
   phaseStartedAt     = null;
   clearDraft();
   render();
@@ -667,7 +677,7 @@ function resumeDraft() {
 
 function hasDraft() {
   const d = loadDraft();
-  return d && (d.currentPhase > 0 || d.screen === 'opinion' || d.screen === 'theme' || d.screen === 'main' || d.screen === 'tutorial' || d.screen === 'practice' || d.screen === 'practice2');
+  return d && (d.currentPhase > 0 || d.screen === 'opinion' || d.screen === 'theme' || d.screen === 'main' || d.screen === 'tutorial' || d.screen === 'practice');
 }
 
 function formatDraftDate(iso) {
@@ -757,7 +767,7 @@ function exportSingleCSV(btnId) {
   const dateStr = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 
   const headers = ['氏名','実施日時','テーマ','開始前の意見','最終:タロット有用度(1-5)','最終:思考拡張度(1-5)','最終:総合満足度(1-5)','最終:思考変化度(1-5)','最終:自由記述','最終:補足メモ'];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < PHASE_COUNT; i++) {
     headers.push(`フェーズ${i+1}(${PHASES[i].name})_カード`);
     headers.push(`フェーズ${i+1}_向き`);
     headers.push(`フェーズ${i+1}_キーワード`);
@@ -770,7 +780,7 @@ function exportSingleCSV(btnId) {
   }
 
   const row = [participantName, dateStr, themeDisplay, initialOpinion, fe.useful||'', fe.expanded||'', fe.overall||'', changeScore||'', (fe.freeText||'').replace(/\n/g,' '), (finalSupplement||'').replace(/\n/g,' ')];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < PHASE_COUNT; i++) {
     const cardNum = selectedCards[i];
     const card = cardNum !== null ? CARDS.find(c => c.num === cardNum) : null;
     const o = orientations[i];
@@ -835,7 +845,7 @@ function exportCSV(btnId) {
   console.log('CSV出力: ' + saves.length + '件', saves.map(s => s.name + ' ' + s.savedAt));
 
   const headers = ['氏名', '実施日時', 'テーマ', '開始前の意見', '最終:タロット有用度(1-5)', '最終:思考拡張度(1-5)', '最終:総合満足度(1-5)', '最終:思考変化度(1-5)', '最終:自由記述', '最終:補足メモ'];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < PHASE_COUNT; i++) {
     headers.push(`フェーズ${i+1}(${PHASES[i].name})_カード`);
     headers.push(`フェーズ${i+1}_向き`);
     headers.push(`フェーズ${i+1}_キーワード`);
@@ -854,7 +864,7 @@ function exportCSV(btnId) {
     const themeDisplay = s.selectedTheme && s.selectedTheme.id === 99 ? s.customThemeText : (s.selectedTheme ? s.selectedTheme.question : '');
     const fe = s.finalEval || {};
     const row = [s.name || '', dateStr, themeDisplay, s.initialOpinion || '', fe.useful||'', fe.expanded||'', fe.overall||'', s.changeScore||'', (fe.freeText||'').replace(/\n/g,' '), (s.finalSupplement||'').replace(/\n/g,' ')];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < PHASE_COUNT; i++) {
       const cardNum = s.selectedCards[i];
       const card = cardNum !== null ? CARDS.find(c => c.num === cardNum) : null;
       const o = s.orientations[i];
@@ -929,7 +939,7 @@ function exportCSV(btnId) {
 function loadSave(id) {
   const s = loadSaves().find(x => x.id === id);
   if (!s) return;
-  const inProgress = (screen === 'main' && !completed) || screen === 'opinion' || screen === 'theme' || screen === 'tutorial' || screen === 'practice' || screen === 'practice2';
+  const inProgress = (screen === 'main' && !completed) || screen === 'opinion' || screen === 'theme' || screen === 'tutorial' || screen === 'practice';
   if (inProgress) {
     const ok = confirm('保存済みの回答を開くと、今取り組んでいる回答画面から離れます。\n（今の入力内容は「続きから再開」で自動的に保存されているので消えません。閉じるボタンで今の画面に戻れます）\n\n保存済みの回答を開きますか？');
     if (!ok) return;
@@ -940,14 +950,14 @@ function loadSave(id) {
   selectedTheme    = s.selectedTheme || null;
   customThemeText  = s.customThemeText || '';
   initialOpinion   = s.initialOpinion || '';
-  satisfaction     = s.satisfaction   || new Array(10).fill(0);
+  satisfaction     = s.satisfaction   || new Array(PHASE_COUNT).fill(0);
   finalSupplement  = s.finalSupplement || '';
   finalEval        = s.finalEval      || { useful: 0, expanded: 0, overall: 0, freeText: '' };
   changeScore      = s.changeScore    || 0;
   screen2          = 'main';
-  structSelections = s.structs ? s.structs.map(x => ({...x})) : new Array(10).fill(null).map(() => ({ w5h1: null, slot1: '', slot2: '' }));
-  pickedKeywords   = s.pickedKeywords ? s.pickedKeywords.map(a => [...a]) : new Array(10).fill(null).map(() => []);
-  phaseTimers      = s.phaseTimers ? [...s.phaseTimers] : new Array(10).fill(0);
+  structSelections = s.structs ? s.structs.map(x => ({...x})) : new Array(PHASE_COUNT).fill(null).map(() => ({ w5h1: null, slot1: '', slot2: '' }));
+  pickedKeywords   = s.pickedKeywords ? s.pickedKeywords.map(a => [...a]) : new Array(PHASE_COUNT).fill(null).map(() => []);
+  phaseTimers      = s.phaseTimers ? [...s.phaseTimers] : new Array(PHASE_COUNT).fill(0);
   phaseStartedAt   = null;
   screen           = 'main';
   participantName = s.name || '';
@@ -1155,8 +1165,8 @@ function selectCard(num, forcedOri) {
   render();
 }
 
-function next()       { recordPhaseTime(); saveMemo(); saveName(); if (currentPhase < 9) { currentPhase++; hintOpen = false; hintTab = 0; startPhaseTimer(); saveDraft(); render(); setTimeout(() => { const el = document.getElementById('phase-top'); if(el) el.scrollIntoView({behavior:'smooth'}); else window.scrollTo({top:0,behavior:'smooth'}); }, 50); } }
-function jumpTo(i)    { recordPhaseTime(); saveMemo(); saveName(); currentPhase = i; showPastAnswers = false; showSameThemePast = false; hintOpen = false; hintTab = 0; startPhaseTimer(); saveDraft(); render(); }
+function next()       { recordPhaseTime(); saveMemo(); saveName(); if (currentPhase < PHASE_COUNT - 1) { currentPhase++; hintOpen = false; hintTab = 0; startPhaseTimer(); saveDraft(); render(); setTimeout(() => { const el = document.getElementById('phase-top'); if(el) el.scrollIntoView({behavior:'smooth'}); else window.scrollTo({top:0,behavior:'smooth'}); }, 50); } }
+function jumpTo(i)    { const reachable = i === 0 || selectedCards[i - 1] !== null || selectedCards[i] !== null; if (!reachable) return; recordPhaseTime(); saveMemo(); saveName(); currentPhase = i; showPastAnswers = false; showSameThemePast = false; hintOpen = false; hintTab = 0; startPhaseTimer(); saveDraft(); render(); }
 let lastResetBackup = null; // { phase, selectedCard, orientation, pickedKeywords, randomUsed, randomCandidates, randomOrientations }
 function resetPhase() {
   saveMemo(); saveName();
@@ -1215,24 +1225,24 @@ function resetAll()   {
   screen           = 'intro';
   showPastAnswers    = false;
   showSameThemePast  = false;
-  satisfaction       = new Array(10).fill(0);
+  satisfaction       = new Array(PHASE_COUNT).fill(0);
   finalSupplement    = '';
   hintOpen           = false;
   hintTab            = 0;
   screen2            = 'main';
   finalEval          = { useful: 0, expanded: 0, overall: 0, freeText: '' };
-  randomUsed         = new Array(10).fill(false);
-  randomCandidates   = new Array(10).fill(null).map(() => []);
-  randomOrientations = new Array(10).fill(null).map(() => []);
+  randomUsed         = new Array(PHASE_COUNT).fill(false);
+  randomCandidates   = new Array(PHASE_COUNT).fill(null).map(() => []);
+  randomOrientations = new Array(PHASE_COUNT).fill(null).map(() => []);
   selectedTheme       = null;
   customThemeText  = '';
   initialOpinion   = '';
-  selectedCards    = new Array(10).fill(null);
-  orientations     = new Array(10).fill(null);
-  memos            = new Array(10).fill('');
-  structSelections = new Array(10).fill(null).map(() => ({ w5h1: null, slot1: '', slot2: '' }));
-  pickedKeywords   = new Array(10).fill(null).map(() => []);
-  phaseTimers      = new Array(10).fill(0);
+  selectedCards    = new Array(PHASE_COUNT).fill(null);
+  orientations     = new Array(PHASE_COUNT).fill(null);
+  memos            = new Array(PHASE_COUNT).fill('');
+  structSelections = new Array(PHASE_COUNT).fill(null).map(() => ({ w5h1: null, slot1: '', slot2: '' }));
+  pickedKeywords   = new Array(PHASE_COUNT).fill(null).map(() => []);
+  phaseTimers      = new Array(PHASE_COUNT).fill(0);
   phaseStartedAt   = null;
   participantName  = '';
   currentPhase     = 0;
@@ -1244,7 +1254,7 @@ function resetAll()   {
 // ===== 配置図 =====
 function renderCeltic() {
   let h = '<div class="celtic-grid">';
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < PHASE_COUNT; i++) {
     const isActive = i === currentPhase && !completed;
     const isDone   = selectedCards[i] !== null;
     const isHoriz  = i === 1;
@@ -1266,7 +1276,7 @@ function renderCeltic() {
   return h;
 }
 
-// ===== フェーズ10用 振り返り表示 =====
+// ===== フェーズ7(考えをまとめる)用 振り返り表示 =====
 function renderReviewList() {
   let h = '<div class="review-list">';
   if (initialOpinion) {
@@ -1276,7 +1286,7 @@ function renderReviewList() {
     </div>`;
   }
   // フェーズ1〜9をループ
-  for (let i = 0; i < 9; i++) {
+  for (let i = 0; i < PHASE_COUNT - 1; i++) {
     const cardNum = selectedCards[i];
     if (cardNum === null) continue;
     const kwText = (pickedKeywords[i] || []).join('・');
@@ -1321,7 +1331,7 @@ function renderTheme() {
       </div>
       <div class="theme-options">${opts}</div>
       <div class="nav-row" style="position:static;border-top:none;padding-top:0;">
-        <button class="nav-btn" onclick="stopSpeech(); screen='practice2'; render()">← 戻る</button>
+        <button class="nav-btn" onclick="stopSpeech(); screen='practice'; render()">← 戻る</button>
         <button class="nav-btn primary" onclick="screen='opinion'; render()" ${canProceed ? '' : 'disabled style="opacity:0.4;cursor:not-allowed;"'}>次へ →</button>
       </div>
     </div>
@@ -1332,43 +1342,35 @@ const OPINION_EXAMPLE_TEXT = '正直、今の環境にうまく馴染めるか�
 const PHASE_EXAMPLE_ANSWERS = [
   '新しい職場に来てまだ2週間ほどで、誰にどう話しかけたらいいか分からず様子を見ている状態です。休憩時間も一人で過ごすことが多いです。',
   '人見知りな性格が壁になっていると思います。まずは自分から挨拶をすることから始めてみようと思います。',
-  '早くこの職場に馴染みたいと意識しています。少しずつですが、話しかけてくれる人も増えてきた気がします。',
-  '本当は前の職場が恋しくて、この変化についていけていない部分があるのかもしれません。',
-  '急に異動が決まり、心の準備をする時間がほとんどなかったことが影響していると思います。',
-  'このまま少しずつ話せる人が増えていきそうな予感がします。',
-  '実は自分から話しかけるのを避けてしまっていることに気づきました。',
-  '周りの人たちも、新しく来た自分にどう接したらいいか、様子を見ているだけなのかもしれません。',
+  '早くこの職場に馴染みたいと意識していて、このまま少しずつ話せる人が増えていきそうな予感もしています。',
+  '本当は前の職場が恋しくて変化についていけていない部分があり、それは急に異動が決まって心の準備をする時間がなかったことが影響していると思います。',
+  '実は自分から話しかけるのを避けてしまっていることに気づきました。周りの人たちも、新しく来た自分にどう接したらいいか様子を見ているだけなのかもしれません。',
   '早く馴染みたいという期待と、浮いてしまうのではという恐れの両方があります。',
-  '時間はかかるかもしれませんが、焦らず少しずつ関係を築いていけそうだと思えました。',
+  'ここまで整理してみて、今の自分は新しい職場にまだ慣れていないだけで、人見知りな性格や、前の職場への未練、急な異動で心の準備ができていなかったことなど、いくつもの理由が重なっているんだと気づきました。自分から話しかけるのを避けていたのも、浮いてしまうのが怖かったからだと思います。でも、周りの人たちも同じように様子を見ているだけかもしれないと考えると、少し気が楽になりました。まずは小さな挨拶から始めて、焦らず自分のペースで少しずつ話せる人を増やしていきたいです。すぐに馴染めなくても、時間をかければ大丈夫だと、今は思えています。',
 ];
 
-function tutorialExamplesHtml() {
-  const opinionExample = `サイト使用前の意見の例：「${OPINION_EXAMPLE_TEXT}」`;
+function tutorialExamplesHtml(onlyPhaseIndex) {
   const phaseExamples = PHASE_EXAMPLE_ANSWERS;
-  let h = `<div style="background:#F5F4F0;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:13px;color:#3D1F0D;line-height:1.7;">
-    ※ これはあくまで「書き方の一例」です。テーマはご自身が決めたもので、内容や感じ方は人それぞれで構いません。<br>
-    ${opinionExample}
-  </div>`;
-  for (let i = 0; i < 10; i++) {
-    const p = PHASES[i];
-    h += `<div style="border:0.5px solid #e0dfd8;border-radius:10px;padding:12px 16px;margin-bottom:10px;">
-      <div style="font-size:12px;font-weight:700;color:#3D1F0D;margin-bottom:4px;">フェーズ${p.num}：${p.name}</div>
-      <div style="font-size:12px;color:#8B6A4A;margin-bottom:6px;">❓ ${p.desc}</div>`;
-    if (i === 0) {
-      h += `<div style="font-size:12px;color:#3D1F0D;background:#F5F4F0;border-radius:8px;padding:8px 10px;margin-bottom:8px;">
-        <strong>操作の流れ：</strong><br>
-        ① 「ランダムでカードを引く」ボタンを押す →
-        ② 出てきた2択のうち、しっくりくるほうを選ぶ（カード名や正逆は気にしなくてOK、キーワードだけ見て選べば大丈夫）→
-        ③ 表示されたキーワードから1〜2個選ぶ →
-        ④ 回答欄に、キーワードを参考にしながら自由に文章を書く →
-        ⑤ 納得度を星で選ぶ →
-        ⑥ 「次へ」を押す
-      </div>`;
-    }
-    h += `<div style="font-size:12px;color:#444;">📝 回答例：「${phaseExamples[i]}」</div>`;
-    h += `</div>`;
+  let h = '';
+  if (onlyPhaseIndex === undefined || onlyPhaseIndex === null) {
+    const opinionExample = `サイト使用前の意見の例：「${OPINION_EXAMPLE_TEXT}」`;
+    h += `<div style="background:#F5F4F0;border-radius:10px;padding:14px 18px;margin-bottom:16px;font-size:15px;color:#3D1F0D;line-height:1.8;">
+      ※ これはあくまで「書き方の一例」です。テーマはご自身が決めたもので、内容や感じ方は人それぞれで構いません。<br>
+      ${opinionExample}
+    </div>`;
   }
-  h += `<div style="font-size:12px;color:#8B6A4A;margin-top:6px;line-height:1.6;">※ 上の回答例はあくまで「書き方」の参考です。テーマも感じ方も人それぞれなので、思ったことをそのまま自由に書いて大丈夫です。</div>`;
+  const range = (onlyPhaseIndex === undefined || onlyPhaseIndex === null)
+    ? [...Array(PHASE_COUNT).keys()]
+    : [onlyPhaseIndex];
+  for (const i of range) {
+    const p = PHASES[i];
+    h += `<div style="border:0.5px solid #e0dfd8;border-radius:10px;padding:14px 18px;margin-bottom:12px;">
+      <div style="font-size:15px;font-weight:700;color:#3D1F0D;margin-bottom:6px;">フェーズ${p.num}：${p.name}</div>
+      <div style="font-size:14px;color:#8B6A4A;margin-bottom:8px;line-height:1.6;">❓ ${p.desc}</div>
+      <div style="font-size:15px;color:#333;line-height:1.7;">📝 回答例：「${phaseExamples[i]}」</div>
+    </div>`;
+  }
+  h += `<div style="font-size:13px;color:#8B6A4A;margin-top:8px;line-height:1.7;">※ 上の回答例はあくまで「書き方」の参考です。テーマも感じ方も人それぞれなので、思ったことをそのまま自由に書いて大丈夫です。</div>`;
   return h;
 }
 
@@ -1385,9 +1387,10 @@ function renderTutorial() {
       </div>
       ${speechButtonsHtml('tutorial')}
       ${tutorialExamplesHtml()}
-      <div style="display:flex;gap:8px;margin-top:12px;">
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
         <button class="nav-btn" onclick="stopSpeech(); screen='intro'; render()">← 戻る</button>
         <button class="nav-btn primary" onclick="startFromTutorial()">次へ →</button>
+        ${hasSeenTutorialBefore() ? `<button class="nav-btn" onclick="stopSpeech(); markTutorialSeen(); screen='theme'; render()">体験フェーズもスキップして始める →</button>` : ''}
       </div>
     </div>
   </div>`;
@@ -1401,10 +1404,10 @@ function buildSpeechText(key) {
   if (key === 'intro') {
     return [
       '思考支援ツール。はじめる前に、このツールの使い方をお読みください。',
-      'このツールの目的。あるテーマについて、普段とは違う角度から多角的に考えるためのツールです。10の場面、フェーズを通じて、自分の考えを少しずつ整理・深めていくことができます。',
+      'このツールの目的。あるテーマについて、普段とは違う角度から多角的に考えるためのツールです。7つの場面、フェーズを通じて、自分の考えを少しずつ整理・深めていくことができます。',
       '大切なポイント。このツールに正解はありません。各フェーズで提示されるヒントを手がかりに、自由に考えてみてください。自分の意見はそのままで構いません。ヒントを見たとき、そういう見方もあるかもと感じることがあれば、それを回答に取り入れてみてください。無理に考えを変える必要はありません。',
-      '進め方。全部で10のフェーズがあります。各フェーズでは異なる視点からテーマについて考えます。表示されるヒントを参考にしながら、回答欄に自由に記入してください。正解はありません。思ったことをそのまま書いていただければ大丈夫です。',
-      '各フェーズの操作の流れです。1、カードを引く。ランダムボタンで2枚表示されるので、その中から1枚選びます。2、キーワードを選ぶ。出たカードのキーワードから1つか2つ選びます。3、回答欄に書く。カードを参考にテーマについて自由に記入します。4、評価する。このフェーズの回答への納得度を1から5で選びます。5、次のフェーズへ進みます。これを全10フェーズ繰り返します。',
+      '進め方。全部で7つのフェーズがあります。各フェーズでは異なる視点からテーマについて考えます。表示されるヒントを参考にしながら、回答欄に自由に記入してください。正解はありません。思ったことをそのまま書いていただければ大丈夫です。',
+      '各フェーズの操作の流れです。1、カードを引く。ランダムボタンで2枚表示されるので、その中から1枚選びます。2、キーワードを選ぶ。出たカードのキーワードから1つか2つ選びます。3、回答欄に書く。カードを参考にテーマについて自由に記入します。4、評価する。このフェーズの回答への納得度を1から5で選びます。5、次のフェーズへ進みます。これを全7フェーズ繰り返します。',
       '内容を確認したら、次へボタンを押してください。',
     ].join(' ');
   }
@@ -1413,12 +1416,9 @@ function buildSpeechText(key) {
       'どう書けばいいか分からないという声が多いので、先に回答例を見てみましょう。これはあくまで書き方の一例です。テーマはご自身が決めたもので、内容や感じ方は人それぞれで構いません。',
       `使用前の意見の例です。${OPINION_EXAMPLE_TEXT}`,
     ];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < PHASE_COUNT; i++) {
       const p = PHASES[i];
       let block = `フェーズ${p.num}、${p.name}。質問は、${p.desc}`;
-      if (i === 0) {
-        block += ' 操作の流れは次のとおりです。まずランダムでカードを引くボタンを押します。次に、出てきた2択のうち、しっくりくるほうを選びます。カード名や正逆は気にしなくて大丈夫です。キーワードだけ見て選べば大丈夫です。次に、表示されたキーワードから1つか2つ選びます。次に、回答欄にキーワードを参考にしながら自由に文章を書きます。次に、納得度を星で選びます。最後に、次へを押します。';
-      }
       block += ` 回答例は、${PHASE_EXAMPLE_ANSWERS[i]}`;
       parts.push(block);
     }
@@ -1462,12 +1462,24 @@ function onSpeechRateChange() {
   speechRate = Number(sel.value);
 }
 
+let speechGlowPoll = null;
+
+function setSpeakButtonGlow(key, on) {
+  const btn = document.getElementById(`speak-btn-${key}`);
+  if (btn) {
+    btn.classList.toggle('speaking-glow', on);
+    btn.textContent = on ? '🔊 読み上げ中…' : '🔊 読み上げる';
+  }
+}
+
 function speakScreen(key) {
   if (!('speechSynthesis' in window)) {
     alert('お使いのブラウザは読み上げ機能に対応していません。');
     return;
   }
   window.speechSynthesis.cancel();
+  if (speechGlowPoll) { clearInterval(speechGlowPoll); speechGlowPoll = null; }
+
   const utter = new SpeechSynthesisUtterance(buildSpeechText(key));
   utter.lang = 'ja-JP';
   utter.rate = speechRate;
@@ -1475,22 +1487,46 @@ function speakScreen(key) {
     const v = japaneseVoices.find(v => v.voiceURI === speechVoiceURI);
     if (v) utter.voice = v;
   }
+
+  let hasStarted = false;
+  utter.onstart = () => { hasStarted = true; };
+  utter.onend   = () => setSpeakButtonGlow(key, false);
+  utter.onerror = () => setSpeakButtonGlow(key, false);
+
+  // ボタンを押した瞬間に光らせる（onstartイベントはブラウザによって発火が遅れる/来ないことがあるため）
+  setSpeakButtonGlow(key, true);
+  // 「まだ始まっていない」と「本当に終わった」を区別しつつ、確実に光を消すためのバックアップ監視
+  speechGlowPoll = setInterval(() => {
+    if (window.speechSynthesis.speaking) {
+      hasStarted = true;
+    } else if (hasStarted) {
+      setSpeakButtonGlow(key, false);
+      clearInterval(speechGlowPoll);
+      speechGlowPoll = null;
+    }
+  }, 200);
+
   window.speechSynthesis.speak(utter);
 }
 
 function stopSpeech() {
   if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  if (speechGlowPoll) { clearInterval(speechGlowPoll); speechGlowPoll = null; }
+  document.querySelectorAll('.speaking-glow').forEach(el => el.classList.remove('speaking-glow'));
 }
 
 function speechButtonsHtml(key) {
   const rateOptions = [0.8, 1.0, 1.1, 1.25, 1.5].map(r =>
     `<option value="${r}" ${r === speechRate ? 'selected' : ''}>${r}倍速</option>`
   ).join('');
-  return `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px;">
-    <button class="nav-btn" onclick="speakScreen('${key}')">🔊 読み上げる</button>
-    <button class="nav-btn" onclick="stopSpeech()">■ 停止</button>
-    <select id="speech-rate-select" class="nav-btn" style="cursor:pointer;" onchange="onSpeechRateChange()">${rateOptions}</select>
-    <select id="speech-voice-select" class="nav-btn" style="cursor:pointer;max-width:180px;" onchange="onSpeechVoiceChange()"><option>声を読み込み中…</option></select>
+  return `<div style="margin-bottom:10px;">
+    <div style="font-size:12px;color:#8B6A4A;margin-bottom:6px;">🔊 読み上げてほしい方は、下のボタンをクリックしてください</div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
+      <button id="speak-btn-${key}" class="nav-btn speaking-glow" onclick="speakScreen('${key}')">🔊 読み上げる</button>
+      <button class="nav-btn" onclick="stopSpeech()">■ 停止</button>
+      <select id="speech-rate-select" class="nav-btn" style="cursor:pointer;" onchange="onSpeechRateChange()">${rateOptions}</select>
+      <select id="speech-voice-select" class="nav-btn" style="cursor:pointer;max-width:180px;" onchange="onSpeechVoiceChange()"><option>声を読み込み中…</option></select>
+    </div>
   </div>`;
 }
 
@@ -1546,7 +1582,7 @@ function renderIntro() {
 
       <div class="intro-section">
         <div class="intro-section-title">このツールの目的</div>
-        <div class="intro-text">あるテーマについて、普段とは違う角度から多角的に考えるためのツールです。10の「場面（フェーズ）」を通じて、自分の考えを少しずつ整理・深めていくことができます。</div>
+        <div class="intro-text">あるテーマについて、普段とは違う角度から多角的に考えるためのツールです。7つの「場面（フェーズ）」を通じて、自分の考えを少しずつ整理・深めていくことができます。</div>
       </div>
       <div class="intro-section">
         <div class="intro-section-title">大切なポイント</div>
@@ -1556,7 +1592,7 @@ function renderIntro() {
 
       <div class="intro-section">
         <div class="intro-section-title">進め方</div>
-        <div class="intro-text">全部で10のフェーズがあります。各フェーズでは異なる視点からテーマについて考えます。表示されるヒントを参考にしながら、回答欄に自由に記入してください。正解はありません。思ったことをそのまま書いていただければ大丈夫です。</div>
+        <div class="intro-text">全部で7つのフェーズがあります。各フェーズでは異なる視点からテーマについて考えます。表示されるヒントを参考にしながら、回答欄に自由に記入してください。正解はありません。思ったことをそのまま書いていただければ大丈夫です。</div>
       </div>
 
       <div class="intro-section">
@@ -1598,15 +1634,16 @@ function renderIntro() {
             <div style="width:36px;height:36px;border-radius:50%;background:#3D1F0D;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">▶</div>
             <div style="flex:1;background:#F5F4F0;border-radius:8px;padding:8px 12px;">
               <div style="font-size:13px;font-weight:600;color:#3D1F0D;">5. 次のフェーズへ</div>
-              <div style="font-size:12px;color:#666;margin-top:2px;">全10フェーズ繰り返す</div>
+              <div style="font-size:12px;color:#666;margin-top:2px;">全7フェーズ繰り返す</div>
             </div>
           </div>
         </div>
       </div>
 
-      <div style="display:flex;gap:8px;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button class="nav-btn" onclick="stopSpeech(); screen='name'; render()">← 戻る</button>
         <button class="intro-start-btn" onclick="startFromIntro()">内容を確認しました　→　次へ</button>
+        ${hasSeenTutorialBefore() ? `<button class="nav-btn" onclick="stopSpeech(); screen='theme'; render()" title="回答例・体験フェーズは前回すでにご覧いただいているため、スキップできます">回答例・体験フェーズをスキップする →</button>` : ''}
       </div>
     </div>
   </div>`;
@@ -1710,7 +1747,7 @@ function getCanNext() {
 
 function buildNavHtml() {
   const { chosenCard, hasMemo, hasKeyword, hasSat, canNext } = getCanNext();
-  let h = `<span class="progress">${currentPhase + 1} / 10</span>`;
+  let h = `<span class="progress">${currentPhase + 1} / ${PHASE_COUNT}</span>`;
   if (currentPhase > 0) h += `<button class="nav-btn" onclick="jumpTo(${currentPhase - 1})">← 前へ</button>`;
   h += `<button class="nav-btn" onclick="resetPhase()" title="このフェーズのカード・キーワードの選択を最初に戻します（回答文は消えません）">やり直す</button>`;
   if (lastResetBackup && lastResetBackup.phase === currentPhase) {
@@ -1724,9 +1761,9 @@ function buildNavHtml() {
     h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="showMemoError()">次へ → <span style='font-size:11px;'>（回答を入力してください）</span></button>`;
   } else if (!hasSat) {
     h += `<button class="nav-btn primary" style="opacity:0.5;cursor:not-allowed;" onclick="document.getElementById('sat-section')?.scrollIntoView({behavior:'smooth'})">次へ → <span style='font-size:11px;'>（評価を選択してください）</span></button>`;
-  } else if (canNext && currentPhase < 9) {
+  } else if (canNext && currentPhase < PHASE_COUNT - 1) {
     h += `<button class="nav-btn primary" onclick="next()">次へ →</button>`;
-  } else if (canNext && currentPhase === 9) {
+  } else if (canNext && currentPhase === PHASE_COUNT - 1) {
     h += `<button class="nav-btn primary" onclick="complete()">完了</button>`;
   }
   return h;
@@ -1796,7 +1833,8 @@ function selectFusionVP(idx) {
   // Aパターンの2問目に使う：選択済みキーワードがあればそちらを優先
   const picked = pickedKeywords[currentPhase] || [];
   const pickedLabel = picked.length > 0 ? picked.join('・') : kw1;
-  const p = currentPhase;
+  const origIndices = PHASE_MAP[currentPhase] || [currentPhase];
+  const p = origIndices.length > 1 ? origIndices[idx % 2] : origIndices[0];
 
   // ボタンのactive切り替え
   const btns = document.querySelectorAll('#fusion-vp-btns button');
@@ -1927,7 +1965,7 @@ function selectFusionVP(idx) {
     ],
     // フェーズ10「最終結果」
     [
-      [`ここまで9枚のカードと向き合ってきて、最終的にあなたはどんな結論に至りましたか？`,
+      [`ここまで6枚のカードと向き合ってきて、最終的にあなたはどんな結論に至りましたか？`,
        `カードのキーワードを参考に、その結論を言葉にしてみてください。`],
       [`関係する人たちにとって、このテーマの最終的な着地点はどうあるべきだと思いますか？`,
        `カードのキーワードを参考に、相手も納得できる結論を考えてみてください。`],
@@ -2061,7 +2099,7 @@ function selectFusionVP(idx) {
     ],
     // フェーズ10「最終結果」
     [
-      [`ここまで9枚のカードと向き合ってきて、最終的にあなたはどんな結論に至りましたか？`,
+      [`ここまで6枚のカードと向き合ってきて、最終的にあなたはどんな結論に至りましたか？`,
        `出たキーワード（${kws.join('・')}）の中で、その結論と重なるものはありますか？`],
       [`関係する人たちにとって、このテーマの最終的な着地点はどうあるべきだと思いますか？`,
        `出たキーワード（${kws.join('・')}）の中で、相手も納得できる結論を示しているものはありますか？`],
@@ -2139,7 +2177,7 @@ function onNameInput() {
   if (!nav) return;
   const hasName = el && el.value.trim() !== '';
   const chosenCard = selectedCards[0] !== null ? CARDS.find(x => x.num === selectedCards[0]) : null;
-  let html = `<span class="progress">1 / 10</span>`;
+  let html = `<span class="progress">1 / ${PHASE_COUNT}</span>`;
   if (!hasName) html += `<span style="font-size:12px;color:#e05c5c;">※ 名前を入力してください</span>`;
   html += `<button class="nav-btn" onclick="resetPhase()">やり直す</button>`;
   if (chosenCard && hasName) html += `<button class="nav-btn primary" onclick="next()">次へ →</button>`;
@@ -2167,6 +2205,7 @@ function startFromIntro() {
 function startFromName() {
   const el = document.getElementById('name-input');
   if (el) participantName = el.value.trim();
+  if (participantName.trim() === '') return;
   stopSpeech();
   screen = 'intro';
   render();
@@ -2178,12 +2217,9 @@ function startFromTutorial() {
   render();
 }
 
-function startFromPractice() {
-  screen = 'practice2';
-  render();
-}
+// ===== 体験フェーズ（練習用。テーマ固定。入力内容は保存されない） =====
+const PRACTICE_THEME = 'ストレスが溜まったら物や周りの人に当たってもよい';
 
-// ===== 体験フェーズ（練習用。入力内容は保存されない） =====
 let practice = {
   candidates: null,
   orientations: null,
@@ -2259,6 +2295,7 @@ function renderPractice() {
 
   h += `<div class="phase-card" style="border:1.5px dashed #afa9ec;">`;
   h += `<div class="phase-header"><span class="phase-num">体験フェーズ</span><span class="phase-name">操作を練習してみましょう</span></div>`;
+  h += `<div style="font-size:13px;color:#3D1F0D;padding:8px 12px;background:#eeedfe;border:1.5px solid #afa9ec;border-radius:8px;margin-bottom:1rem;"><strong>📌 今回のテーマ：</strong>${PRACTICE_THEME}</div>`;
   h += `<div class="phase-prompt"><div class="phase-prompt-label">❓ 練習用の質問（例）</div>今、あなたはこのテーマについて、どんな状況にいますか？</div>`;
 
   if (!practice.candidates) {
@@ -2277,11 +2314,7 @@ function renderPractice() {
     });
     h += `</div></div>`;
   } else {
-    h += `<div class="card-result"><div class="card-name">カードが出ました</div><div class="meaning-row">
-      <div class="meaning-box up"><div class="meaning-tags">${kwList.map(k => `<span class="tag up">${k}</span>`).join('')}</div></div>
-    </div></div>`;
-
-    h += `<div class="keyword-select-label">このフェーズで使うキーワードを選んでください（最低1つ・最大2つ）</div>`;
+    h += `<div class="keyword-select-label">このフェーズで使うキーワードを選んでください(最低1つ・最大2つ)</div>`;
     h += `<div class="keyword-select-note" style="color:#0f6e56;">※ 選んだキーワードをもう一度タップすると、選択を取り消して選び直せます</div>`;
     h += `<div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;">`;
     kwList.forEach(k => {
@@ -2292,7 +2325,7 @@ function renderPractice() {
     h += `</div>`;
 
     if (practice.keywords.length > 0) {
-      h += `<textarea id="practice-memo" oninput="practiceOnMemoInput()" placeholder="キーワードを参考に、自由に書いてみてください（これは練習なので何を書いても大丈夫です）" style="width:100%;min-height:90px;border:1px solid #ddd;border-radius:8px;padding:10px;font-size:14px;box-sizing:border-box;font-family:inherit;">${practice.memo}</textarea>`;
+      h += `<textarea id="practice-memo" oninput="practiceOnMemoInput()" placeholder="キーワードを参考に、このテーマについて自由に書いてみてください（これは練習なので何を書いても大丈夫です）" style="width:100%;min-height:90px;border:1px solid #ddd;border-radius:8px;padding:10px;font-size:14px;box-sizing:border-box;font-family:inherit;">${practice.memo}</textarea>`;
 
       h += `<div id="practice-sat-section" style="display:${practice.memo.trim() ? 'block' : 'none'};margin-top:12px;">
         <div class="satisfaction-label">このフェーズの回答への評価（練習）</div>
@@ -2315,147 +2348,14 @@ function renderPractice() {
   return h;
 }
 
-// ===== 体験フェーズ2（テーマ固定版。ゼミ比較用。入力内容は保存されない） =====
-const PRACTICE2_THEME = 'ストレスが溜まったら物や周りの人に当たってもよい';
-
-let practice2 = {
-  candidates: null,
-  orientations: null,
-  chosenNum: null,
-  chosenOri: null,
-  keywords: [],
-  memo: '',
-  satisfaction: 0,
-};
-
-function practice2Reset() {
-  practice2 = { candidates: null, orientations: null, chosenNum: null, chosenOri: null, keywords: [], memo: '', satisfaction: 0 };
-  render();
-}
-
-function practice2Draw() {
-  const nums = CARDS.map(c => c.num);
-  const shuffled = [...nums].sort(() => Math.random() - 0.5);
-  practice2.candidates   = shuffled.slice(0, 2);
-  practice2.orientations = practice2.candidates.map(() => (Math.random() < 0.5 ? 'up' : 'down'));
-  practice2.chosenNum = null;
-  practice2.chosenOri = null;
-  practice2.keywords  = [];
-  practice2.memo = '';
-  practice2.satisfaction = 0;
-  render();
-}
-
-function practice2SelectCard(idx) {
-  practice2.chosenNum = practice2.candidates[idx];
-  practice2.chosenOri = practice2.orientations[idx];
-  render();
-}
-
-function practice2ToggleKeyword(kw) {
-  const arr = practice2.keywords;
-  const i = arr.indexOf(kw);
-  if (i !== -1) {
-    arr.splice(i, 1);
-  } else {
-    if (arr.length >= 2) return;
-    arr.push(kw);
-  }
-  render();
-}
-
-function practice2OnMemoInput() {
-  const el = document.getElementById('practice2-memo');
-  if (el) practice2.memo = el.value;
-  const satSection = document.getElementById('practice2-sat-section');
-  if (satSection) satSection.style.display = practice2.memo.trim() ? 'block' : 'none';
-}
-
-function practice2SetSat(n) {
-  practice2.satisfaction = n;
-  render();
-}
-
-function renderPractice2() {
-  const card1 = practice2.candidates ? CARDS.find(c => c.num === practice2.candidates[0]) : null;
-  const card2 = practice2.candidates ? CARDS.find(c => c.num === practice2.candidates[1]) : null;
-  const chosenCard = practice2.chosenNum !== null ? CARDS.find(c => c.num === practice2.chosenNum) : null;
-  const kwList = chosenCard ? (practice2.chosenOri === 'up' ? chosenCard.up : chosenCard.down) : [];
-
-  let h = `<div class="intro-screen"><div class="intro-card">`;
-  h += `<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:1.2rem;">
-    ${charaHtml('guide', 72)}
-    <div class="guide-balloon" style="font-size:14px;">
-      もう一つ、実際のテーマで練習してみましょう。<br>
-      <span style="font-size:12px;color:#888;">※ この画面はあくまで練習です。ここでの入力は結果として保存されません。</span>
-    </div>
-  </div>`;
-
-  h += `<div class="phase-card" style="border:1.5px dashed #afa9ec;">`;
-  h += `<div class="phase-header"><span class="phase-num">体験フェーズ2</span><span class="phase-name">操作を練習してみましょう</span></div>`;
-  h += `<div style="font-size:13px;color:#3D1F0D;padding:8px 12px;background:#eeedfe;border:1.5px solid #afa9ec;border-radius:8px;margin-bottom:1rem;"><strong>📌 今回のテーマ：</strong>${PRACTICE2_THEME}</div>`;
-  h += `<div class="phase-prompt"><div class="phase-prompt-label">❓ 練習用の質問（例）</div>今、あなたはこのテーマについて、どんな状況にいますか？</div>`;
-
-  if (!practice2.candidates) {
-    h += `<button class="nav-btn primary" onclick="practice2Draw()">🎴 ランダムでカードを引く</button>`;
-  } else if (practice2.chosenNum === null) {
-    h += `<div class="card-choice-wrap">
-      <div style="font-size:12px;color:#aaa;margin-bottom:8px;">どちらか、しっくりくる方を選んでください</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">`;
-    [0, 1].forEach(idx => {
-      const c   = idx === 0 ? card1 : card2;
-      const ori = practice2.orientations[idx];
-      const kws = ori === 'up' ? c.up : c.down;
-      h += `<button onclick="practice2SelectCard(${idx})" style="padding:10px;border:1.5px solid #afa9ec;border-radius:10px;background:#fff;cursor:pointer;text-align:left;" onmouseover="this.style.background='#eeedfe'" onmouseout="this.style.background='#fff'">
-        <div style="font-size:13px;color:#3D1F0D;">${kws.join('・')}</div>
-      </button>`;
-    });
-    h += `</div></div>`;
-  } else {
-    h += `<div class="card-result"><div class="card-name">カードが出ました</div><div class="meaning-row">
-      <div class="meaning-box up"><div class="meaning-tags">${kwList.map(k => `<span class="tag up">${k}</span>`).join('')}</div></div>
-    </div></div>`;
-
-    h += `<div class="keyword-select-label">このフェーズで使うキーワードを選んでください(最低1つ・最大2つ)</div>`;
-    h += `<div class="keyword-select-note" style="color:#0f6e56;">※ 選んだキーワードをもう一度タップすると、選択を取り消して選び直せます</div>`;
-    h += `<div style="display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;">`;
-    kwList.forEach(k => {
-      const picked   = practice2.keywords.includes(k);
-      const disabled = !picked && practice2.keywords.length >= 2;
-      h += `<span class="kw-tag up${picked ? ' picked' : ''}${disabled ? ' disabled' : ''}" onclick="practice2ToggleKeyword('${k}')">${k}</span>`;
-    });
-    h += `</div>`;
-
-    if (practice2.keywords.length > 0) {
-      h += `<textarea id="practice2-memo" oninput="practice2OnMemoInput()" placeholder="キーワードを参考に、このテーマについて自由に書いてみてください（これは練習なので何を書いても大丈夫です）" style="width:100%;min-height:90px;border:1px solid #ddd;border-radius:8px;padding:10px;font-size:14px;box-sizing:border-box;font-family:inherit;">${practice2.memo}</textarea>`;
-
-      h += `<div id="practice2-sat-section" style="display:${practice2.memo.trim() ? 'block' : 'none'};margin-top:12px;">
-        <div class="satisfaction-label">このフェーズの回答への評価（練習）</div>
-        <div style="display:flex;gap:8px;margin-top:8px;">
-          ${[1, 2, 3, 4, 5].map(n => `<button onclick="practice2SetSat(${n})" style="width:40px;height:40px;border-radius:50%;font-weight:700;border:2px solid ${practice2.satisfaction === n ? '#3D1F0D' : '#ddd'};background:${practice2.satisfaction === n ? '#3D1F0D' : '#f5f4f0'};color:${practice2.satisfaction === n ? '#fff' : '#888'};cursor:pointer;">${n}</button>`).join('')}
-        </div>
-      </div>`;
-    }
-  }
-
-  h += `</div>`; // phase-card
-
-  h += `<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
-    <button class="nav-btn" onclick="stopSpeech(); screen='practice'; render()">← 戻る</button>`;
-  if (practice2.candidates) h += `<button class="nav-btn" onclick="practice2Reset()">🔄 練習をやり直す</button>`;
-  h += `<button class="nav-btn primary" onclick="startFromPractice2()">練習を終えて次へ →</button>
-  </div>`;
-
-  h += `</div></div>`;
-  return h;
-}
-
-function startFromPractice2() {
+function startFromPractice() {
+  markTutorialSeen();
   screen = 'theme';
   render();
 }
 
 function renderName() {
+  const canProceedName = participantName.trim() !== '';
   return `<div class="intro-screen">
     <div class="intro-card">
       <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:1.5rem;">
@@ -2474,15 +2374,29 @@ function renderName() {
           type="text"
           placeholder="例：山田 太郎"
           value="${participantName}"
-          oninput="participantName=this.value.trim();"
+          oninput="onNameFieldInput()"
           style="font-size:15px;padding:10px 14px;max-width:320px;"
         />
+        ${canProceedName ? '' : '<span style="font-size:12px;color:#e05c5c;">※ お名前を入力すると次に進めます</span>'}
       </div>
       <div style="display:flex;gap:8px;">
-        <button class="nav-btn primary" onclick="startFromName()">次へ →</button>
+        <button class="nav-btn primary" id="name-next-btn" onclick="startFromName()" ${canProceedName ? '' : 'disabled style="opacity:0.4;cursor:not-allowed;"'}>次へ →</button>
       </div>
     </div>
   </div>`;
+}
+
+function onNameFieldInput() {
+  const el = document.getElementById('name-input');
+  if (!el) return;
+  participantName = el.value.trim();
+  const nextBtn = document.getElementById('name-next-btn');
+  if (nextBtn) {
+    const canProceed = participantName !== '';
+    nextBtn.disabled = !canProceed;
+    nextBtn.style.opacity = canProceed ? '1' : '0.4';
+    nextBtn.style.cursor = canProceed ? 'pointer' : 'not-allowed';
+  }
 }
 
 function startMain() {
@@ -2568,7 +2482,10 @@ function toggleExampleModal() {
     modal.style.display = 'none';
     overlay.classList.remove('open');
   } else {
-    document.getElementById('example-modal-body').innerHTML = tutorialExamplesHtml();
+    const inPhaseFlow = (screen === 'main' && !completed);
+    document.getElementById('example-modal-body').innerHTML = tutorialExamplesHtml(inPhaseFlow ? currentPhase : undefined);
+    const title = document.getElementById('example-modal-title');
+    if (title) title.textContent = inPhaseFlow ? `📝 フェーズ${currentPhase + 1}の回答例` : '📝 回答例（見たいときにどうぞ）';
     modal.style.display = 'flex';
     overlay.classList.add('open');
   }
@@ -2622,7 +2539,6 @@ function render() {
   if (screen === 'name')     { el.innerHTML = renderName();    setTimeout(loadJapaneseVoices, 0); return; }
   if (screen === 'tutorial') { el.innerHTML = renderTutorial(); setTimeout(loadJapaneseVoices, 0); return; }
   if (screen === 'practice') { el.innerHTML = renderPractice(); return; }
-  if (screen === 'practice2') { el.innerHTML = renderPractice2(); return; }
   if (screen === 'theme')    { el.innerHTML = renderTheme();   return; }
   if (screen === 'opinion')  { el.innerHTML = renderOpinion(); return; }
   if (screen2 === 'final_eval') { el.innerHTML = renderFinalEval(); return; }
@@ -2632,10 +2548,17 @@ function render() {
 
   if (!allDone) {
     html += '<div class="phase-bar"><span class="phase-label">フェーズ</span>';
-    for (let i = 0; i < 10; i++) {
-      const done   = selectedCards[i] !== null;
-      const active = i === currentPhase && !completed;
-      html += `<button class="phase-btn ${active ? 'active' : done ? 'done' : ''}" onclick="jumpTo(${i})">${i+1}${done ? ' ✓' : ''}</button>`;
+    for (let i = 0; i < PHASE_COUNT; i++) {
+      const done      = selectedCards[i] !== null;
+      const active    = i === currentPhase && !completed;
+      // 「今どのフェーズにいるか」ではなく「そこまで進んだ実績があるか」でロック判定する
+      const reachable = i === 0 || selectedCards[i - 1] !== null || done;
+      const cls = active ? 'active' : done ? 'done' : reachable ? '' : 'locked';
+      if (reachable) {
+        html += `<button class="phase-btn ${cls}" onclick="jumpTo(${i})">${i+1}${done ? ' ✓' : ''}</button>`;
+      } else {
+        html += `<button class="phase-btn locked" disabled title="まだこのフェーズには進めません">${i+1} 🔒</button>`;
+      }
     }
     html += '</div>';
   }
@@ -2644,6 +2567,7 @@ function render() {
   if (allDone) {
     const saves = loadSaves();
     const themeDisplay = selectedTheme && selectedTheme.id === 99 ? customThemeText : (selectedTheme ? selectedTheme.question : '');
+    html += '<div class="done-screen">';
     html += '<div class="done-banner">';
     html += '<div class="done-title">全フェーズ完了</div>';
     if (themeDisplay) html += `<div class="done-meta">テーマ：${themeDisplay}</div>`;
@@ -2654,7 +2578,7 @@ function render() {
     html += '</div>';
 
     html += '<div class="summary-list">';
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < PHASE_COUNT; i++) {
       const c = CARDS.find(x => x.num === selectedCards[i]);
       const o = orientations[i];
       const keywords = o === 'up' ? c.up : c.down;
@@ -2733,6 +2657,7 @@ function render() {
       html += '</div>';
     }
 
+    html += '</div>';
     el.innerHTML = html;
     return;
   }
@@ -2771,14 +2696,6 @@ function render() {
         </button>
       </div>
     </div>`;
-  }
-
-  if (chosenCard) {
-    const kws = orientations[currentPhase] === 'up' ? chosenCard.up : chosenCard.down;
-    html += `<div class="card-result"><div class="card-name">カードが出ました</div><div class="meaning-row">`;
-    html += `<div class="meaning-box up"><div class="meaning-tags">${kws.map(t=>`<span class="tag up">${t}</span>`).join('')}</div></div>`;
-    html += `</div>`;
-    html += `</div>`;
   }
 
   const memoDisabled = !chosenCard;
@@ -2929,8 +2846,8 @@ function render() {
       html += `<div style="font-size:12px;color:#bbb;text-align:center;padding:1rem 0;">前の回答はまだありません</div>`;
     }
 
-    // フェーズ10は振り返りリストを追加表示
-    if (currentPhase === 9) {
+    // フェーズ7(考えをまとめる)は振り返りリストを追加表示
+    if (currentPhase === PHASE_COUNT - 1) {
       html += '<div style="margin-top:1rem;border-top:0.5px solid #e8e7e0;padding-top:0.75rem;">';
       html += '<div class="right-title">これまでの振り返り (1〜9)</div>';
       html += renderReviewList();
