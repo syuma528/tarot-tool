@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>思考支援ツール　利用後アンケート</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif;
+    background: #E1F5EE;
+    color: #1a1a1a;
+    min-height: 100vh;
+    padding: 1.5rem;
+    margin: 0;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+  .card {
+    background: #fff;
+    border: 0.5px solid #5DCAA5;
+    border-radius: 16px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.25rem;
+  }
+  h1 { font-size: 22px; color: #3D1F0D; margin: 0 0 8px; }
+  .subtitle { font-size: 13px; color: #666; line-height: 1.7; margin-bottom: 4px; }
+  .lead { font-size: 13px; color: #444; line-height: 1.8; }
+  h2.section-title {
+    font-size: 16px;
+    color: #3D1F0D;
+    border-left: 5px solid #3D1F0D;
+    padding-left: 10px;
+    margin: 0 0 6px;
+  }
+  .section-note {
+    font-size: 12px;
+    color: #8B6A4A;
+    background: #F5F4F0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+  label.field-label { font-size: 13px; color: #555; display: block; margin-bottom: 6px; }
+  input[type="text"], input[type="date"] {
+    font-size: 15px;
+    padding: 9px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+  .basic-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  @media (min-width: 560px) { .basic-grid.two { grid-template-columns: 1fr 1fr; } }
+  .radio-pill-group { display: flex; gap: 10px; flex-wrap: wrap; }
+  .radio-pill {
+    border: 1.5px solid #ccc;
+    border-radius: 999px;
+    padding: 7px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .radio-pill input { display: none; }
+  .radio-pill.checked { background: #3D1F0D; color: #fff; border-color: #3D1F0D; }
+
+  .likert-question { margin-bottom: 18px; padding-bottom: 16px; border-bottom: 0.5px solid #eee; }
+  .likert-question:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .likert-text { font-size: 14px; color: #1a1a1a; margin-bottom: 10px; line-height: 1.6; }
+  .likert-scale { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .likert-scale .anchor { font-size: 11px; color: #999; width: 88px; }
+  .likert-scale .anchor.right { text-align: right; }
+  .likert-opt {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; user-select: none;
+  }
+  .likert-opt input { display: none; }
+  .likert-opt .dot {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 1.5px solid #ccc; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: #888; transition: all 0.15s;
+  }
+  .likert-opt input:checked + .dot {
+    background: #3D1F0D; border-color: #3D1F0D; color: #fff; font-weight: 700;
+  }
+  textarea {
+    width: 100%; min-height: 80px; border: 1px solid #ddd; border-radius: 8px;
+    padding: 10px; font-size: 14px; box-sizing: border-box; font-family: inherit;
+    margin-bottom: 14px;
+  }
+  .submit-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .btn {
+    font-size: 14px; padding: 10px 20px; border-radius: 8px; border: 0.5px solid #ccc;
+    background: #fff; color: #1a1a1a; cursor: pointer; transition: all 0.15s;
+  }
+  .btn.primary { background: #3D1F0D; color: #fff; border-color: #3D1F0D; font-weight: 600; }
+  .btn.primary:hover { opacity: 0.9; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .status-msg { font-size: 13px; color: #0f6e56; margin-top: 8px; }
+  .footer-note { font-size: 12px; color: #999; text-align: center; margin: 1.5rem 0; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="card">
+    <h1>思考支援ツール　利用後アンケート</h1>
+    <div class="subtitle">（前回の実験でいただいたご意見をもとに改善しました。今回、それぞれの点が改善されたかどうかを確認するためのアンケートです。）</div>
+    <div class="lead">ご協力ありがとうございます。以下の質問に、直感で構いませんのでお答えください。</div>
+  </div>
+
+  <div class="card">
+    <h2 class="section-title">基本情報</h2>
+    <div class="basic-grid two" style="margin-bottom:16px;">
+      <div>
+        <label class="field-label">お名前（任意）</label>
+        <input type="text" id="resName" placeholder="例：山田 太郎">
+      </div>
+      <div>
+        <label class="field-label">実施日</label>
+        <input type="date" id="resDate">
+      </div>
+    </div>
+    <label class="field-label">このツールの利用は</label>
+    <div class="radio-pill-group" id="firstOrRepeat">
+      <label class="radio-pill"><input type="radio" name="usage" value="今回が初めて">今回が初めて</label>
+      <label class="radio-pill"><input type="radio" name="usage" value="2回目以降">2回目以降</label>
+    </div>
+  </div>
+
+  <div id="sections"></div>
+
+  <div class="card">
+    <h2 class="section-title">自由記述</h2>
+    <label class="field-label">① 良かったと感じた点</label>
+    <textarea id="freeGood"></textarea>
+    <label class="field-label">② 改善してほしいと感じた点</label>
+    <textarea id="freeImprove"></textarea>
+    <label class="field-label">③ その他、気づいたこと・感想</label>
+    <textarea id="freeOther"></textarea>
+  </div>
+
+  <div class="card">
+    <div class="submit-row">
+      <button class="btn primary" onclick="downloadCsv()">回答をCSVでダウンロード</button>
+      <button class="btn" onclick="resetForm()">回答をリセット</button>
+    </div>
+    <div class="status-msg" id="statusMsg"></div>
+  </div>
+
+  <div class="footer-note">ご協力いただき、誠にありがとうございました。</div>
+</div>
+
+<script>
+const SECTIONS = [
+  {
+    title: 'A. 導入・ツールの目的について',
+    note: '※「何のために使うのか分からない」「事前に流れを知ってから始めたい」という前回のご意見への対応を確認します',
+    questions: [
+      'このツールが「何のためのものか」「使うことで何が得られるか」を、始める前に理解できた',
+      'チュートリアル（回答例）や体験フェーズは、実際に回答を書くときの助けになった',
+      '本番のフェーズに入る前に、全体の流れやどんな質問をされるかを把握できた',
+    ],
+  },
+  {
+    title: 'B. テーマ選択について',
+    note: '※「テーマ選びで失敗した／書きにくいテーマを選んでしまった」という前回のご意見への対応を確認します',
+    questions: [
+      '用意されたテーマの中から、自分にとって書きやすいテーマを選べた',
+      'テーマを選ぶ時点で「書きにくいテーマを選んでしまったかも」と感じた',
+    ],
+  },
+  {
+    title: 'C. 回答の書きやすさ・キーワードについて',
+    note: '※「何を書けばいいか分からない」「キーワードの意味が分からず使えていない」という前回のご意見への対応を確認します',
+    questions: [
+      '各フェーズで「何を書けば良いか」に迷わず答えられた',
+      '選んだキーワードは、回答を書く際の参考になった',
+      '選んだキーワードの意味を理解した上で、回答に活かせた',
+    ],
+  },
+  {
+    title: 'D. ヒント機能について',
+    note: '※「ヒントが開いたままになる」「5つの視点のうち自分に合うものが分からない」という前回のご意見への対応を確認します',
+    questions: [
+      'ヒント（自分の視点・相手の視点など）は、考えを深める助けになった',
+      'ヒントが意図せず開いたままになっている等の不便を感じた',
+      '5つの視点のうち、自分に合う視点を選んで活用できた',
+    ],
+  },
+  {
+    title: 'E. 「納得度」の評価について',
+    note: '※「評価をつける意図が分からない」「評価が難しい」という前回のご意見への対応を確認します',
+    questions: [
+      '各フェーズの最後につける「納得度の評価」の意味や目的を理解できた',
+      '納得度の評価をつけること自体が負担だった',
+    ],
+  },
+  {
+    title: 'F. 全体の分量・カードの見せ方について',
+    note: '※「後半で集中力が切れる」「カード名や正逆を気にする必要がある」という前回のご意見への対応を確認します',
+    questions: [
+      '全体の質問数や所要時間は適切だと感じた',
+      '後半になるにつれて集中力が切れたり、疲れを感じたりした',
+      'カードの名前・番号・正位置逆位置などは気にならず、キーワードだけで選びやすかった',
+    ],
+  },
+  {
+    title: 'G. 新しく追加した機能について',
+    note: '',
+    questions: [
+      '読み上げ機能があることで、内容が理解しやすくなった',
+      'まだ答えていないフェーズには進めない仕組み（鍵マーク）はわかりやすかった',
+      '画面のレイアウトや文字の大きさは見やすかった',
+    ],
+  },
+];
+
+const LABELS = ['全くそう\n思わない', '', 'どちらとも\n言えない', '', '非常に\nそう思う'];
+
+function buildSections() {
+  const root = document.getElementById('sections');
+  let qIndex = 0;
+  SECTIONS.forEach((sec, sIdx) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    let html = `<h2 class="section-title">${sec.title}</h2>`;
+    if (sec.note) html += `<div class="section-note">${sec.note}</div>`;
+    sec.questions.forEach(q => {
+      qIndex++;
+      html += `<div class="likert-question">
+        <div class="likert-text">${qIndex}. ${q}</div>
+        <div class="likert-scale">
+          <span class="anchor">全くそう思わない</span>
+          ${[1,2,3,4,5].map(v => `
+            <label class="likert-opt">
+              <input type="radio" name="q${qIndex}" value="${v}">
+              <span class="dot">${v}</span>
+            </label>
+          `).join('')}
+          <span class="anchor right">非常にそう思う</span>
+        </div>
+      </div>`;
+    });
+    card.innerHTML = html;
+    root.appendChild(card);
+  });
+  document.querySelectorAll('.likert-opt input, .radio-pill input').forEach(inp => {
+    inp.addEventListener('change', () => {
+      if (inp.closest('.radio-pill-group')) {
+        document.querySelectorAll('#firstOrRepeat .radio-pill').forEach(p => p.classList.remove('checked'));
+        inp.closest('.radio-pill').classList.add('checked');
+      }
+    });
+  });
+}
+buildSections();
+
+function totalQuestionCount() {
+  return SECTIONS.reduce((sum, s) => sum + s.questions.length, 0);
+}
+
+function collectAnswers() {
+  const data = {};
+  data['お名前'] = document.getElementById('resName').value.trim();
+  data['実施日'] = document.getElementById('resDate').value;
+  const usageEl = document.querySelector('input[name="usage"]:checked');
+  data['利用回数'] = usageEl ? usageEl.value : '';
+
+  let qIndex = 0;
+  SECTIONS.forEach(sec => {
+    sec.questions.forEach(q => {
+      qIndex++;
+      const el = document.querySelector(`input[name="q${qIndex}"]:checked`);
+      data[`Q${qIndex}_${q}`] = el ? el.value : '';
+    });
+  });
+
+  data['良かった点'] = document.getElementById('freeGood').value.trim();
+  data['改善してほしい点'] = document.getElementById('freeImprove').value.trim();
+  data['その他'] = document.getElementById('freeOther').value.trim();
+  return data;
+}
+
+function csvEscape(v) {
+  const s = String(v ?? '');
+  if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  return s;
+}
+
+function downloadCsv() {
+  const data = collectAnswers();
+  const headers = Object.keys(data);
+  const values = Object.values(data);
+  const csv = '\uFEFF' + headers.map(csvEscape).join(',') + '\n' + values.map(csvEscape).join(',');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const namePart = data['お名前'] ? data['お名前'].replace(/\s+/g, '') : 'anonymous';
+  const datePart = data['実施日'] || new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `アンケート回答_${namePart}_${datePart}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  document.getElementById('statusMsg').textContent = '✓ ダウンロードしました。ファイルを研究者にお渡しください。';
+}
+
+function resetForm() {
+  if (!confirm('入力内容をすべてリセットします。よろしいですか？')) return;
+  document.getElementById('resName').value = '';
+  document.getElementById('resDate').value = '';
+  document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+  document.querySelectorAll('.radio-pill').forEach(p => p.classList.remove('checked'));
+  document.getElementById('freeGood').value = '';
+  document.getElementById('freeImprove').value = '';
+  document.getElementById('freeOther').value = '';
+  document.getElementById('statusMsg').textContent = '';
+}
+</script>
+</body>
+</html>
